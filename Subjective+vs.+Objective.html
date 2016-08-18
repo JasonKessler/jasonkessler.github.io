@@ -11790,6 +11790,38 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
+<div class="prompt input_prompt">In&nbsp;[26]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Examples of subjective sentences in corpus</span>
+<span class="n">quote</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)[:</span><span class="mi">3</span><span class="p">]</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt output_prompt">Out[26]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[&#39;smart and alert , thirteen conversations about one thing is a small gem . &#39;,
+ &#39;color , musical bounce and warm seas lapping on island shores . and just enough science to send you home thinking . &#39;,
+ &#39;it is not a mass-market entertainment but an uncompromising attempt by one artist to think about another . &#39;]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
 <div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
@@ -11821,7 +11853,9 @@ div#notebook {
 <span class="n">term_doc_mat</span> <span class="o">=</span> <span class="n">ST</span><span class="o">.</span><span class="n">TermDocMatrixFromPandas</span><span class="p">(</span><span class="n">data_frame</span> <span class="o">=</span> <span class="n">df</span><span class="p">,</span> 
                                           <span class="n">category_col</span> <span class="o">=</span> <span class="s1">&#39;label&#39;</span><span class="p">,</span> 
                                           <span class="n">text_col</span> <span class="o">=</span> <span class="s1">&#39;text&#39;</span><span class="p">,</span>
-                                          <span class="n">nlp</span> <span class="o">=</span> <span class="n">ST</span><span class="o">.</span><span class="n">fast_but_crap_nlp</span><span class="p">)</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+                                          <span class="c1"># Note: use nlp=spacy.en.English() for text that&#39;s not pre-tokenized</span>
+                                          <span class="n">nlp</span> <span class="o">=</span> <span class="n">ST</span><span class="o">.</span><span class="n">fast_but_crap_nlp</span> 
+                                         <span class="p">)</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
 </pre></div>
 
 </div>
