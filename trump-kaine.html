@@ -1,0 +1,604 @@
+<!-- some code adapted from www.degeneratestate.org/static/metal_lyrics/metal_line.html -->
+<!-- <!DOCTYPE html>
+<meta content="utf-8"> -->
+<style> /* set the CSS */
+
+body {
+  font: 12px Arial;
+}
+
+path {
+  stroke: steelblue;
+  stroke-width: 2;
+  fill: none;
+}
+
+.axis path,
+.axis lineper {
+  fill: none;
+  stroke: grey;
+  stroke-width: 1;
+  shape-rendering: crispEdges;
+}
+
+div.tooltip {
+  position: absolute;
+  text-align: center;
+  width: 150px;
+  height: 28px;
+  padding: 2px;
+  font: 12px sans-serif;
+  background: lightsteelblue;
+  border: 0px;
+  border-radius: 8px;
+  pointer-events: none;
+}
+
+div.label {
+  position: absolute;
+  text-align: left;
+  padding: 1px;
+  border-spacing: 1px;
+  font: 10px sans-serif;
+  border: 0;
+  pointer-events: none;
+}
+
+
+div.label {
+  position: absolute;
+  text-align: left;
+  padding: 1px;
+  border-spacing: 1px;
+  font: 10px sans-serif;
+  border: 0;
+  pointer-events: none;
+}
+
+input {
+  border: 1px dotted #ccc;
+  background: white;
+  font-family: monospace;
+  padding: 10px 20px;
+  font-size: 14px;
+  margin: 20px 10px 30px 0;
+  color: darkred;
+}
+
+.alert {
+  font-family: monospace;
+  padding: 10px 20px;
+  font-size: 14px;
+  margin: 20px 10px 30px 0;
+  color: darkred;
+}
+
+input:focus {
+  background-color: lightyellow;
+  outline: none;
+}
+
+</style>
+<script src="http://d3js.org/d3.v4.min.js" charset="utf-8"></script>
+<script src="http://d3js.org/d3-scale-chromatic.v1.min.js" charset="utf-8"></script>
+<div id="d3-div-1"> </div>
+<form name="termForm" onSubmit="return handleClick()">
+  <input name="Submit" type="submit" value="Search for term">
+  <input type="text" id="searchTerm" placeholder="Type a word or two&hellip;">
+  <span id="alertMessage" class="alert"></span>
+</form>
+<script>
+  /**
+ * Created by Jason Kessler. on 8/1/16.
+ * Interval trees are based on code from http://www.geeksforgeeks.org/interval-tree/
+ *
+ * Please see testing function at the end of the file to test the commands.
+ */
+
+function newIntervalTree(low, hi, label) {
+    return [[low, hi, hi, label], null, null];
+}
+
+function insertIntervalTree(root, low, high, label) {
+    if (root == null) {
+        return newIntervalTree(low, high, label);
+    }
+    // if interval is within current node, then don't insert range
+    var rootLow = root[0][0];
+    var rootHigh = root[0][1];
+
+    // if root's low value is smaller, interval goes to left subtree
+    if (rootLow < low) {
+        root[2] = insertIntervalTree(root[2], low, high, label);
+    } else { // else, new node goes to right subtree.
+        root[1] = insertIntervalTree(root[1], low, high, label);
+    }
+
+    var rootMax = root[0][2];
+    if (rootMax < high) {
+        root[0][2] = high;
+    }
+    return root;
+}
+
+function overlaps(low1, high1, low2, high2) {
+    return !(low1 >= high2 || low2 >= high1);
+}
+
+
+function searchIntervalTree(root, low, high) {
+    if (root === null) return [];
+    var rootLow = root[0][0];
+    var rootHigh = root[0][1];
+    var rootMax = root[0][2];
+    var rootLabel = root[0][3];
+    if (low >= rootMax) {
+        return []; // null root or low >= max
+    }
+    var toRet = [];
+    if (overlaps(rootLow, rootHigh, low, high))
+        toRet = [rootLabel];
+
+    var rootLeft = root[1];
+    var rootRight = root[2];
+    if (!(rootLeft === null) && rootLeft[0][2] >= low) {
+        toRet = toRet.concat(searchIntervalTree(rootLeft, low, high));
+    }
+    if (!(rootRight === null)) {
+        toRet = toRet.concat(searchIntervalTree(rootRight, low, high));
+    }
+    return toRet;
+}
+
+function newRangeTree(topLeftX, topLeftY, bottomRightX, bottomRightY, label) {
+    return [
+        newIntervalTree(
+            Math.min(topLeftX, bottomRightX),
+            Math.max(topLeftX, bottomRightX),
+            label),
+        newIntervalTree(
+            Math.min(topLeftY, bottomRightY),
+            Math.max(topLeftY, bottomRightY),
+            label)
+    ];
+}
+
+function insertRangeTree(root, topLeftX, topLeftY, bottomRightX, bottomRightY, label) {
+    if (root === null) {
+        return newRangeTree(topLeftX, topLeftY, bottomRightX, bottomRightY, label);
+    }
+    return [
+        insertIntervalTree(
+            root[0],
+            Math.min(topLeftX, bottomRightX),
+            Math.max(topLeftX, bottomRightX),
+            label),
+        insertIntervalTree(
+            root[1],
+            Math.min(topLeftY, bottomRightY),
+            Math.max(topLeftY, bottomRightY),
+            label)
+    ]
+}
+
+// adapted from http://stackoverflow.com/questions/1885557/simplest-code-for-array-intersection-in-javascript
+function doSortedArraysIntersect(a, b) {
+    var ai = 0, bi = 0;
+    while (ai < a.length && bi < b.length) {
+        if (a[ai] < b[bi]) ai++;
+        else if (a[ai] > b[bi]) bi++;
+        else if (a[ai] == b[bi]) //return true;
+            return a[ai];
+    }
+    return false;
+}
+
+function searchRangeTree(rangeTree, topLeftX, topLeftY, bottomRightX, bottomRightY) {
+    if (rangeTree === null || typeof rangeTree === "undefined") {
+        return false;
+    }
+    var xIntersects = searchIntervalTree(
+        rangeTree[0],
+        Math.min(topLeftX, bottomRightX),
+        Math.max(topLeftX, bottomRightX));
+
+
+    var yIntersects = searchIntervalTree(
+        rangeTree[1],
+        Math.min(topLeftY, bottomRightY),
+        Math.max(topLeftY, bottomRightY));
+    if (xIntersects.length == 0 || yIntersects.length == 0)
+        return false;
+    return doSortedArraysIntersect(xIntersects.sort(), yIntersects.sort());
+}
+
+
+(function () {
+    console.assert(JSON.stringify(newIntervalTree(0, 6, 'a'))
+        == JSON.stringify([[0, 6, 6, 'a'], null, null]));
+
+    console.assert(overlaps(0, 1, 1, 2) == false);
+    console.assert(overlaps(0, 1, 2, 3) == false);
+    console.assert(overlaps(0, 2, 1, 3) == true);
+    console.assert(overlaps(0, 2, 1, 2) == true);
+    console.assert(overlaps(0, 2, 0, 1) == true);
+    console.assert(overlaps(0, 2, -1, 1) == true);
+    console.assert(overlaps(0, 2, -1, 0) == false);
+
+    var root = newIntervalTree(15, 20, 'a');
+    root = insertIntervalTree(root, 10, 30, 'b');
+    root = insertIntervalTree(root, 10, 30, 'c');
+    root = insertIntervalTree(root, 12, 15, 'd');
+    root = insertIntervalTree(root, 17, 21, 'e');
+    root = insertIntervalTree(root, 30, 40, 'f');
+    root = insertIntervalTree(root, 5, 20, 'g');
+    console.assert(JSON.stringify(root)
+        == '[[15,20,40,"a"],[[10,30,30,"b"],[[10,30,30,"c"],[[5,20,20,"g"],null,null],null],[[12,15,15,"d"],null,null]],[[17,21,40,"e"],null,[[30,40,40,"f"],null,null]]]');
+    console.assert(JSON.stringify(searchIntervalTree(root, 0, 46))
+        == JSON.stringify(["a", "b", "c", "g", "d", "e", "f"]));
+    console.assert(JSON.stringify(searchIntervalTree(root, 0, 2))
+        == JSON.stringify([]));
+    console.assert(JSON.stringify(searchIntervalTree(root, 0, 5))
+        == JSON.stringify([]));
+    console.assert(JSON.stringify(searchIntervalTree(root, 40, 45))
+        == JSON.stringify([]));
+    console.assert(JSON.stringify(searchIntervalTree(root, 39, 40))
+        == JSON.stringify(['f']));
+    console.assert(JSON.stringify(searchIntervalTree(root, 20, 39))
+        == JSON.stringify(["b", "c", "e", "f"]));
+    console.assert(JSON.stringify(searchIntervalTree(root, 0, 7))
+        == JSON.stringify(['g']));
+    console.assert(JSON.stringify(searchIntervalTree(root, 0, 10))
+        == JSON.stringify(["g"]));
+    console.assert(JSON.stringify(searchIntervalTree(root, 0, 14))
+        == JSON.stringify(["b", "c", "g", "d"]));
+    var rt = null;
+    console.assert(searchRangeTree(rt, 2, 5, 5, 6) == false);
+    rt = insertRangeTree(rt, 4, 2, 8, 4, 'a');
+    rt = insertRangeTree(rt, 2, 5, 5, 6, 'b');
+    console.assert(searchRangeTree(rt, 2, 5, 5, 6) == true);
+    console.assert(searchRangeTree(rt, 0, 0, 100, 100) == true);
+    console.assert(searchRangeTree(rt, 4, 2, 8, 4) == true);
+    console.assert(searchRangeTree(rt, 6, 5, 10, 6) == false);
+    console.assert(searchRangeTree(rt, 0, 0, 1, 1) == false);
+})();
+
+
+
+
+var divName = 'd3-div-1';
+
+// Set the dimensions of the canvas / graph
+var margin = {top: 30, right: 20, bottom: 30, left: 50},
+    width = 800 - margin.left - margin.right,
+    height = 600 - margin.top - margin.bottom;
+
+// Set the ranges
+var x = d3.scaleLinear().range([0, width]);
+var y = d3.scaleLinear().range([height, 0]);
+
+function axisLabeler(d, i) {
+    return ["Infrequent", "Average", "Frequent"][i]
+}
+
+var xAxis = d3.axisBottom(x).ticks(3).tickFormat(axisLabeler);
+
+var yAxis = d3.axisLeft(y).ticks(3).tickFormat(axisLabeler);
+
+// Define the div for the tooltip
+// var tooltip = d3.select("body").append("div")
+var tooltip = d3.select('#' + divName).append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 0);
+
+// var label = d3.select("body").append("div")
+var label = d3.select('#' + divName).append("div")
+    .attr("class", "label");
+
+// setup fill color
+var color = d3.interpolateRdYlBu;
+
+// Adds the svg canvas
+// var svg = d3.select("body")
+var svg = d3.select('#' + divName)
+    .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform",
+        "translate(" + margin.left + "," + margin.top + ")");
+
+/*
+ var categoryTermList = d3.select('#' + divName)
+ .append("ul");
+ */
+
+var lastCircleSelected = null;
+function deselectLastCircle() {
+    if (lastCircleSelected) {
+        lastCircleSelected.style["stroke"] = null;
+        lastCircleSelected = null;
+    }
+}
+function showTooltip(d, pageX, pageY) {
+    deselectLastCircle();
+    tooltip.transition()
+        .duration(0)
+        .style("opacity", 1)
+        .style("z-index", 1000000);
+
+    tooltip.html(d.term + "<br/>" + d.cat25k + ":" + d.ncat25k + " per 25k words")
+        .style("left", (pageX) + "px")
+        .style("top", (pageY - 28) + "px");
+
+    tooltip.on('click', function () {
+        tooltip.transition()
+            .style('opacity', 0)
+    });
+}
+
+function handleClick(event) {
+    deselectLastCircle();
+    var searchTerm = document.getElementById("searchTerm").value.toLowerCase();
+    var searchTermInfo = termDict[searchTerm];
+    if(searchTermInfo === undefined) {
+        d3.select("#alertMessage")
+            .text(searchTerm + " din't make it into the visualization.");
+    } else {
+        d3.select("#alertMessage").text("");
+        var circle = mysvg._groups[0][searchTermInfo.i];
+        var mySVGMatrix = circle.getScreenCTM()
+            .translate(circle.cx.baseVal.value, circle.cy.baseVal.value);
+        var pageX = mySVGMatrix.e;
+        var pageY = mySVGMatrix.f;
+        console.log(searchTermInfo);
+        circle.style["stroke"] = "black";
+        showTooltip(searchTermInfo, pageX, pageY);
+        lastCircleSelected = circle;
+    }
+    return false;
+}
+
+function processData(jsonObject) {
+    var modelInfo = jsonObject['info'];
+    /*
+     categoryTermList.data(modelInfo['category_terms'])
+     .enter()
+     .append("li")
+     .text(function(d) {return d;});
+     */
+    data = jsonObject['data'];
+    termDict = Object();
+    data.forEach(function (x, i) {
+        termDict[x.term] = x;
+        termDict[x.term].i = i;
+    });
+
+    console.log(data);
+    // Scale the range of the data.  Add some space on either end.
+    x.domain([-0.1, d3.max(data, function (d) {
+        return d.x;
+    }) + 0.1]);
+    y.domain([-0.1, d3.max(data, function (d) {
+        return d.y;
+    }) + 0.1]);
+
+
+    var rangeTree = null; // keep boxes of all points and labels here
+    // Add the scatterplot
+    mysvg = svg.selectAll("dot")
+        .data(data)
+        .enter()
+        .append("circle")
+        .attr("r", 2)
+        .attr("cx", function (d) {
+            return x(d.x);
+        })
+        .attr("cy", function (d) {
+            return y(d.y);
+        })
+        .style("fill", function (d) {
+            return color(d.s);
+        })
+        .on("mouseover", function (d) {
+            showTooltip(d, d3.event.pageX, d3.event.pageY);
+            d3.select(this).style("stroke", "black");
+        })
+        .on("mouseout", function (d) {
+            tooltip.transition()
+                .duration(0)
+                .style("opacity", 0);
+            d3.select(this).style("stroke", null);
+        });
+
+
+    console.log('dot');
+    console.log(svg.selectAll('circle'));
+
+    coords = Object();
+    function censorPoints(datum) {
+        var term = datum.term;
+        //var curLabel = d3.select("body").append("div")
+        var curLabel = d3.select('#' + divName).append("div")
+
+            .attr("class", "label").html('L')
+            .style("left", x(datum.x) + margin.left + 5 + 'px')
+            .style("top", y(datum.y) + margin.top + 4 + 'px');
+        var curDiv = curLabel._groups[0][0];
+
+        var x1 = curDiv.offsetLeft - 2 + 2;
+        var y1 = curDiv.offsetTop - 2 + 5;
+        var x2 = curDiv.offsetLeft + 2 + 2;
+        var y2 = curDiv.offsetTop + 2 + 5;
+        /*
+         var x1 = curDiv.offsetLeft - 2;
+         var y1 = curDiv.offsetTop - 2;
+         var x2 = curDiv.offsetLeft + 2;
+         var y2 = curDiv.offsetTop + 2;
+         */
+        curLabel.remove();
+        //if (!searchRangeTree(rangeTree, x1, y1, x2, y2)) {
+        rangeTree = insertRangeTree(rangeTree, x1, y1, x2, y2, '~~' + term);
+        //}
+
+        if (term == 'an economy') {
+            console.log("~~an economy " + " X" + x1 + ":" + x2 + " Y" + y1 + ":" + y2)
+        }
+        coords['~~' + term] = [x1, y1, x2, y2];
+    }
+
+    function labelPointBottomLeft(i) {
+        var term = data[i].term;
+        //var curLabel = d3.select("body").append("div")
+        var curLabel = d3.select("#" + divName).append("div")
+            .attr("class", "label").html(term)
+            .style("left", x(data[i].x) + margin.left + 10 + 'px')
+            .style("top", y(data[i].y) + margin.top + 8 + 'px');
+        var curDiv = curLabel._groups[0][0];
+
+        var x1 = curDiv.offsetLeft;
+        var y1 = curDiv.offsetTop;
+        var x2 = curDiv.offsetLeft + curDiv.offsetWidth;
+        var y2 = curDiv.offsetTop + curDiv.offsetHeight;
+
+
+        //move it to top right
+        /*
+         var width = curDiv.offsetWidth;
+         var height = curDiv.offsetHeight;
+
+         curLabel.remove();
+         var curLabel = d3.select("body").append("div")
+         .attr("class", "label").html(term)
+         .style("left", x(data[i].x) + margin.left  + 10 - width + 'px')
+         .style("top", y(data[i].y) + margin.top + 8  - height + 'px');
+         var curDiv = curLabel._groups[0][0];
+
+         var x2 = curDiv.offsetLeft;
+         var y2 = curDiv.offsetTop;
+         var x1 = curDiv.offsetLeft - curDiv.offsetWidth;
+         var y1 = curDiv.offsetTop - curDiv.offsetHeight;
+         */
+        //console.log('x' + x(data[i].x) + margin.left + ' vs ' + curDiv.offsetLeft);
+        //console.log(curDiv.offsetLeft - (10 + x(data[i].x) + margin.left));
+        //console.log('y' + y(data[i].y) +  margin.top);
+        //console.log(curDiv.offsetTop - (8 + y(data[i].y) +  margin.top));
+        var matchedElement = searchRangeTree(rangeTree, x1, y1, x2, y2);
+        /*
+        if (term == 'affordable') {
+            console.log(term + " " + " X" + x1 + ":" + x2 + " Y" + y1 + ":" + y2)
+            var matchedCoord = coords[matchedElement];
+            var mx1 = matchedElement[0];
+            var my1 = matchedElement[1];
+            var mx2 = matchedElement[2];
+            var my2 = matchedElement[3];
+            var x_diff = 0;
+            var y_diff = 0;
+            if (x1 >= mx1 && x1 < mx2) {
+                x_diff = mx2 - x1;
+            }
+            if (x2 > mx1 && x2 <= mx2) {
+                x_diff = mx1 - x2;
+            }
+            x1 += x_diff;
+            x2 += x_diff;
+            if (y1 >= my1 && y1 < my2) {
+                y_diff = my2 - y1;
+            }
+            if (y2 > my1 && y2 <= my2) {
+                y_diff = my1 - y2;
+            }
+            y1 += y_diff;
+            y2 += y_diff;
+            console.log(y_diff, x_diff)
+            var matchedElement = searchRangeTree(rangeTree, x1, y1, x2, y2);
+            console.log(term + " " + " X" + x1 + ":" + x2 + " Y" + y1 + ":" + y2)
+            console.log('matchedElement ' + matchedElement)
+            console.log('matchedElement ' + matchedCoord)
+
+        }*/
+
+        if (!matchedElement || term == 'affordable') {
+            coords[term] = [x1, y1, x2, y2];
+            rangeTree = insertRangeTree(rangeTree, x1, y1, x2, y2, term);
+            return true;
+        } else {
+            curLabel.remove();
+            return false;
+        }
+
+    }
+
+    var radius = 2;
+    console.log('Data length ' + data.length);
+    // prevent intersections with points.. not quite working
+    /*
+     for (var i = 0; i < data.length; i++) {
+
+     //if (!searchRangeTree(rangeTree, x1, y1, x2, y2)) {
+     //    rangeTree = insertRangeTree(rangeTree, x1, y1, x2, y2, i);
+     //}
+     }*/
+
+    //var nodes = Array.prototype.slice.call(svg.selectAll('circle')._groups[0],0);
+    //console.log("NODES");console.log(nodes);
+
+    /*
+     var nodeI = 0;
+     nodes.forEach(
+     function (node) {
+     var rect = node.getBoundingClientRect();
+     rangeTree = insertRangeTree(rangeTree, rect.left, rect.top, rect.right, rect.bottom, nodeI++);
+     }
+     );*/
+    //console.log("Range Tree");
+    //console.log(rangeTree);
+    data = data.sort(function (a, b) { // sort by euclidean distance
+        var aCatDist = a.x * a.x + (1 - a.y) * (1 - a.y);
+        var aNotCatDist = a.y * a.y + (1 - a.x) * (1 - a.x);
+        var bCatDist = b.x * b.x + (1 - b.y) * (1 - b.y);
+        var bNotCatDist = b.y * b.y + (1 - b.x) * (1 - b.x);
+        return (Math.min(aCatDist, aNotCatDist) > Math.min(bCatDist, bNotCatDist)) * 2 - 1
+    });
+
+    data.forEach(censorPoints)
+    for (i = 0; i < data.length; labelPointBottomLeft(i++));
+    console.log("coords")
+    console.log(coords)
+    // Add the X Axis
+    var myXAxis = svg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis);
+
+    var xLabel = svg.append("text")
+        .attr("class", "x label")
+        .attr("text-anchor", "end")
+        .attr("x", width)
+        .attr("y", height - 6)
+        .text(modelInfo['not_category_name'] + " Frequency");
+    console.log('xLabel');
+    console.log(xLabel);
+
+    // Add the Y Axis
+    svg.append("g")
+        .attr("class", "y axis")
+        .call(yAxis)
+        .selectAll("text")
+        .style("text-anchor", "end")
+        .attr("dx", "30px")
+        .attr("dy", "-13px")
+        .attr("transform", "rotate(-90)");
+
+    svg.append("text")
+        .attr("class", "y label")
+        .attr("text-anchor", "end")
+        .attr("y", 6)
+        .attr("dy", ".75em")
+        .attr("transform", "rotate(-90)")
+        .text(modelInfo['category_name'] + " Frequency");
+};
+
+processData(getDataAndInfo());
+function getDataAndInfo() { return{"data": [{"ncat25k": 0, "cat25k": 36, "term": "lester", "s": 0.9975520195838433, "y": 0.8261933904528764, "x": 0.0}, {"ncat25k": 0, "cat25k": 25, "term": "our jobs", "s": 0.9840881272949816, "y": 0.7760097919216646, "x": 0.0012239902080783355}, {"ncat25k": 0, "cat25k": 17, "term": "mexico", "s": 0.9302325581395349, "y": 0.6487148102815177, "x": 0.002447980416156671}, {"ncat25k": 0, "cat25k": 33, "term": "countries", "s": 0.996328029375765, "y": 0.817625458996328, "x": 0.0036719706242350062}, {"ncat25k": 0, "cat25k": 14, "term": "many other", "s": 0.8812729498164015, "y": 0.5361077111383109, "x": 0.004895960832313342}, {"ncat25k": 0, "cat25k": 14, "term": "terms", "s": 0.8812729498164015, "y": 0.5373317013463893, "x": 0.006119951040391677}, {"ncat25k": 0, "cat25k": 14, "term": "in terms", "s": 0.8812729498164015, "y": 0.5385556915544675, "x": 0.007343941248470012}, {"ncat25k": 0, "cat25k": 14, "term": "terms of", "s": 0.8812729498164015, "y": 0.5397796817625459, "x": 0.008567931456548347}, {"ncat25k": 0, "cat25k": 22, "term": "nobody", "s": 0.9706242350061199, "y": 0.7466340269277846, "x": 0.009791921664626684}, {"ncat25k": 0, "cat25k": 20, "term": "losing", "s": 0.9547123623011016, "y": 0.7025703794369644, "x": 0.011015911872705019}, {"ncat25k": 0, "cat25k": 14, "term": "'re losing", "s": 0.8812729498164015, "y": 0.5422276621787026, "x": 0.012239902080783353}, {"ncat25k": 0, "cat25k": 28, "term": "so many", "s": 0.9902080783353733, "y": 0.7943696450428396, "x": 0.01346389228886169}, {"ncat25k": 0, "cat25k": 14, "term": "biggest", "s": 0.8812729498164015, "y": 0.5434516523867808, "x": 0.014687882496940025}, {"ncat25k": 0, "cat25k": 14, "term": "anywhere", "s": 0.8812729498164015, "y": 0.5446756425948592, "x": 0.01591187270501836}, {"ncat25k": 0, "cat25k": 42, "term": "leaving", "s": 1.0, "y": 0.8494492044063647, "x": 0.017135862913096697}, {"ncat25k": 0, "cat25k": 22, "term": "thousands", "s": 0.9706242350061199, "y": 0.7478580171358629, "x": 0.01835985312117503}, {"ncat25k": 0, "cat25k": 17, "term": "thousands of", "s": 0.9302325581395349, "y": 0.6499388004895961, "x": 0.019583843329253368}, {"ncat25k": 0, "cat25k": 22, "term": "far", "s": 0.9706242350061199, "y": 0.7490820073439413, "x": 0.020807833537331705}, {"ncat25k": 0, "cat25k": 14, "term": "care", "s": 0.8812729498164015, "y": 0.5471236230110159, "x": 0.022031823745410038}, {"ncat25k": 0, "cat25k": 17, "term": "as far", "s": 0.9302325581395349, "y": 0.6523867809057528, "x": 0.023255813953488375}, {"ncat25k": 0, "cat25k": 17, "term": "far as", "s": 0.9302325581395349, "y": 0.653610771113831, "x": 0.02447980416156671}, {"ncat25k": 0, "cat25k": 22, "term": "talking", "s": 0.9706242350061199, "y": 0.7515299877600979, "x": 0.025703794369645042}, {"ncat25k": 0, "cat25k": 20, "term": "talking about", "s": 0.9547123623011016, "y": 0.7037943696450428, "x": 0.026927784577723383}, {"ncat25k": 0, "cat25k": 11, "term": "left", "s": 0.817625458996328, "y": 0.4137086903304774, "x": 0.028151774785801716}, {"ncat25k": 0, "cat25k": 14, "term": "hundreds", "s": 0.8812729498164015, "y": 0.5507955936352509, "x": 0.02937576499388005}, {"ncat25k": 0, "cat25k": 11, "term": "hundreds of", "s": 0.817625458996328, "y": 0.4149326805385557, "x": 0.030599755201958387}, {"ncat25k": 0, "cat25k": 11, "term": "companies are", "s": 0.817625458996328, "y": 0.4161566707466341, "x": 0.03182374541003672}, {"ncat25k": 0, "cat25k": 20, "term": "doing this", "s": 0.9547123623011016, "y": 0.7050183598531211, "x": 0.033047735618115054}, {"ncat25k": 0, "cat25k": 25, "term": "job", "s": 0.9840881272949816, "y": 0.7784577723378212, "x": 0.03427172582619339}, {"ncat25k": 0, "cat25k": 14, "term": "watch", "s": 0.8812729498164015, "y": 0.5544675642594858, "x": 0.03549571603427173}, {"ncat25k": 0, "cat25k": 11, "term": "expand", "s": 0.817625458996328, "y": 0.4173806609547124, "x": 0.03671970624235006}, {"ncat25k": 0, "cat25k": 11, "term": "our trade", "s": 0.817625458996328, "y": 0.4186046511627908, "x": 0.0379436964504284}, {"ncat25k": 0, "cat25k": 14, "term": "trade deals", "s": 0.8812729498164015, "y": 0.5556915544675642, "x": 0.039167686658506735}, {"ncat25k": 0, "cat25k": 22, "term": "company", "s": 0.9706242350061199, "y": 0.7564259485924113, "x": 0.04039167686658507}, {"ncat25k": 0, "cat25k": 14, "term": "billions", "s": 0.8812729498164015, "y": 0.5569155446756426, "x": 0.04161566707466341}, {"ncat25k": 0, "cat25k": 11, "term": "thinking", "s": 0.817625458996328, "y": 0.42227662178702574, "x": 0.04283965728274174}, {"ncat25k": 0, "cat25k": 11, "term": "needs", "s": 0.817625458996328, "y": 0.4235006119951041, "x": 0.044063647490820076}, {"ncat25k": 0, "cat25k": 22, "term": "'re doing", "s": 0.9706242350061199, "y": 0.7576499388004896, "x": 0.04528763769889841}, {"ncat25k": 0, "cat25k": 20, "term": "long", "s": 0.9547123623011016, "y": 0.7123623011015913, "x": 0.046511627906976744}, {"ncat25k": 0, "cat25k": 31, "term": "politicians", "s": 0.99265605875153, "y": 0.8078335373317013, "x": 0.047735618115055084}, {"ncat25k": 0, "cat25k": 17, "term": "a long", "s": 0.9302325581395349, "y": 0.6621787025703795, "x": 0.04895960832313342}, {"ncat25k": 0, "cat25k": 17, "term": "long time", "s": 0.9302325581395349, "y": 0.6634026927784578, "x": 0.05018359853121175}, {"ncat25k": 0, "cat25k": 11, "term": "n't done", "s": 0.817625458996328, "y": 0.42717258261933905, "x": 0.051407588739290085}, {"ncat25k": 0, "cat25k": 20, "term": "30", "s": 0.9547123623011016, "y": 0.7148102815177478, "x": 0.052631578947368425}, {"ncat25k": 0, "cat25k": 22, "term": "been doing", "s": 0.9706242350061199, "y": 0.7600979192166463, "x": 0.05385556915544676}, {"ncat25k": 0, "cat25k": 11, "term": "for 30", "s": 0.817625458996328, "y": 0.42839657282741744, "x": 0.0550795593635251}, {"ncat25k": 0, "cat25k": 14, "term": "30 years", "s": 0.8812729498164015, "y": 0.5667074663402693, "x": 0.05630354957160343}, {"ncat25k": 0, "cat25k": 14, "term": "nafta", "s": 0.8812729498164015, "y": 0.5691554467564259, "x": 0.057527539779681766}, {"ncat25k": 0, "cat25k": 25, "term": "fact", "s": 0.9840881272949816, "y": 0.780905752753978, "x": 0.0587515299877601}, {"ncat25k": 0, "cat25k": 11, "term": "created", "s": 0.817625458996328, "y": 0.42962056303549573, "x": 0.05997552019583843}, {"ncat25k": 0, "cat25k": 22, "term": "20", "s": 0.9706242350061199, "y": 0.7625458996328028, "x": 0.061199510403916774}, {"ncat25k": 0, "cat25k": 36, "term": "trillion", "s": 0.9975520195838433, "y": 0.8298653610771114, "x": 0.06242350061199511}, {"ncat25k": 0, "cat25k": 20, "term": "$ 20", "s": 0.9547123623011016, "y": 0.7160342717258262, "x": 0.06364749082007343}, {"ncat25k": 0, "cat25k": 20, "term": "20 trillion", "s": 0.9547123623011016, "y": 0.7172582619339045, "x": 0.06487148102815177}, {"ncat25k": 0, "cat25k": 14, "term": "name", "s": 0.8812729498164015, "y": 0.5716034271725826, "x": 0.06609547123623011}, {"ncat25k": 0, "cat25k": 22, "term": "mean", "s": 0.9706242350061199, "y": 0.7637698898408812, "x": 0.06731946144430843}, {"ncat25k": 0, "cat25k": 22, "term": "i mean", "s": 0.9706242350061199, "y": 0.7649938800489596, "x": 0.06854345165238677}, {"ncat25k": 0, "cat25k": 11, "term": "'re leaving", "s": 0.817625458996328, "y": 0.4320685434516524, "x": 0.0697674418604651}, {"ncat25k": 0, "cat25k": 11, "term": "into our", "s": 0.817625458996328, "y": 0.43329253365973075, "x": 0.07099143206854344}, {"ncat25k": 0, "cat25k": 11, "term": "'re wrong", "s": 0.817625458996328, "y": 0.4345165238678091, "x": 0.07221542227662178}, {"ncat25k": 0, "cat25k": 14, "term": "trillion in", "s": 0.8812729498164015, "y": 0.5813953488372093, "x": 0.07343941248470011}, {"ncat25k": 0, "cat25k": 14, "term": "come in", "s": 0.8812729498164015, "y": 0.5826193390452876, "x": 0.07466340269277846}, {"ncat25k": 0, "cat25k": 31, "term": "almost", "s": 0.99265605875153, "y": 0.8127294981640146, "x": 0.07588739290085679}, {"ncat25k": 0, "cat25k": 20, "term": "will tell", "s": 0.9547123623011016, "y": 0.7233782129742962, "x": 0.07711138310893513}, {"ncat25k": 0, "cat25k": 14, "term": "much better", "s": 0.8812729498164015, "y": 0.5838433292533659, "x": 0.07833537331701347}, {"ncat25k": 0, "cat25k": 17, "term": "places", "s": 0.9302325581395349, "y": 0.6658506731946144, "x": 0.0795593635250918}, {"ncat25k": 0, "cat25k": 11, "term": "excuse", "s": 0.817625458996328, "y": 0.4394124847001224, "x": 0.08078335373317014}, {"ncat25k": 0, "cat25k": 11, "term": "excuse me", "s": 0.817625458996328, "y": 0.4406364749082008, "x": 0.08200734394124846}, {"ncat25k": 0, "cat25k": 14, "term": "bring back", "s": 0.8812729498164015, "y": 0.5850673194614443, "x": 0.0832313341493268}, {"ncat25k": 0, "cat25k": 14, "term": "n't bring", "s": 0.8812729498164015, "y": 0.5862913096695227, "x": 0.08445532435740515}, {"ncat25k": 0, "cat25k": 14, "term": "single", "s": 0.8812729498164015, "y": 0.5875152998776009, "x": 0.08567931456548347}, {"ncat25k": 0, "cat25k": 14, "term": "number", "s": 0.8812729498164015, "y": 0.5887392900856793, "x": 0.08690330477356181}, {"ncat25k": 0, "cat25k": 14, "term": "certainly", "s": 0.8812729498164015, "y": 0.5899632802937577, "x": 0.08812729498164014}, {"ncat25k": 0, "cat25k": 14, "term": "approve", "s": 0.8812729498164015, "y": 0.591187270501836, "x": 0.08935128518971848}, {"ncat25k": 0, "cat25k": 14, "term": "totally", "s": 0.8812729498164015, "y": 0.5924112607099143, "x": 0.09057527539779682}, {"ncat25k": 0, "cat25k": 20, "term": "nothing", "s": 0.9547123623011016, "y": 0.7270501835985312, "x": 0.09179926560587515}, {"ncat25k": 0, "cat25k": 11, "term": "ever seen", "s": 0.817625458996328, "y": 0.4418604651162791, "x": 0.09302325581395349}, {"ncat25k": 0, "cat25k": 20, "term": "regulations", "s": 0.9547123623011016, "y": 0.7282741738066095, "x": 0.09424724602203181}, {"ncat25k": 0, "cat25k": 11, "term": "my tax", "s": 0.817625458996328, "y": 0.44430844553243576, "x": 0.09547123623011015}, {"ncat25k": 0, "cat25k": 11, "term": "very proud", "s": 0.817625458996328, "y": 0.44675642594859244, "x": 0.0966952264381885}, {"ncat25k": 0, "cat25k": 31, "term": "tremendous", "s": 0.99265605875153, "y": 0.8151774785801713, "x": 0.09791921664626682}, {"ncat25k": 0, "cat25k": 17, "term": "website", "s": 0.9302325581395349, "y": 0.6695226438188494, "x": 0.09914320685434516}, {"ncat25k": 0, "cat25k": 17, "term": "her website", "s": 0.9302325581395349, "y": 0.6707466340269278, "x": 0.10036719706242349}, {"ncat25k": 0, "cat25k": 11, "term": "isis.", "s": 0.817625458996328, "y": 0.45165238678090575, "x": 0.10159118727050183}, {"ncat25k": 0, "cat25k": 25, "term": "isis", "s": 0.9840881272949816, "y": 0.7870257037943696, "x": 0.10281517747858016}, {"ncat25k": 0, "cat25k": 14, "term": "major", "s": 0.8812729498164015, "y": 0.594859241126071, "x": 0.10403916768665851}, {"ncat25k": 0, "cat25k": 11, "term": "wealthy", "s": 0.817625458996328, "y": 0.4541003671970624, "x": 0.10526315789473685}, {"ncat25k": 0, "cat25k": 11, "term": "money back", "s": 0.817625458996328, "y": 0.4565483476132191, "x": 0.10648714810281518}, {"ncat25k": 0, "cat25k": 14, "term": "lots", "s": 0.8812729498164015, "y": 0.598531211750306, "x": 0.10771113831089352}, {"ncat25k": 0, "cat25k": 14, "term": "lots of", "s": 0.8812729498164015, "y": 0.5997552019583843, "x": 0.10893512851897184}, {"ncat25k": 0, "cat25k": 14, "term": "brought", "s": 0.8812729498164015, "y": 0.6009791921664627, "x": 0.11015911872705018}, {"ncat25k": 0, "cat25k": 17, "term": "inner", "s": 0.9302325581395349, "y": 0.6768665850673194, "x": 0.11138310893512852}, {"ncat25k": 0, "cat25k": 17, "term": "cities", "s": 0.9302325581395349, "y": 0.6780905752753977, "x": 0.11260709914320685}, {"ncat25k": 0, "cat25k": 17, "term": "inner cities", "s": 0.9302325581395349, "y": 0.6793145654834761, "x": 0.11383108935128519}, {"ncat25k": 0, "cat25k": 20, "term": "believe me", "s": 0.9547123623011016, "y": 0.7307221542227662, "x": 0.11505507955936352}, {"ncat25k": 0, "cat25k": 14, "term": "fed", "s": 0.8812729498164015, "y": 0.6046511627906976, "x": 0.11627906976744186}, {"ncat25k": 0, "cat25k": 11, "term": "soon", "s": 0.817625458996328, "y": 0.4638922888616891, "x": 0.1175030599755202}, {"ncat25k": 0, "cat25k": 11, "term": "learn", "s": 0.817625458996328, "y": 0.4651162790697675, "x": 0.11872705018359853}, {"ncat25k": 0, "cat25k": 11, "term": "will release", "s": 0.817625458996328, "y": 0.4700122399020808, "x": 0.11995104039167687}, {"ncat25k": 0, "cat25k": 11, "term": "audited", "s": 0.817625458996328, "y": 0.4712362301101592, "x": 0.12117503059975519}, {"ncat25k": 0, "cat25k": 11, "term": "other people", "s": 0.817625458996328, "y": 0.4724602203182375, "x": 0.12239902080783353}, {"ncat25k": 0, "cat25k": 28, "term": "taken", "s": 0.9902080783353733, "y": 0.8029375764993879, "x": 0.12362301101591187}, {"ncat25k": 0, "cat25k": 11, "term": "taken care", "s": 0.817625458996328, "y": 0.4736842105263159, "x": 0.1248470012239902}, {"ncat25k": 0, "cat25k": 11, "term": "care of", "s": 0.817625458996328, "y": 0.47490820073439416, "x": 0.12607099143206854}, {"ncat25k": 0, "cat25k": 17, "term": "mess", "s": 0.9302325581395349, "y": 0.6842105263157895, "x": 0.12729498164014688}, {"ncat25k": 0, "cat25k": 11, "term": "airports", "s": 0.817625458996328, "y": 0.48102815177478586, "x": 0.1285189718482252}, {"ncat25k": 0, "cat25k": 14, "term": "land", "s": 0.8812729498164015, "y": 0.613219094247246, "x": 0.12974296205630353}, {"ncat25k": 0, "cat25k": 14, "term": "you land", "s": 0.8812729498164015, "y": 0.6144430844553244, "x": 0.13096695226438188}, {"ncat25k": 0, "cat25k": 11, "term": "land at", "s": 0.817625458996328, "y": 0.48225214198286415, "x": 0.13219094247246022}, {"ncat25k": 0, "cat25k": 17, "term": "spent", "s": 0.9302325581395349, "y": 0.6854345165238678, "x": 0.13341493268053856}, {"ncat25k": 0, "cat25k": 11, "term": "6", "s": 0.817625458996328, "y": 0.48347613219094254, "x": 0.13463892288861687}, {"ncat25k": 0, "cat25k": 17, "term": "east", "s": 0.9302325581395349, "y": 0.6866585067319462, "x": 0.1358629130966952}, {"ncat25k": 0, "cat25k": 17, "term": "middle east", "s": 0.9302325581395349, "y": 0.6878824969400245, "x": 0.13708690330477355}, {"ncat25k": 0, "cat25k": 11, "term": "advantage", "s": 0.817625458996328, "y": 0.4847001223990208, "x": 0.1383108935128519}, {"ncat25k": 0, "cat25k": 11, "term": "advantage of", "s": 0.817625458996328, "y": 0.4859241126070992, "x": 0.13953488372093023}, {"ncat25k": 0, "cat25k": 25, "term": "she does", "s": 0.9840881272949816, "y": 0.7894736842105263, "x": 0.14075887392900854}, {"ncat25k": 0, "cat25k": 11, "term": "budget", "s": 0.817625458996328, "y": 0.48837209302325585, "x": 0.14198286413708688}, {"ncat25k": 0, "cat25k": 11, "term": "supposed", "s": 0.817625458996328, "y": 0.49082007343941253, "x": 0.14320685434516522}, {"ncat25k": 0, "cat25k": 11, "term": "supposed to", "s": 0.817625458996328, "y": 0.49204406364749087, "x": 0.14443084455324356}, {"ncat25k": 0, "cat25k": 11, "term": "need law", "s": 0.817625458996328, "y": 0.4932680538555692, "x": 0.1456548347613219}, {"ncat25k": 0, "cat25k": 17, "term": "in chicago", "s": 0.9302325581395349, "y": 0.6927784577723377, "x": 0.14687882496940022}, {"ncat25k": 0, "cat25k": 11, "term": "barack", "s": 0.817625458996328, "y": 0.4969400244798042, "x": 0.1481028151774786}, {"ncat25k": 0, "cat25k": 11, "term": "barack obama", "s": 0.817625458996328, "y": 0.4981640146878826, "x": 0.14932680538555693}, {"ncat25k": 0, "cat25k": 14, "term": "away", "s": 0.8812729498164015, "y": 0.6279069767441859, "x": 0.15055079559363527}, {"ncat25k": 0, "cat25k": 11, "term": "away from", "s": 0.817625458996328, "y": 0.49938800489596086, "x": 0.1517747858017136}, {"ncat25k": 0, "cat25k": 14, "term": "guns", "s": 0.8812729498164015, "y": 0.6291309669522643, "x": 0.15299877600979192}, {"ncat25k": 0, "cat25k": 14, "term": "terrible", "s": 0.8812729498164015, "y": 0.6340269277845777, "x": 0.15422276621787026}, {"ncat25k": 0, "cat25k": 11, "term": "agree with", "s": 0.817625458996328, "y": 0.5042839657282742, "x": 0.1554467564259486}, {"ncat25k": 0, "cat25k": 17, "term": "respond", "s": 0.9302325581395349, "y": 0.6952264381884945, "x": 0.15667074663402694}, {"ncat25k": 0, "cat25k": 11, "term": "lists", "s": 0.817625458996328, "y": 0.5055079559363524, "x": 0.15789473684210528}, {"ncat25k": 0, "cat25k": 11, "term": "very strongly", "s": 0.817625458996328, "y": 0.5067319461444308, "x": 0.1591187270501836}, {"ncat25k": 0, "cat25k": 11, "term": "about taking", "s": 0.817625458996328, "y": 0.5079559363525091, "x": 0.16034271725826194}, {"ncat25k": 0, "cat25k": 14, "term": "murders", "s": 0.8812729498164015, "y": 0.6376988984088127, "x": 0.16156670746634028}, {"ncat25k": 0, "cat25k": 11, "term": "sent", "s": 0.817625458996328, "y": 0.5104039167686658, "x": 0.16279069767441862}, {"ncat25k": 0, "cat25k": 11, "term": "birth", "s": 0.817625458996328, "y": 0.5128518971848225, "x": 0.16401468788249696}, {"ncat25k": 0, "cat25k": 11, "term": "certificate", "s": 0.817625458996328, "y": 0.5140758873929008, "x": 0.16523867809057527}, {"ncat25k": 0, "cat25k": 11, "term": "birth certificate", "s": 0.817625458996328, "y": 0.5152998776009792, "x": 0.1664626682986536}, {"ncat25k": 0, "cat25k": 11, "term": "produce", "s": 0.817625458996328, "y": 0.5165238678090576, "x": 0.16768665850673195}, {"ncat25k": 0, "cat25k": 11, "term": "oh", "s": 0.817625458996328, "y": 0.5177478580171357, "x": 0.1689106487148103}, {"ncat25k": 0, "cat25k": 14, "term": "true", "s": 0.8812729498164015, "y": 0.6401468788249693, "x": 0.17013463892288863}, {"ncat25k": 0, "cat25k": 17, "term": "endorsed", "s": 0.9302325581395349, "y": 0.6976744186046511, "x": 0.17135862913096694}, {"ncat25k": 0, "cat25k": 14, "term": "formed", "s": 0.8812729498164015, "y": 0.642594859241126, "x": 0.17258261933904528}, {"ncat25k": 0, "cat25k": 17, "term": "oil", "s": 0.9302325581395349, "y": 0.6988984088127295, "x": 0.17380660954712362}, {"ncat25k": 0, "cat25k": 11, "term": "iran deal", "s": 0.817625458996328, "y": 0.5263157894736842, "x": 0.17503059975520197}, {"ncat25k": 0, "cat25k": 11, "term": "a major", "s": 0.817625458996328, "y": 0.5275397796817625, "x": 0.1762545899632803}, {"ncat25k": 0, "cat25k": 22, "term": "sean", "s": 0.9706242350061199, "y": 0.773561811505508, "x": 0.17747858017135862}, {"ncat25k": 0, "cat25k": 20, "term": "hannity", "s": 0.9547123623011016, "y": 0.7417380660954712, "x": 0.17870257037943696}, {"ncat25k": 0, "cat25k": 20, "term": "sean hannity", "s": 0.9547123623011016, "y": 0.7429620563035495, "x": 0.1799265605875153}, {"ncat25k": 0, "cat25k": 14, "term": "temperament", "s": 0.8812729498164015, "y": 0.6438188494492043, "x": 0.18115055079559364}, {"ncat25k": 0, "cat25k": 14, "term": "stamina", "s": 0.8812729498164015, "y": 0.6474908200734395, "x": 0.18237454100367198}, {"ncat25k": 3, "cat25k": 73, "term": "our country", "s": 0.8164014687882497, "y": 0.9179926560587515, "x": 0.1835985312117503}, {"ncat25k": 3, "cat25k": 11, "term": "best", "s": 0.7258261933904528, "y": 0.408812729498164, "x": 0.18482252141982863}, {"ncat25k": 3, "cat25k": 17, "term": "happen", "s": 0.780905752753978, "y": 0.6511627906976745, "x": 0.18604651162790697}, {"ncat25k": 3, "cat25k": 14, "term": "probably", "s": 0.7564259485924113, "y": 0.5483476132190942, "x": 0.18727050183598531}, {"ncat25k": 3, "cat25k": 8, "term": "bit", "s": 0.6719706242350062, "y": 0.3317013463892289, "x": 0.18849449204406366}, {"ncat25k": 3, "cat25k": 8, "term": "little bit", "s": 0.6719706242350062, "y": 0.3329253365973073, "x": 0.18971848225214197}, {"ncat25k": 3, "cat25k": 56, "term": "companies", "s": 0.8127294981640146, "y": 0.8873929008567932, "x": 0.1909424724602203}, {"ncat25k": 3, "cat25k": 14, "term": "percent", "s": 0.7564259485924113, "y": 0.5520195838433293, "x": 0.19216646266829865}, {"ncat25k": 3, "cat25k": 17, "term": "seen", "s": 0.780905752753978, "y": 0.6585067319461444, "x": 0.193390452876377}, {"ncat25k": 3, "cat25k": 25, "term": "trade", "s": 0.8029375764993879, "y": 0.7796817625458996, "x": 0.19461444308445533}, {"ncat25k": 3, "cat25k": 11, "term": "gave", "s": 0.7258261933904528, "y": 0.41982864137086906, "x": 0.19583843329253364}, {"ncat25k": 3, "cat25k": 20, "term": "greatest", "s": 0.7906976744186046, "y": 0.7086903304773562, "x": 0.19706242350061198}, {"ncat25k": 3, "cat25k": 14, "term": "one thing", "s": 0.7564259485924113, "y": 0.5593635250917992, "x": 0.19828641370869032}, {"ncat25k": 3, "cat25k": 14, "term": "of dollars", "s": 0.7564259485924113, "y": 0.5605875152998776, "x": 0.19951040391676866}, {"ncat25k": 3, "cat25k": 14, "term": "know what", "s": 0.7564259485924113, "y": 0.561811505507956, "x": 0.20073439412484698}, {"ncat25k": 3, "cat25k": 20, "term": "all over", "s": 0.7906976744186046, "y": 0.7099143206854345, "x": 0.20195838433292532}, {"ncat25k": 3, "cat25k": 11, "term": "anything", "s": 0.7258261933904528, "y": 0.42594859241126076, "x": 0.20318237454100366}, {"ncat25k": 3, "cat25k": 14, "term": "ok", "s": 0.7564259485924113, "y": 0.5642594859241126, "x": 0.204406364749082}, {"ncat25k": 3, "cat25k": 64, "term": "secretary clinton", "s": 0.8151774785801713, "y": 0.9118727050183599, "x": 0.20563035495716034}, {"ncat25k": 3, "cat25k": 14, "term": "very important", "s": 0.7564259485924113, "y": 0.565483476132191, "x": 0.20685434516523868}, {"ncat25k": 3, "cat25k": 25, "term": "happened", "s": 0.8029375764993879, "y": 0.7821297429620564, "x": 0.20807833537331702}, {"ncat25k": 3, "cat25k": 8, "term": "fine", "s": 0.6719706242350062, "y": 0.3390452876376989, "x": 0.20930232558139536}, {"ncat25k": 3, "cat25k": 31, "term": "wrong", "s": 0.8102815177478581, "y": 0.8115055079559363, "x": 0.2105263157894737}, {"ncat25k": 3, "cat25k": 11, "term": "once", "s": 0.7258261933904528, "y": 0.43574051407588743, "x": 0.21175030599755204}, {"ncat25k": 3, "cat25k": 11, "term": "cases", "s": 0.7258261933904528, "y": 0.43696450428396577, "x": 0.21297429620563035}, {"ncat25k": 3, "cat25k": 14, "term": "talks about", "s": 0.7564259485924113, "y": 0.5752753977968176, "x": 0.2141982864137087}, {"ncat25k": 3, "cat25k": 14, "term": "disaster", "s": 0.7564259485924113, "y": 0.576499388004896, "x": 0.21542227662178703}, {"ncat25k": 3, "cat25k": 14, "term": "a disaster", "s": 0.7564259485924113, "y": 0.5777233782129743, "x": 0.21664626682986537}, {"ncat25k": 3, "cat25k": 8, "term": "energy", "s": 0.6719706242350062, "y": 0.3414932680538556, "x": 0.21787025703794372}, {"ncat25k": 3, "cat25k": 8, "term": "keeping", "s": 0.6719706242350062, "y": 0.34394124847001223, "x": 0.21909424724602203}, {"ncat25k": 3, "cat25k": 20, "term": "worst", "s": 0.7906976744186046, "y": 0.7258261933904528, "x": 0.22031823745410037}, {"ncat25k": 3, "cat25k": 8, "term": "signed", "s": 0.6719706242350062, "y": 0.3463892288861689, "x": 0.2215422276621787}, {"ncat25k": 3, "cat25k": 8, "term": "which was", "s": 0.6719706242350062, "y": 0.3476132190942473, "x": 0.22276621787025705}, {"ncat25k": 3, "cat25k": 25, "term": "maybe", "s": 0.8029375764993879, "y": 0.7858017135862914, "x": 0.2239902080783354}, {"ncat25k": 3, "cat25k": 8, "term": "fault", "s": 0.6719706242350062, "y": 0.3488372093023256, "x": 0.2252141982864137}, {"ncat25k": 3, "cat25k": 8, "term": "'s fault", "s": 0.6719706242350062, "y": 0.35006119951040393, "x": 0.22643818849449204}, {"ncat25k": 3, "cat25k": 11, "term": "cut", "s": 0.7258261933904528, "y": 0.4430844553243575, "x": 0.22766217870257038}, {"ncat25k": 3, "cat25k": 11, "term": "proud of", "s": 0.7258261933904528, "y": 0.4479804161566708, "x": 0.22888616891064872}, {"ncat25k": 3, "cat25k": 14, "term": "old", "s": 0.7564259485924113, "y": 0.5936352509179926, "x": 0.23011015911872706}, {"ncat25k": 3, "cat25k": 8, "term": "end", "s": 0.6719706242350062, "y": 0.3525091799265606, "x": 0.23133414932680538}, {"ncat25k": 3, "cat25k": 8, "term": "story", "s": 0.6719706242350062, "y": 0.353733170134639, "x": 0.23255813953488372}, {"ncat25k": 3, "cat25k": 17, "term": "everything", "s": 0.780905752753978, "y": 0.6719706242350062, "x": 0.23378212974296206}, {"ncat25k": 3, "cat25k": 14, "term": "getting", "s": 0.7564259485924113, "y": 0.5960832313341493, "x": 0.2350061199510404}, {"ncat25k": 3, "cat25k": 20, "term": "middle", "s": 0.7906976744186046, "y": 0.7294981640146878, "x": 0.23623011015911874}, {"ncat25k": 3, "cat25k": 14, "term": "how much", "s": 0.7564259485924113, "y": 0.6034271725826192, "x": 0.23745410036719705}, {"ncat25k": 3, "cat25k": 11, "term": "family", "s": 0.7258261933904528, "y": 0.46022031823745413, "x": 0.2386780905752754}, {"ncat25k": 3, "cat25k": 17, "term": "audit", "s": 0.780905752753978, "y": 0.6817625458996328, "x": 0.23990208078335373}, {"ncat25k": 3, "cat25k": 11, "term": "billion", "s": 0.7258261933904528, "y": 0.46878824969400246, "x": 0.24112607099143207}, {"ncat25k": 3, "cat25k": 8, "term": "650", "s": 0.6719706242350062, "y": 0.36597307221542236, "x": 0.2423500611995104}, {"ncat25k": 3, "cat25k": 8, "term": "$ 650", "s": 0.6719706242350062, "y": 0.36719706242350064, "x": 0.24357405140758873}, {"ncat25k": 3, "cat25k": 14, "term": "list", "s": 0.7564259485924113, "y": 0.6107711138310894, "x": 0.24479804161566707}, {"ncat25k": 3, "cat25k": 8, "term": "banks", "s": 0.6719706242350062, "y": 0.3696450428396573, "x": 0.2460220318237454}, {"ncat25k": 3, "cat25k": 11, "term": "these are", "s": 0.7258261933904528, "y": 0.4798041615667075, "x": 0.24724602203182375}, {"ncat25k": 3, "cat25k": 8, "term": "words", "s": 0.6719706242350062, "y": 0.37086903304773566, "x": 0.2484700122399021}, {"ncat25k": 3, "cat25k": 8, "term": "real", "s": 0.6719706242350062, "y": 0.372093023255814, "x": 0.24969400244798043}, {"ncat25k": 3, "cat25k": 14, "term": "four", "s": 0.7564259485924113, "y": 0.616891064871481, "x": 0.2509179926560588}, {"ncat25k": 3, "cat25k": 14, "term": "used", "s": 0.7564259485924113, "y": 0.6193390452876377, "x": 0.2521419828641371}, {"ncat25k": 3, "cat25k": 8, "term": "certain", "s": 0.6719706242350062, "y": 0.37331701346389234, "x": 0.2533659730722155}, {"ncat25k": 3, "cat25k": 8, "term": "ahead", "s": 0.6719706242350062, "y": 0.37454100367197063, "x": 0.25458996328029376}, {"ncat25k": 3, "cat25k": 8, "term": "cost", "s": 0.6719706242350062, "y": 0.375764993880049, "x": 0.25581395348837216}, {"ncat25k": 3, "cat25k": 25, "term": "order", "s": 0.8029375764993879, "y": 0.7906976744186046, "x": 0.25703794369645044}, {"ncat25k": 3, "cat25k": 11, "term": "throughout", "s": 0.7258261933904528, "y": 0.4957160342717259, "x": 0.2582619339045288}, {"ncat25k": 3, "cat25k": 25, "term": "chicago", "s": 0.8029375764993879, "y": 0.791921664626683, "x": 0.2594859241126071}, {"ncat25k": 3, "cat25k": 17, "term": "frisk", "s": 0.780905752753978, "y": 0.6940024479804161, "x": 0.26070991432068547}, {"ncat25k": 3, "cat25k": 14, "term": "african american", "s": 0.7564259485924113, "y": 0.6328029375764993, "x": 0.2619339045287638}, {"ncat25k": 3, "cat25k": 8, "term": "'d like", "s": 0.6719706242350062, "y": 0.38066095471236233, "x": 0.26315789473684215}, {"ncat25k": 3, "cat25k": 14, "term": "strongly", "s": 0.7564259485924113, "y": 0.6364749082007344, "x": 0.26438188494492043}, {"ncat25k": 3, "cat25k": 8, "term": "met", "s": 0.6719706242350062, "y": 0.383108935128519, "x": 0.2656058751529988}, {"ncat25k": 3, "cat25k": 8, "term": "manager", "s": 0.6719706242350062, "y": 0.386780905752754, "x": 0.2668298653610771}, {"ncat25k": 3, "cat25k": 8, "term": "during", "s": 0.6719706242350062, "y": 0.3880048959608324, "x": 0.2680538555691555}, {"ncat25k": 3, "cat25k": 8, "term": "campaign manager", "s": 0.6719706242350062, "y": 0.38922888616891066, "x": 0.2692778457772338}, {"ncat25k": 3, "cat25k": 11, "term": "week", "s": 0.7258261933904528, "y": 0.5091799265605875, "x": 0.27050183598531213}, {"ncat25k": 3, "cat25k": 11, "term": "find", "s": 0.7258261933904528, "y": 0.5116279069767442, "x": 0.2717258261933905}, {"ncat25k": 3, "cat25k": 11, "term": "lawsuit", "s": 0.7258261933904528, "y": 0.5189718482252141, "x": 0.2729498164014688}, {"ncat25k": 3, "cat25k": 11, "term": "10 years", "s": 0.7258261933904528, "y": 0.5238678090575275, "x": 0.27417380660954715}, {"ncat25k": 3, "cat25k": 8, "term": "control", "s": 0.6719706242350062, "y": 0.394124847001224, "x": 0.2753977968176255}, {"ncat25k": 3, "cat25k": 8, "term": "internet", "s": 0.6719706242350062, "y": 0.39534883720930236, "x": 0.2766217870257038}, {"ncat25k": 3, "cat25k": 8, "term": "defending", "s": 0.6719706242350062, "y": 0.39657282741738065, "x": 0.2778457772337822}, {"ncat25k": 3, "cat25k": 8, "term": "terror", "s": 0.6719706242350062, "y": 0.39779681762545904, "x": 0.27906976744186046}, {"ncat25k": 3, "cat25k": 20, "term": "wait", "s": 0.7906976744186046, "y": 0.7405140758873929, "x": 0.28029375764993886}, {"ncat25k": 3, "cat25k": 11, "term": "minute", "s": 0.7258261933904528, "y": 0.5299877600979191, "x": 0.28151774785801714}, {"ncat25k": 3, "cat25k": 11, "term": "wait a", "s": 0.7258261933904528, "y": 0.5312117503059975, "x": 0.2827417380660955}, {"ncat25k": 3, "cat25k": 11, "term": "a minute", "s": 0.7258261933904528, "y": 0.5324357405140759, "x": 0.2839657282741738}, {"ncat25k": 3, "cat25k": 8, "term": "call", "s": 0.6719706242350062, "y": 0.401468788249694, "x": 0.28518971848225216}, {"ncat25k": 3, "cat25k": 8, "term": "you find", "s": 0.6719706242350062, "y": 0.4075887392900857, "x": 0.2864137086903305}, {"ncat25k": 7, "cat25k": 78, "term": "many", "s": 0.813953488372093, "y": 0.9253365973072215, "x": 0.28763769889840884}, {"ncat25k": 7, "cat25k": 8, "term": "very good", "s": 0.5226438188494491, "y": 0.3243574051407589, "x": 0.28886168910648713}, {"ncat25k": 7, "cat25k": 8, "term": "wonder", "s": 0.5226438188494491, "y": 0.3268053855569156, "x": 0.2900856793145655}, {"ncat25k": 7, "cat25k": 6, "term": "allow", "s": 0.38922888616891066, "y": 0.23990208078335373, "x": 0.2913096695226438}, {"ncat25k": 7, "cat25k": 14, "term": "a little", "s": 0.6401468788249693, "y": 0.5495716034271726, "x": 0.2925336597307222}, {"ncat25k": 7, "cat25k": 36, "term": "stop", "s": 0.7968176254589964, "y": 0.8274173806609547, "x": 0.2937576499388005}, {"ncat25k": 7, "cat25k": 6, "term": "businesses", "s": 0.38922888616891066, "y": 0.24112607099143207, "x": 0.29498164014687883}, {"ncat25k": 7, "cat25k": 14, "term": "since", "s": 0.6401468788249693, "y": 0.5532435740514076, "x": 0.29620563035495723}, {"ncat25k": 7, "cat25k": 20, "term": "deals", "s": 0.7184822521419828, "y": 0.7074663402692779, "x": 0.2974296205630355}, {"ncat25k": 7, "cat25k": 6, "term": "built", "s": 0.38922888616891066, "y": 0.24357405140758873, "x": 0.2986536107711139}, {"ncat25k": 7, "cat25k": 14, "term": "dollars", "s": 0.6401468788249693, "y": 0.5581395348837209, "x": 0.2998776009791922}, {"ncat25k": 7, "cat25k": 6, "term": "example", "s": 0.38922888616891066, "y": 0.24479804161566707, "x": 0.30110159118727053}, {"ncat25k": 7, "cat25k": 20, "term": "started", "s": 0.7184822521419828, "y": 0.7135862913096694, "x": 0.3023255813953489}, {"ncat25k": 7, "cat25k": 6, "term": "others", "s": 0.38922888616891066, "y": 0.2460220318237454, "x": 0.3035495716034272}, {"ncat25k": 7, "cat25k": 22, "term": "right now", "s": 0.7515299877600979, "y": 0.7613219094247247, "x": 0.30477356181150556}, {"ncat25k": 7, "cat25k": 6, "term": "special", "s": 0.38922888616891066, "y": 0.2484700122399021, "x": 0.3059975520195839}, {"ncat25k": 7, "cat25k": 6, "term": "interests", "s": 0.38922888616891066, "y": 0.24969400244798043, "x": 0.3072215422276622}, {"ncat25k": 7, "cat25k": 14, "term": "talks", "s": 0.6401468788249693, "y": 0.5740514075887393, "x": 0.3084455324357406}, {"ncat25k": 7, "cat25k": 47, "term": "money", "s": 0.8090575275397797, "y": 0.8690330477356181, "x": 0.30966952264381886}, {"ncat25k": 7, "cat25k": 6, "term": "putting", "s": 0.38922888616891066, "y": 0.2521419828641371, "x": 0.31089351285189726}, {"ncat25k": 7, "cat25k": 14, "term": "off", "s": 0.6401468788249693, "y": 0.5789473684210525, "x": 0.31211750305997554}, {"ncat25k": 7, "cat25k": 8, "term": "course", "s": 0.5226438188494491, "y": 0.34271725826193394, "x": 0.3133414932680539}, {"ncat25k": 7, "cat25k": 11, "term": "ask", "s": 0.591187270501836, "y": 0.4381884944920441, "x": 0.3145654834761322}, {"ncat25k": 7, "cat25k": 39, "term": "which", "s": 0.8004895960832313, "y": 0.843329253365973, "x": 0.31578947368421056}, {"ncat25k": 7, "cat25k": 17, "term": "place", "s": 0.7099143206854345, "y": 0.668298653610771, "x": 0.3170134638922889}, {"ncat25k": 7, "cat25k": 6, "term": "create", "s": 0.38922888616891066, "y": 0.25458996328029376, "x": 0.31823745410036725}, {"ncat25k": 7, "cat25k": 11, "term": "raise", "s": 0.591187270501836, "y": 0.45042839657282746, "x": 0.31946144430844553}, {"ncat25k": 7, "cat25k": 6, "term": "rid", "s": 0.38922888616891066, "y": 0.25581395348837216, "x": 0.3206854345165239}, {"ncat25k": 7, "cat25k": 6, "term": "rid of", "s": 0.38922888616891066, "y": 0.25703794369645044, "x": 0.3219094247246022}, {"ncat25k": 7, "cat25k": 6, "term": "instead", "s": 0.38922888616891066, "y": 0.2619339045287638, "x": 0.3231334149326806}, {"ncat25k": 7, "cat25k": 6, "term": "instead of", "s": 0.38922888616891066, "y": 0.26315789473684215, "x": 0.3243574051407589}, {"ncat25k": 7, "cat25k": 11, "term": "n't work", "s": 0.591187270501836, "y": 0.45777233782129745, "x": 0.32558139534883723}, {"ncat25k": 7, "cat25k": 6, "term": "sit", "s": 0.38922888616891066, "y": 0.26438188494492043, "x": 0.3268053855569156}, {"ncat25k": 7, "cat25k": 8, "term": "use", "s": 0.5226438188494491, "y": 0.357405140758874, "x": 0.3280293757649939}, {"ncat25k": 7, "cat25k": 14, "term": "could be", "s": 0.6401468788249693, "y": 0.6022031823745411, "x": 0.32925336597307225}, {"ncat25k": 7, "cat25k": 8, "term": "rates", "s": 0.5226438188494491, "y": 0.3586291309669523, "x": 0.3304773561811506}, {"ncat25k": 7, "cat25k": 17, "term": "political", "s": 0.7099143206854345, "y": 0.6805385556915544, "x": 0.3317013463892289}, {"ncat25k": 7, "cat25k": 14, "term": "income", "s": 0.6401468788249693, "y": 0.605875152998776, "x": 0.3329253365973073}, {"ncat25k": 7, "cat25k": 6, "term": "situation", "s": 0.38922888616891066, "y": 0.2717258261933905, "x": 0.33414932680538556}, {"ncat25k": 7, "cat25k": 6, "term": "lawyer", "s": 0.38922888616891066, "y": 0.2729498164014688, "x": 0.33537331701346396}, {"ncat25k": 7, "cat25k": 11, "term": "why did", "s": 0.591187270501836, "y": 0.47735618115055084, "x": 0.33659730722154224}, {"ncat25k": 7, "cat25k": 6, "term": "sure", "s": 0.38922888616891066, "y": 0.27417380660954715, "x": 0.3378212974296206}, {"ncat25k": 7, "cat25k": 6, "term": "mistake", "s": 0.38922888616891066, "y": 0.2753977968176255, "x": 0.3390452876376989}, {"ncat25k": 7, "cat25k": 8, "term": "fifth", "s": 0.5226438188494491, "y": 0.3635250917992657, "x": 0.34026927784577726}, {"ncat25k": 7, "cat25k": 8, "term": "thinks", "s": 0.5226438188494491, "y": 0.36474908200734396, "x": 0.3414932680538556}, {"ncat25k": 7, "cat25k": 11, "term": "actually", "s": 0.591187270501836, "y": 0.4785801713586292, "x": 0.34271725826193394}, {"ncat25k": 7, "cat25k": 8, "term": "n't even", "s": 0.5226438188494491, "y": 0.368421052631579, "x": 0.34394124847001223}, {"ncat25k": 7, "cat25k": 6, "term": "reason", "s": 0.38922888616891066, "y": 0.27906976744186046, "x": 0.3451652386780906}, {"ncat25k": 7, "cat25k": 17, "term": "problem", "s": 0.7099143206854345, "y": 0.6891064871481027, "x": 0.3463892288861689}, {"ncat25k": 7, "cat25k": 6, "term": "change", "s": 0.38922888616891066, "y": 0.2827417380660955, "x": 0.3476132190942473}, {"ncat25k": 7, "cat25k": 11, "term": "love", "s": 0.591187270501836, "y": 0.4871481028151775, "x": 0.3488372093023256}, {"ncat25k": 7, "cat25k": 20, "term": "able", "s": 0.7184822521419828, "y": 0.7343941248470012, "x": 0.35006119951040393}, {"ncat25k": 7, "cat25k": 14, "term": "be able", "s": 0.6401468788249693, "y": 0.6217870257037944, "x": 0.35128518971848227}, {"ncat25k": 7, "cat25k": 20, "term": "able to", "s": 0.7184822521419828, "y": 0.7356181150550796, "x": 0.3525091799265606}, {"ncat25k": 7, "cat25k": 8, "term": "came", "s": 0.5226438188494491, "y": 0.3769889840881273, "x": 0.353733170134639}, {"ncat25k": 7, "cat25k": 8, "term": "having", "s": 0.5226438188494491, "y": 0.3782129742962057, "x": 0.3549571603427173}, {"ncat25k": 7, "cat25k": 8, "term": "protect", "s": 0.5226438188494491, "y": 0.379436964504284, "x": 0.35618115055079563}, {"ncat25k": 7, "cat25k": 14, "term": "relationships", "s": 0.6401468788249693, "y": 0.6352509179926561, "x": 0.357405140758874}, {"ncat25k": 7, "cat25k": 6, "term": "five", "s": 0.38922888616891066, "y": 0.28886168910648713, "x": 0.3586291309669523}, {"ncat25k": 7, "cat25k": 8, "term": "person", "s": 0.5226438188494491, "y": 0.38188494492044067, "x": 0.35985312117503065}, {"ncat25k": 7, "cat25k": 6, "term": "check", "s": 0.38922888616891066, "y": 0.2913096695226438, "x": 0.361077111383109}, {"ncat25k": 7, "cat25k": 6, "term": "just like", "s": 0.38922888616891066, "y": 0.2925336597307222, "x": 0.3623011015911873}, {"ncat25k": 7, "cat25k": 6, "term": "border", "s": 0.38922888616891066, "y": 0.2937576499388005, "x": 0.3635250917992657}, {"ncat25k": 7, "cat25k": 11, "term": "anybody", "s": 0.591187270501836, "y": 0.5214198286413709, "x": 0.36474908200734396}, {"ncat25k": 7, "cat25k": 6, "term": "lead", "s": 0.38922888616891066, "y": 0.29620563035495723, "x": 0.36597307221542236}, {"ncat25k": 7, "cat25k": 14, "term": "cyber", "s": 0.6401468788249693, "y": 0.6413708690330477, "x": 0.36719706242350064}, {"ncat25k": 7, "cat25k": 6, "term": "learned", "s": 0.38922888616891066, "y": 0.2986536107711139, "x": 0.368421052631579}, {"ncat25k": 7, "cat25k": 6, "term": "them out", "s": 0.38922888616891066, "y": 0.2998776009791922, "x": 0.3696450428396573}, {"ncat25k": 7, "cat25k": 11, "term": "asked", "s": 0.591187270501836, "y": 0.5287637698898409, "x": 0.37086903304773566}, {"ncat25k": 7, "cat25k": 6, "term": "york times", "s": 0.38922888616891066, "y": 0.3072215422276622, "x": 0.372093023255814}, {"ncat25k": 7, "cat25k": 11, "term": "japan", "s": 0.591187270501836, "y": 0.5348837209302325, "x": 0.37331701346389234}, {"ncat25k": 7, "cat25k": 8, "term": "saudi", "s": 0.5226438188494491, "y": 0.4039167686658507, "x": 0.37454100367197063}, {"ncat25k": 7, "cat25k": 8, "term": "arabia", "s": 0.5226438188494491, "y": 0.40514075887392903, "x": 0.375764993880049}, {"ncat25k": 7, "cat25k": 8, "term": "saudi arabia", "s": 0.5226438188494491, "y": 0.40636474908200737, "x": 0.3769889840881273}, {"ncat25k": 10, "cat25k": 3, "term": "making", "s": 0.2350061199510404, "y": 0.1591187270501836, "x": 0.3782129742962057}, {"ncat25k": 10, "cat25k": 75, "term": "look at", "s": 0.8115055079559363, "y": 0.9228886168910648, "x": 0.379436964504284}, {"ncat25k": 10, "cat25k": 3, "term": "government", "s": 0.2350061199510404, "y": 0.16034271725826194, "x": 0.38066095471236233}, {"ncat25k": 10, "cat25k": 8, "term": "most", "s": 0.4235006119951041, "y": 0.3280293757649939, "x": 0.38188494492044067}, {"ncat25k": 10, "cat25k": 61, "term": "much", "s": 0.8017135862913097, "y": 0.9020807833537332, "x": 0.383108935128519}, {"ncat25k": 10, "cat25k": 39, "term": "agree", "s": 0.7796817625458996, "y": 0.8384332925336597, "x": 0.38433292533659735}, {"ncat25k": 10, "cat25k": 17, "term": "little", "s": 0.6022031823745411, "y": 0.6548347613219094, "x": 0.3855569155446757}, {"ncat25k": 10, "cat25k": 20, "term": "under", "s": 0.6230110159118727, "y": 0.7062423500611995, "x": 0.386780905752754}, {"ncat25k": 10, "cat25k": 22, "term": "big", "s": 0.6597307221542228, "y": 0.7527539779681762, "x": 0.3880048959608324}, {"ncat25k": 10, "cat25k": 6, "term": "forward", "s": 0.32925336597307225, "y": 0.2423500611995104, "x": 0.38922888616891066}, {"ncat25k": 10, "cat25k": 11, "term": "kind", "s": 0.5006119951040392, "y": 0.4210526315789474, "x": 0.39045287637698906}, {"ncat25k": 10, "cat25k": 11, "term": "kind of", "s": 0.5006119951040392, "y": 0.4247246022031824, "x": 0.39167686658506734}, {"ncat25k": 10, "cat25k": 50, "term": "over", "s": 0.7894736842105263, "y": 0.8763769889840881, "x": 0.3929008567931457}, {"ncat25k": 10, "cat25k": 22, "term": "taking", "s": 0.6597307221542228, "y": 0.7588739290085679, "x": 0.394124847001224}, {"ncat25k": 10, "cat25k": 20, "term": "give", "s": 0.6230110159118727, "y": 0.7111383108935129, "x": 0.39534883720930236}, {"ncat25k": 10, "cat25k": 3, "term": "system", "s": 0.2350061199510404, "y": 0.16401468788249696, "x": 0.39657282741738065}, {"ncat25k": 10, "cat25k": 3, "term": "16", "s": 0.2350061199510404, "y": 0.16523867809057527, "x": 0.39779681762545904}, {"ncat25k": 10, "cat25k": 8, "term": "yes", "s": 0.4235006119951041, "y": 0.3378212974296206, "x": 0.3990208078335373}, {"ncat25k": 10, "cat25k": 6, "term": "there are", "s": 0.32925336597307225, "y": 0.24724602203182375, "x": 0.4002447980416157}, {"ncat25k": 10, "cat25k": 25, "term": "never", "s": 0.7135862913096694, "y": 0.7833537331701346, "x": 0.401468788249694}, {"ncat25k": 10, "cat25k": 14, "term": "debt", "s": 0.561811505507956, "y": 0.5801713586291309, "x": 0.40269277845777235}, {"ncat25k": 10, "cat25k": 3, "term": "administration", "s": 0.2350061199510404, "y": 0.16768665850673195, "x": 0.4039167686658507}, {"ncat25k": 10, "cat25k": 20, "term": "'d", "s": 0.6230110159118727, "y": 0.7246022031823746, "x": 0.40514075887392903}, {"ncat25k": 10, "cat25k": 33, "term": "'ve been", "s": 0.7527539779681762, "y": 0.8237454100367196, "x": 0.40636474908200737}, {"ncat25k": 10, "cat25k": 8, "term": "yeah", "s": 0.4235006119951041, "y": 0.3451652386780906, "x": 0.4075887392900857}, {"ncat25k": 10, "cat25k": 28, "term": "this country", "s": 0.7160342717258262, "y": 0.7992656058751529, "x": 0.408812729498164}, {"ncat25k": 10, "cat25k": 45, "term": "bad", "s": 0.7870257037943696, "y": 0.8665850673194615, "x": 0.4100367197062424}, {"ncat25k": 10, "cat25k": 11, "term": "interest", "s": 0.5006119951040392, "y": 0.4553243574051408, "x": 0.4112607099143207}, {"ncat25k": 10, "cat25k": 3, "term": "class", "s": 0.2350061199510404, "y": 0.17135862913096694, "x": 0.4124847001223991}, {"ncat25k": 10, "cat25k": 3, "term": "overseas", "s": 0.2350061199510404, "y": 0.17258261933904528, "x": 0.4137086903304774}, {"ncat25k": 10, "cat25k": 6, "term": "tape", "s": 0.32925336597307225, "y": 0.2594859241126071, "x": 0.4149326805385557}, {"ncat25k": 10, "cat25k": 6, "term": "table", "s": 0.32925336597307225, "y": 0.2656058751529988, "x": 0.4161566707466341}, {"ncat25k": 10, "cat25k": 6, "term": "leadership", "s": 0.32925336597307225, "y": 0.2668298653610771, "x": 0.4173806609547124}, {"ncat25k": 10, "cat25k": 11, "term": "read", "s": 0.5006119951040392, "y": 0.4589963280293758, "x": 0.4186046511627908}, {"ncat25k": 10, "cat25k": 20, "term": "day", "s": 0.6230110159118727, "y": 0.7319461444308446, "x": 0.41982864137086906}, {"ncat25k": 10, "cat25k": 6, "term": "federal", "s": 0.32925336597307225, "y": 0.2680538555691555, "x": 0.4210526315789474}, {"ncat25k": 10, "cat25k": 6, "term": "looked", "s": 0.32925336597307225, "y": 0.2692778457772338, "x": 0.42227662178702574}, {"ncat25k": 10, "cat25k": 11, "term": "year", "s": 0.5006119951040392, "y": 0.4663402692778458, "x": 0.4235006119951041}, {"ncat25k": 10, "cat25k": 11, "term": "every", "s": 0.5006119951040392, "y": 0.46756425948592417, "x": 0.4247246022031824}, {"ncat25k": 10, "cat25k": 6, "term": "more than", "s": 0.32925336597307225, "y": 0.2766217870257038, "x": 0.42594859241126076}, {"ncat25k": 10, "cat25k": 6, "term": "amendment", "s": 0.32925336597307225, "y": 0.2778457772337822, "x": 0.42717258261933905}, {"ncat25k": 10, "cat25k": 20, "term": "help", "s": 0.6230110159118727, "y": 0.7331701346389229, "x": 0.42839657282741744}, {"ncat25k": 10, "cat25k": 3, "term": "i am", "s": 0.2350061199510404, "y": 0.18482252141982863, "x": 0.42962056303549573}, {"ncat25k": 10, "cat25k": 6, "term": "third", "s": 0.32925336597307225, "y": 0.28151774785801714, "x": 0.4308445532435741}, {"ncat25k": 10, "cat25k": 14, "term": "laws", "s": 0.561811505507956, "y": 0.620563035495716, "x": 0.4320685434516524}, {"ncat25k": 10, "cat25k": 17, "term": "another", "s": 0.6022031823745411, "y": 0.6903304773561811, "x": 0.43329253365973075}, {"ncat25k": 10, "cat25k": 3, "term": "living", "s": 0.2350061199510404, "y": 0.18971848225214197, "x": 0.4345165238678091}, {"ncat25k": 10, "cat25k": 14, "term": "killed", "s": 0.561811505507956, "y": 0.6230110159118727, "x": 0.43574051407588743}, {"ncat25k": 10, "cat25k": 14, "term": "mayor", "s": 0.561811505507956, "y": 0.624235006119951, "x": 0.43696450428396577}, {"ncat25k": 10, "cat25k": 14, "term": "york", "s": 0.561811505507956, "y": 0.6254589963280294, "x": 0.4381884944920441}, {"ncat25k": 10, "cat25k": 14, "term": "new york", "s": 0.561811505507956, "y": 0.6266829865361078, "x": 0.4394124847001224}, {"ncat25k": 10, "cat25k": 3, "term": "gun", "s": 0.2350061199510404, "y": 0.193390452876377, "x": 0.4406364749082008}, {"ncat25k": 10, "cat25k": 3, "term": "immigrants", "s": 0.2350061199510404, "y": 0.19583843329253364, "x": 0.4418604651162791}, {"ncat25k": 10, "cat25k": 3, "term": "afraid", "s": 0.2350061199510404, "y": 0.19706242350061198, "x": 0.4430844553243575}, {"ncat25k": 10, "cat25k": 3, "term": "afraid to", "s": 0.2350061199510404, "y": 0.19828641370869032, "x": 0.44430844553243576}, {"ncat25k": 10, "cat25k": 17, "term": "n't believe", "s": 0.6022031823745411, "y": 0.6964504283965729, "x": 0.4455324357405141}, {"ncat25k": 10, "cat25k": 3, "term": "stay", "s": 0.2350061199510404, "y": 0.20318237454100366, "x": 0.44675642594859244}, {"ncat25k": 10, "cat25k": 3, "term": "to stay", "s": 0.2350061199510404, "y": 0.204406364749082, "x": 0.4479804161566708}, {"ncat25k": 10, "cat25k": 3, "term": "tonight", "s": 0.2350061199510404, "y": 0.20563035495716034, "x": 0.4492044063647491}, {"ncat25k": 10, "cat25k": 8, "term": "trying", "s": 0.4235006119951041, "y": 0.39167686658506734, "x": 0.45042839657282746}, {"ncat25k": 10, "cat25k": 8, "term": "trying to", "s": 0.4235006119951041, "y": 0.3929008567931457, "x": 0.45165238678090575}, {"ncat25k": 10, "cat25k": 3, "term": "else", "s": 0.2350061199510404, "y": 0.2105263157894737, "x": 0.45287637698898414}, {"ncat25k": 10, "cat25k": 6, "term": "knows", "s": 0.32925336597307225, "y": 0.2974296205630355, "x": 0.4541003671970624}, {"ncat25k": 10, "cat25k": 6, "term": "including", "s": 0.32925336597307225, "y": 0.3023255813953489, "x": 0.4553243574051408}, {"ncat25k": 10, "cat25k": 22, "term": "iran", "s": 0.6597307221542228, "y": 0.7723378212974297, "x": 0.4565483476132191}, {"ncat25k": 10, "cat25k": 6, "term": "show", "s": 0.32925336597307225, "y": 0.30477356181150556, "x": 0.45777233782129745}, {"ncat25k": 10, "cat25k": 3, "term": "obsolete", "s": 0.2350061199510404, "y": 0.2141982864137087, "x": 0.4589963280293758}, {"ncat25k": 10, "cat25k": 6, "term": "focus on", "s": 0.32925336597307225, "y": 0.30966952264381886, "x": 0.46022031823745413}, {"ncat25k": 10, "cat25k": 3, "term": "not support", "s": 0.2350061199510404, "y": 0.22031823745410037, "x": 0.46144430844553247}, {"ncat25k": 10, "cat25k": 8, "term": "in iraq", "s": 0.4235006119951041, "y": 0.4002447980416157, "x": 0.4626682986536108}, {"ncat25k": 10, "cat25k": 3, "term": "exactly", "s": 0.2350061199510404, "y": 0.2239902080783354, "x": 0.4638922888616891}, {"ncat25k": 10, "cat25k": 8, "term": "me tell", "s": 0.4235006119951041, "y": 0.40269277845777235, "x": 0.4651162790697675}, {"ncat25k": 10, "cat25k": 3, "term": "n't pay", "s": 0.2350061199510404, "y": 0.22888616891064872, "x": 0.4663402692778458}, {"ncat25k": 10, "cat25k": 3, "term": "may", "s": 0.2350061199510404, "y": 0.23011015911872706, "x": 0.46756425948592417}, {"ncat25k": 10, "cat25k": 3, "term": "i guess", "s": 0.2350061199510404, "y": 0.2350061199510404, "x": 0.46878824969400246}, {"ncat25k": 10, "cat25k": 3, "term": "more nations", "s": 0.2350061199510404, "y": 0.23623011015911874, "x": 0.4700122399020808}, {"ncat25k": 10, "cat25k": 6, "term": "ability", "s": 0.32925336597307225, "y": 0.31946144430844553, "x": 0.4712362301101592}, {"ncat25k": 10, "cat25k": 3, "term": "imagine", "s": 0.2350061199510404, "y": 0.23745410036719705, "x": 0.4724602203182375}, {"ncat25k": 10, "cat25k": 3, "term": "somebody who", "s": 0.2350061199510404, "y": 0.2386780905752754, "x": 0.4736842105263159}, {"ncat25k": 10, "cat25k": 6, "term": "america", "s": 0.32925336597307225, "y": 0.3219094247246022, "x": 0.47490820073439416}, {"ncat25k": 13, "cat25k": 8, "term": "small", "s": 0.35618115055079563, "y": 0.3304773561811506, "x": 0.4761321909424725}, {"ncat25k": 13, "cat25k": 11, "term": "being", "s": 0.4320685434516524, "y": 0.4124847001223991, "x": 0.47735618115055084}, {"ncat25k": 13, "cat25k": 3, "term": "firing", "s": 0.21297429620563035, "y": 0.16156670746634028, "x": 0.4785801713586292}, {"ncat25k": 13, "cat25k": 17, "term": "can not", "s": 0.5446756425948592, "y": 0.6560587515299877, "x": 0.4798041615667075}, {"ncat25k": 13, "cat25k": 8, "term": "build", "s": 0.35618115055079563, "y": 0.33537331701346396, "x": 0.48102815177478586}, {"ncat25k": 13, "cat25k": 22, "term": "before", "s": 0.605875152998776, "y": 0.7552019583843329, "x": 0.48225214198286415}, {"ncat25k": 13, "cat25k": 42, "term": "bring", "s": 0.7503059975520195, "y": 0.8580171358629131, "x": 0.48347613219094254}, {"ncat25k": 13, "cat25k": 14, "term": "called", "s": 0.4847001223990208, "y": 0.5728274173806609, "x": 0.4847001223990208}, {"ncat25k": 13, "cat25k": 47, "term": "tell you", "s": 0.7784577723378212, "y": 0.8714810281517749, "x": 0.4859241126070992}, {"ncat25k": 13, "cat25k": 11, "term": "proud", "s": 0.4320685434516524, "y": 0.4455324357405141, "x": 0.4871481028151775}, {"ncat25k": 13, "cat25k": 8, "term": "'m going", "s": 0.35618115055079563, "y": 0.3549571603427173, "x": 0.48837209302325585}, {"ncat25k": 13, "cat25k": 11, "term": "too", "s": 0.4320685434516524, "y": 0.45287637698898414, "x": 0.4895960832313342}, {"ncat25k": 13, "cat25k": 3, "term": "high", "s": 0.21297429620563035, "y": 0.17380660954712362, "x": 0.49082007343941253}, {"ncat25k": 13, "cat25k": 25, "term": "should be", "s": 0.6181150550795593, "y": 0.7882496940024479, "x": 0.49204406364749087}, {"ncat25k": 13, "cat25k": 3, "term": "get them", "s": 0.21297429620563035, "y": 0.1762545899632803, "x": 0.4932680538555692}, {"ncat25k": 13, "cat25k": 3, "term": "action", "s": 0.21297429620563035, "y": 0.17747858017135862, "x": 0.4944920440636475}, {"ncat25k": 13, "cat25k": 3, "term": "am", "s": 0.21297429620563035, "y": 0.1835985312117503, "x": 0.4957160342717259}, {"ncat25k": 13, "cat25k": 6, "term": "next", "s": 0.2937576499388005, "y": 0.2839657282741738, "x": 0.4969400244798042}, {"ncat25k": 13, "cat25k": 17, "term": "they were", "s": 0.5446756425948592, "y": 0.6915544675642595, "x": 0.4981640146878826}, {"ncat25k": 13, "cat25k": 11, "term": "city", "s": 0.4320685434516524, "y": 0.4944920440636475, "x": 0.49938800489596086}, {"ncat25k": 13, "cat25k": 36, "term": "war", "s": 0.7172582619339045, "y": 0.835985312117503, "x": 0.5006119951040392}, {"ncat25k": 13, "cat25k": 3, "term": "criminals", "s": 0.21297429620563035, "y": 0.19461444308445533, "x": 0.5018359853121175}, {"ncat25k": 13, "cat25k": 14, "term": "african", "s": 0.4847001223990208, "y": 0.6303549571603427, "x": 0.5030599755201958}, {"ncat25k": 13, "cat25k": 11, "term": "communities", "s": 0.4320685434516524, "y": 0.5018359853121175, "x": 0.5042839657282742}, {"ncat25k": 13, "cat25k": 6, "term": "judge", "s": 0.2937576499388005, "y": 0.28763769889840884, "x": 0.5055079559363524}, {"ncat25k": 13, "cat25k": 6, "term": "young", "s": 0.2937576499388005, "y": 0.2900856793145655, "x": 0.5067319461444308}, {"ncat25k": 13, "cat25k": 8, "term": "hard", "s": 0.35618115055079563, "y": 0.38433292533659735, "x": 0.5079559363525091}, {"ncat25k": 13, "cat25k": 8, "term": "feel", "s": 0.35618115055079563, "y": 0.39045287637698906, "x": 0.5091799265605875}, {"ncat25k": 13, "cat25k": 11, "term": "tough", "s": 0.4320685434516524, "y": 0.5201958384332925, "x": 0.5104039167686658}, {"ncat25k": 13, "cat25k": 6, "term": "generals", "s": 0.2937576499388005, "y": 0.29498164014687883, "x": 0.5116279069767442}, {"ncat25k": 13, "cat25k": 3, "term": "immigration", "s": 0.21297429620563035, "y": 0.20930232558139536, "x": 0.5128518971848225}, {"ncat25k": 13, "cat25k": 11, "term": "10", "s": 0.4320685434516524, "y": 0.5226438188494491, "x": 0.5140758873929008}, {"ncat25k": 13, "cat25k": 17, "term": "nato", "s": 0.5446756425948592, "y": 0.7001223990208079, "x": 0.5152998776009792}, {"ncat25k": 13, "cat25k": 6, "term": "share", "s": 0.2937576499388005, "y": 0.3059975520195839, "x": 0.5165238678090576}, {"ncat25k": 13, "cat25k": 3, "term": "nato is", "s": 0.21297429620563035, "y": 0.21542227662178703, "x": 0.5177478580171357}, {"ncat25k": 13, "cat25k": 6, "term": "hear", "s": 0.2937576499388005, "y": 0.3133414932680539, "x": 0.5189718482252141}, {"ncat25k": 13, "cat25k": 11, "term": "did an", "s": 0.4320685434516524, "y": 0.5336597307221542, "x": 0.5201958384332925}, {"ncat25k": 13, "cat25k": 6, "term": "threat", "s": 0.2937576499388005, "y": 0.31578947368421056, "x": 0.5214198286413709}, {"ncat25k": 13, "cat25k": 3, "term": "add", "s": 0.21297429620563035, "y": 0.23255813953488372, "x": 0.5226438188494491}, {"ncat25k": 13, "cat25k": 3, "term": "guess", "s": 0.21297429620563035, "y": 0.23378212974296206, "x": 0.5238678090575275}, {"ncat25k": 13, "cat25k": 6, "term": "again", "s": 0.2937576499388005, "y": 0.3231334149326806, "x": 0.5250917992656059}, {"ncat25k": 13, "cat25k": 0, "term": "terrorism", "s": 0.0, "y": 0.011015911872705019, "x": 0.5263157894736842}, {"ncat25k": 13, "cat25k": 0, "term": "teachers", "s": 0.0, "y": 0.014687882496940025, "x": 0.5275397796817625}, {"ncat25k": 13, "cat25k": 0, "term": "ticket", "s": 0.0, "y": 0.01835985312117503, "x": 0.5287637698898409}, {"ncat25k": 13, "cat25k": 0, "term": "we trust", "s": 0.0, "y": 0.020807833537331705, "x": 0.5299877600979191}, {"ncat25k": 13, "cat25k": 0, "term": "deployed", "s": 0.0, "y": 0.022031823745410038, "x": 0.5312117503059975}, {"ncat25k": 13, "cat25k": 0, "term": "commander", "s": 0.0, "y": 0.023255813953488375, "x": 0.5324357405140759}, {"ncat25k": 13, "cat25k": 0, "term": "death", "s": 0.0, "y": 0.025703794369645042, "x": 0.5336597307221542}, {"ncat25k": 13, "cat25k": 0, "term": "commander in", "s": 0.0, "y": 0.026927784577723383, "x": 0.5348837209302325}, {"ncat25k": 13, "cat25k": 0, "term": "in chief", "s": 0.0, "y": 0.028151774785801716, "x": 0.5361077111383109}, {"ncat25k": 13, "cat25k": 0, "term": "elaine let", "s": 0.0, "y": 0.02937576499388005, "x": 0.5373317013463893}, {"ncat25k": 13, "cat25k": 0, "term": "kids", "s": 0.0, "y": 0.03427172582619339, "x": 0.5385556915544675}, {"ncat25k": 13, "cat25k": 0, "term": "rapists", "s": 0.0, "y": 0.0379436964504284, "x": 0.5397796817625459}, {"ncat25k": 13, "cat25k": 0, "term": "born", "s": 0.0, "y": 0.039167686658506735, "x": 0.5410036719706243}, {"ncat25k": 13, "cat25k": 0, "term": "guys", "s": 0.0, "y": 0.04039167686658507, "x": 0.5422276621787026}, {"ncat25k": 13, "cat25k": 0, "term": "putin as", "s": 0.0, "y": 0.04895960832313342, "x": 0.5434516523867808}, {"ncat25k": 13, "cat25k": 0, "term": "great leader", "s": 0.0, "y": 0.05018359853121175, "x": 0.5446756425948592}, {"ncat25k": 13, "cat25k": 0, "term": "175,000", "s": 0.0, "y": 0.0550795593635251, "x": 0.5458996328029376}, {"ncat25k": 13, "cat25k": 0, "term": "stockpile", "s": 0.0, "y": 0.05630354957160343, "x": 0.5471236230110159}, {"ncat25k": 13, "cat25k": 0, "term": "was part", "s": 0.0, "y": 0.061199510403916774, "x": 0.5483476132190942}, {"ncat25k": 13, "cat25k": 0, "term": "without firing", "s": 0.0, "y": 0.07099143206854344, "x": 0.5495716034271726}, {"ncat25k": 13, "cat25k": 0, "term": "firing a", "s": 0.0, "y": 0.07221542227662178, "x": 0.5507955936352509}, {"ncat25k": 13, "cat25k": 0, "term": "a fundamental", "s": 0.0, "y": 0.07833537331701347, "x": 0.5520195838433293}, {"ncat25k": 13, "cat25k": 0, "term": "minimum", "s": 0.0, "y": 0.0795593635250918, "x": 0.5532435740514076}, {"ncat25k": 13, "cat25k": 0, "term": "wage", "s": 0.0, "y": 0.08078335373317014, "x": 0.5544675642594858}, {"ncat25k": 13, "cat25k": 0, "term": "poverty", "s": 0.0, "y": 0.08200734394124846, "x": 0.5556915544675642}, {"ncat25k": 13, "cat25k": 0, "term": "minimum wage", "s": 0.0, "y": 0.08445532435740515, "x": 0.5569155446756426}, {"ncat25k": 13, "cat25k": 0, "term": "folks", "s": 0.0, "y": 0.09179926560587515, "x": 0.5581395348837209}, {"ncat25k": 13, "cat25k": 0, "term": "paying taxes", "s": 0.0, "y": 0.09302325581395349, "x": 0.5593635250917992}, {"ncat25k": 13, "cat25k": 0, "term": "release his", "s": 0.0, "y": 0.09424724602203181, "x": 0.5605875152998776}, {"ncat25k": 13, "cat25k": 0, "term": "stood", "s": 0.0, "y": 0.0966952264381885, "x": 0.561811505507956}, {"ncat25k": 13, "cat25k": 0, "term": "background", "s": 0.0, "y": 0.10648714810281518, "x": 0.5630354957160342}, {"ncat25k": 13, "cat25k": 0, "term": "background record", "s": 0.0, "y": 0.10893512851897184, "x": 0.5642594859241126}, {"ncat25k": 13, "cat25k": 0, "term": "parents", "s": 0.0, "y": 0.11138310893512852, "x": 0.565483476132191}, {"ncat25k": 13, "cat25k": 0, "term": "hero", "s": 0.0, "y": 0.11505507955936352, "x": 0.5667074663402693}, {"ncat25k": 13, "cat25k": 0, "term": "million people", "s": 0.0, "y": 0.12117503059975519, "x": 0.5679314565483475}, {"ncat25k": 13, "cat25k": 0, "term": "claim", "s": 0.0, "y": 0.12239902080783353, "x": 0.5691554467564259}, {"ncat25k": 13, "cat25k": 0, "term": "terrorist", "s": 0.0, "y": 0.12362301101591187, "x": 0.5703794369645043}, {"ncat25k": 13, "cat25k": 0, "term": "9/11", "s": 0.0, "y": 0.1248470012239902, "x": 0.5716034271725826}, {"ncat25k": 13, "cat25k": 0, "term": "based", "s": 0.0, "y": 0.12729498164014688, "x": 0.5728274173806609}, {"ncat25k": 13, "cat25k": 0, "term": "based on", "s": 0.0, "y": 0.1285189718482252, "x": 0.5740514075887393}, {"ncat25k": 13, "cat25k": 0, "term": "really important", "s": 0.0, "y": 0.13341493268053856, "x": 0.5752753977968176}, {"ncat25k": 13, "cat25k": 0, "term": "investigation", "s": 0.0, "y": 0.13463892288861687, "x": 0.576499388004896}, {"ncat25k": 13, "cat25k": 0, "term": "concluded", "s": 0.0, "y": 0.1358629130966952, "x": 0.5777233782129743}, {"ncat25k": 13, "cat25k": 0, "term": "concluded that", "s": 0.0, "y": 0.13708690330477355, "x": 0.5789473684210525}, {"ncat25k": 13, "cat25k": 0, "term": "has business", "s": 0.0, "y": 0.13953488372093023, "x": 0.5801713586291309}, {"ncat25k": 13, "cat25k": 0, "term": "acknowledge", "s": 0.0, "y": 0.14198286413708688, "x": 0.5813953488372093}, {"ncat25k": 13, "cat25k": 0, "term": "to acknowledge", "s": 0.0, "y": 0.14320685434516522, "x": 0.5826193390452876}, {"ncat25k": 13, "cat25k": 0, "term": "toe with", "s": 0.0, "y": 0.1456548347613219, "x": 0.5838433292533659}, {"ncat25k": 13, "cat25k": 0, "term": "as secretary", "s": 0.0, "y": 0.14687882496940022, "x": 0.5850673194614443}, {"ncat25k": 13, "cat25k": 0, "term": "bottom", "s": 0.0, "y": 0.1481028151774786, "x": 0.5862913096695227}, {"ncat25k": 13, "cat25k": 0, "term": "bottom line", "s": 0.0, "y": 0.14932680538555693, "x": 0.5875152998776009}, {"ncat25k": 13, "cat25k": 0, "term": "trump organization", "s": 0.0, "y": 0.1517747858017136, "x": 0.5887392900856793}, {"ncat25k": 13, "cat25k": 0, "term": "faith", "s": 0.0, "y": 0.15422276621787026, "x": 0.5899632802937577}, {"ncat25k": 13, "cat25k": 0, "term": "roe", "s": 0.0, "y": 0.1554467564259486, "x": 0.591187270501836}, {"ncat25k": 17, "cat25k": 56, "term": "jobs", "s": 0.7539779681762545, "y": 0.8837209302325582, "x": 0.5924112607099143}, {"ncat25k": 17, "cat25k": 47, "term": "'re going", "s": 0.7246022031823746, "y": 0.8678090575275397, "x": 0.5936352509179926}, {"ncat25k": 17, "cat25k": 86, "term": "doing", "s": 0.7980416156670747, "y": 0.9363525091799266, "x": 0.594859241126071}, {"ncat25k": 17, "cat25k": 14, "term": "fight", "s": 0.4418604651162791, "y": 0.5410036719706243, "x": 0.5960832313341493}, {"ncat25k": 17, "cat25k": 8, "term": "same", "s": 0.31823745410036725, "y": 0.32558139534883723, "x": 0.5973072215422277}, {"ncat25k": 17, "cat25k": 3, "term": "fired", "s": 0.19951040391676866, "y": 0.16279069767441862, "x": 0.598531211750306}, {"ncat25k": 17, "cat25k": 22, "term": "come", "s": 0.5556915544675642, "y": 0.7539779681762545, "x": 0.5997552019583843}, {"ncat25k": 17, "cat25k": 8, "term": "start", "s": 0.31823745410036725, "y": 0.33659730722154224, "x": 0.6009791921664627}, {"ncat25k": 17, "cat25k": 39, "term": "ever", "s": 0.664626682986536, "y": 0.839657282741738, "x": 0.6022031823745411}, {"ncat25k": 17, "cat25k": 14, "term": "different", "s": 0.4418604651162791, "y": 0.5630354957160342, "x": 0.6034271725826192}, {"ncat25k": 17, "cat25k": 14, "term": "made", "s": 0.4418604651162791, "y": 0.5679314565483475, "x": 0.6046511627906976}, {"ncat25k": 17, "cat25k": 14, "term": "any", "s": 0.4418604651162791, "y": 0.5703794369645043, "x": 0.605875152998776}, {"ncat25k": 17, "cat25k": 20, "term": "paying", "s": 0.5177478580171357, "y": 0.7221542227662179, "x": 0.6070991432068544}, {"ncat25k": 17, "cat25k": 33, "term": "obama", "s": 0.6364749082007344, "y": 0.8225214198286414, "x": 0.6083231334149326}, {"ncat25k": 17, "cat25k": 25, "term": "down", "s": 0.5777233782129743, "y": 0.784577723378213, "x": 0.609547123623011}, {"ncat25k": 17, "cat25k": 17, "term": "president obama", "s": 0.4761321909424725, "y": 0.6670746634026928, "x": 0.6107711138310894}, {"ncat25k": 17, "cat25k": 8, "term": "history", "s": 0.31823745410036725, "y": 0.35128518971848227, "x": 0.6119951040391677}, {"ncat25k": 17, "cat25k": 17, "term": "everybody", "s": 0.4761321909424725, "y": 0.6731946144430844, "x": 0.613219094247246}, {"ncat25k": 17, "cat25k": 17, "term": "something", "s": 0.4761321909424725, "y": 0.6744186046511628, "x": 0.6144430844553244}, {"ncat25k": 17, "cat25k": 8, "term": "told", "s": 0.31823745410036725, "y": 0.361077111383109, "x": 0.6156670746634026}, {"ncat25k": 17, "cat25k": 6, "term": "years ago", "s": 0.2729498164014688, "y": 0.27050183598531213, "x": 0.616891064871481}, {"ncat25k": 17, "cat25k": 17, "term": "release", "s": 0.4761321909424725, "y": 0.6829865361077111, "x": 0.6181150550795593}, {"ncat25k": 17, "cat25k": 3, "term": "says", "s": 0.19951040391676866, "y": 0.18115055079559364, "x": 0.6193390452876377}, {"ncat25k": 17, "cat25k": 3, "term": "smart", "s": 0.19951040391676866, "y": 0.18237454100367198, "x": 0.620563035495716}, {"ncat25k": 17, "cat25k": 14, "term": "question", "s": 0.4418604651162791, "y": 0.609547123623011, "x": 0.6217870257037944}, {"ncat25k": 17, "cat25k": 14, "term": "times", "s": 0.4418604651162791, "y": 0.6181150550795593, "x": 0.6230110159118727}, {"ncat25k": 17, "cat25k": 3, "term": "office", "s": 0.19951040391676866, "y": 0.18604651162790697, "x": 0.624235006119951}, {"ncat25k": 17, "cat25k": 22, "term": "we need", "s": 0.5556915544675642, "y": 0.7686658506731946, "x": 0.6254589963280294}, {"ncat25k": 17, "cat25k": 6, "term": "americans", "s": 0.2729498164014688, "y": 0.28518971848225216, "x": 0.6266829865361078}, {"ncat25k": 17, "cat25k": 3, "term": "shot", "s": 0.19951040391676866, "y": 0.19216646266829865, "x": 0.6279069767441859}, {"ncat25k": 17, "cat25k": 11, "term": "strong", "s": 0.36719706242350064, "y": 0.5006119951040392, "x": 0.6291309669522643}, {"ncat25k": 17, "cat25k": 8, "term": "has been", "s": 0.31823745410036725, "y": 0.3855569155446757, "x": 0.6303549571603427}, {"ncat25k": 17, "cat25k": 3, "term": "ways", "s": 0.19951040391676866, "y": 0.20807833537331702, "x": 0.631578947368421}, {"ncat25k": 17, "cat25k": 11, "term": "iraq", "s": 0.36719706242350064, "y": 0.5250917992656059, "x": 0.6328029375764993}, {"ncat25k": 17, "cat25k": 3, "term": "sanctions", "s": 0.19951040391676866, "y": 0.21297429620563035, "x": 0.6340269277845777}, {"ncat25k": 17, "cat25k": 6, "term": "focus", "s": 0.2729498164014688, "y": 0.3084455324357406, "x": 0.6352509179926561}, {"ncat25k": 17, "cat25k": 3, "term": "should get", "s": 0.19951040391676866, "y": 0.21664626682986537, "x": 0.6364749082007344}, {"ncat25k": 17, "cat25k": 6, "term": "nations", "s": 0.2729498164014688, "y": 0.31089351285189726, "x": 0.6376988984088127}, {"ncat25k": 17, "cat25k": 14, "term": "north", "s": 0.4418604651162791, "y": 0.6450428396572827, "x": 0.6389228886168911}, {"ncat25k": 17, "cat25k": 14, "term": "north korea", "s": 0.4418604651162791, "y": 0.6462668298653611, "x": 0.6401468788249693}, {"ncat25k": 17, "cat25k": 6, "term": "respect", "s": 0.2729498164014688, "y": 0.3170134638922889, "x": 0.6413708690330477}, {"ncat25k": 17, "cat25k": 6, "term": "deal with", "s": 0.2729498164014688, "y": 0.31823745410036725, "x": 0.642594859241126}, {"ncat25k": 17, "cat25k": 20, "term": "experience", "s": 0.5177478580171357, "y": 0.7454100367197063, "x": 0.6438188494492043}, {"ncat25k": 17, "cat25k": 6, "term": "absolutely", "s": 0.2729498164014688, "y": 0.3206854345165239, "x": 0.6450428396572827}, {"ncat25k": 17, "cat25k": 0, "term": "stronger", "s": 0.0, "y": 0.007343941248470012, "x": 0.6462668298653611}, {"ncat25k": 17, "cat25k": 0, "term": "chief", "s": 0.0, "y": 0.02447980416156671, "x": 0.6474908200734395}, {"ncat25k": 17, "cat25k": 0, "term": "clinton has", "s": 0.0, "y": 0.03182374541003672, "x": 0.6487148102815177}, {"ncat25k": 17, "cat25k": 0, "term": "families", "s": 0.0, "y": 0.033047735618115054, "x": 0.6499388004895961}, {"ncat25k": 17, "cat25k": 0, "term": "national", "s": 0.0, "y": 0.0587515299877601, "x": 0.6511627906976745}, {"ncat25k": 17, "cat25k": 0, "term": "team that", "s": 0.0, "y": 0.06364749082007343, "x": 0.6523867809057528}, {"ncat25k": 17, "cat25k": 0, "term": "iranian", "s": 0.0, "y": 0.06609547123623011, "x": 0.653610771113831}, {"ncat25k": 17, "cat25k": 0, "term": "iranian nuclear", "s": 0.0, "y": 0.06854345165238677, "x": 0.6548347613219094}, {"ncat25k": 17, "cat25k": 0, "term": "a shot", "s": 0.0, "y": 0.07343941248470011, "x": 0.6560587515299877}, {"ncat25k": 17, "cat25k": 0, "term": "our troops", "s": 0.0, "y": 0.07466340269277846, "x": 0.6572827417380661}, {"ncat25k": 17, "cat25k": 0, "term": "pay for", "s": 0.0, "y": 0.08567931456548347, "x": 0.6585067319461444}, {"ncat25k": 17, "cat25k": 0, "term": "american public", "s": 0.0, "y": 0.09057527539779682, "x": 0.6597307221542228}, {"ncat25k": 17, "cat25k": 0, "term": "run", "s": 0.0, "y": 0.09547123623011015, "x": 0.6609547123623011}, {"ncat25k": 17, "cat25k": 0, "term": "last thing", "s": 0.0, "y": 0.09791921664626682, "x": 0.6621787025703795}, {"ncat25k": 17, "cat25k": 0, "term": "package", "s": 0.0, "y": 0.10403916768665851, "x": 0.6634026927784578}, {"ncat25k": 17, "cat25k": 0, "term": "enforcement", "s": 0.0, "y": 0.10526315789473685, "x": 0.664626682986536}, {"ncat25k": 17, "cat25k": 0, "term": "issues", "s": 0.0, "y": 0.11015911872705018, "x": 0.6658506731946144}, {"ncat25k": 17, "cat25k": 0, "term": "john", "s": 0.0, "y": 0.11260709914320685, "x": 0.6670746634026928}, {"ncat25k": 17, "cat25k": 0, "term": "mccain", "s": 0.0, "y": 0.11383108935128519, "x": 0.668298653610771}, {"ncat25k": 17, "cat25k": 0, "term": "john mccain", "s": 0.0, "y": 0.11627906976744186, "x": 0.6695226438188494}, {"ncat25k": 17, "cat25k": 0, "term": "apologize", "s": 0.0, "y": 0.11872705018359853, "x": 0.6707466340269278}, {"ncat25k": 17, "cat25k": 0, "term": "pay taxes", "s": 0.0, "y": 0.11995104039167687, "x": 0.6719706242350062}, {"ncat25k": 17, "cat25k": 0, "term": "syria", "s": 0.0, "y": 0.12974296205630353, "x": 0.6731946144430844}, {"ncat25k": 17, "cat25k": 0, "term": "republican", "s": 0.0, "y": 0.13096695226438188, "x": 0.6744186046511628}, {"ncat25k": 17, "cat25k": 0, "term": "religion", "s": 0.0, "y": 0.13219094247246022, "x": 0.6756425948592412}, {"ncat25k": 17, "cat25k": 0, "term": "their own", "s": 0.0, "y": 0.15667074663402694, "x": 0.6768665850673194}, {"ncat25k": 17, "cat25k": 0, "term": "aisle", "s": 0.0, "y": 0.15789473684210528, "x": 0.6780905752753977}, {"ncat25k": 20, "cat25k": 114, "term": "they 're", "s": 0.7992656058751529, "y": 0.952264381884945, "x": 0.6793145654834761}, {"ncat25k": 20, "cat25k": 25, "term": "china", "s": 0.5483476132190942, "y": 0.777233782129743, "x": 0.6805385556915544}, {"ncat25k": 20, "cat25k": 31, "term": "see", "s": 0.5801713586291309, "y": 0.806609547123623, "x": 0.6817625458996328}, {"ncat25k": 20, "cat25k": 17, "term": "only", "s": 0.45165238678090575, "y": 0.6597307221542228, "x": 0.6829865361077111}, {"ncat25k": 20, "cat25k": 39, "term": "time", "s": 0.6340269277845777, "y": 0.8408812729498164, "x": 0.6842105263157895}, {"ncat25k": 20, "cat25k": 31, "term": "done", "s": 0.5801713586291309, "y": 0.8090575275397797, "x": 0.6854345165238678}, {"ncat25k": 20, "cat25k": 11, "term": "economy", "s": 0.3488372093023256, "y": 0.4308445532435741, "x": 0.6866585067319462}, {"ncat25k": 20, "cat25k": 67, "term": "$", "s": 0.7552019583843329, "y": 0.9155446756425949, "x": 0.6878824969400245}, {"ncat25k": 20, "cat25k": 42, "term": "a lot", "s": 0.6572827417380661, "y": 0.8567931456548348, "x": 0.6891064871481027}, {"ncat25k": 20, "cat25k": 33, "term": "lot of", "s": 0.6070991432068544, "y": 0.8212974296205631, "x": 0.6903304773561811}, {"ncat25k": 20, "cat25k": 22, "term": "saying", "s": 0.5104039167686658, "y": 0.7662178702570379, "x": 0.6915544675642595}, {"ncat25k": 20, "cat25k": 3, "term": "gone", "s": 0.18727050183598531, "y": 0.1689106487148103, "x": 0.6927784577723377}, {"ncat25k": 20, "cat25k": 11, "term": "around", "s": 0.3488372093023256, "y": 0.4492044063647491, "x": 0.6940024479804161}, {"ncat25k": 20, "cat25k": 8, "term": "ago", "s": 0.3035495716034272, "y": 0.3623011015911873, "x": 0.6952264381884945}, {"ncat25k": 20, "cat25k": 28, "term": "community", "s": 0.5703794369645043, "y": 0.8053855569155447, "x": 0.6964504283965729}, {"ncat25k": 20, "cat25k": 3, "term": "rights", "s": 0.18727050183598531, "y": 0.20073439412484698, "x": 0.6976744186046511}, {"ncat25k": 20, "cat25k": 3, "term": "wants", "s": 0.18727050183598531, "y": 0.2215422276621787, "x": 0.6988984088127295}, {"ncat25k": 20, "cat25k": 3, "term": "wants to", "s": 0.18727050183598531, "y": 0.22276621787025705, "x": 0.7001223990208079}, {"ncat25k": 20, "cat25k": 3, "term": "line", "s": 0.18727050183598531, "y": 0.2252141982864137, "x": 0.7013463892288861}, {"ncat25k": 20, "cat25k": 0, "term": "senator", "s": 0.0, "y": 0.017135862913096697, "x": 0.7025703794369644}, {"ncat25k": 20, "cat25k": 0, "term": "mexicans", "s": 0.0, "y": 0.03671970624235006, "x": 0.7037943696450428}, {"ncat25k": 20, "cat25k": 0, "term": "putin is", "s": 0.0, "y": 0.047735618115055084, "x": 0.7050183598531211}, {"ncat25k": 20, "cat25k": 0, "term": "bin", "s": 0.0, "y": 0.051407588739290085, "x": 0.7062423500611995}, {"ncat25k": 20, "cat25k": 0, "term": "laden", "s": 0.0, "y": 0.052631578947368425, "x": 0.7074663402692779}, {"ncat25k": 20, "cat25k": 0, "term": "bin laden", "s": 0.0, "y": 0.05385556915544676, "x": 0.7086903304773562}, {"ncat25k": 20, "cat25k": 0, "term": "part", "s": 0.0, "y": 0.057527539779681766, "x": 0.7099143206854345}, {"ncat25k": 20, "cat25k": 0, "term": "part of", "s": 0.0, "y": 0.06242350061199511, "x": 0.7111383108935129}, {"ncat25k": 20, "cat25k": 0, "term": "she worked", "s": 0.0, "y": 0.06487148102815177, "x": 0.7123623011015913}, {"ncat25k": 20, "cat25k": 0, "term": "fundamental", "s": 0.0, "y": 0.07588739290085679, "x": 0.7135862913096694}, {"ncat25k": 20, "cat25k": 0, "term": "mike", "s": 0.0, "y": 0.08690330477356181, "x": 0.7148102815177478}, {"ncat25k": 20, "cat25k": 0, "term": "mike pence", "s": 0.0, "y": 0.08812729498164014, "x": 0.7160342717258262}, {"ncat25k": 20, "cat25k": 0, "term": "social", "s": 0.0, "y": 0.09914320685434516, "x": 0.7172582619339045}, {"ncat25k": 20, "cat25k": 0, "term": "social security", "s": 0.0, "y": 0.10036719706242349, "x": 0.7184822521419828}, {"ncat25k": 20, "cat25k": 0, "term": "across", "s": 0.0, "y": 0.10281517747858016, "x": 0.7197062423500612}, {"ncat25k": 20, "cat25k": 0, "term": "dealings", "s": 0.0, "y": 0.1383108935128519, "x": 0.7209302325581396}, {"ncat25k": 20, "cat25k": 0, "term": "business dealings", "s": 0.0, "y": 0.14075887392900854, "x": 0.7221542227662179}, {"ncat25k": 20, "cat25k": 0, "term": "organization", "s": 0.0, "y": 0.15055079559363527, "x": 0.7233782129742962}, {"ncat25k": 23, "cat25k": 36, "term": "take", "s": 0.5826193390452876, "y": 0.828641370869033, "x": 0.7246022031823746}, {"ncat25k": 23, "cat25k": 56, "term": "these", "s": 0.668298653610771, "y": 0.8898408812729498, "x": 0.7258261933904528}, {"ncat25k": 23, "cat25k": 33, "term": "better", "s": 0.5740514075887393, "y": 0.8200734394124847, "x": 0.7270501835985312}, {"ncat25k": 23, "cat25k": 42, "term": "lot", "s": 0.613219094247246, "y": 0.8555691554467564, "x": 0.7282741738066095}, {"ncat25k": 23, "cat25k": 47, "term": "tell", "s": 0.6523867809057528, "y": 0.8702570379436965, "x": 0.7294981640146878}, {"ncat25k": 23, "cat25k": 39, "term": "deal", "s": 0.6083231334149326, "y": 0.8445532435740514, "x": 0.7307221542227662}, {"ncat25k": 23, "cat25k": 3, "term": "difference", "s": 0.17747858017135862, "y": 0.17013463892288863, "x": 0.7319461444308446}, {"ncat25k": 23, "cat25k": 42, "term": "believe", "s": 0.613219094247246, "y": 0.8616891064871481, "x": 0.7331701346389229}, {"ncat25k": 23, "cat25k": 11, "term": "two", "s": 0.31578947368421056, "y": 0.4895960832313342, "x": 0.7343941248470012}, {"ncat25k": 23, "cat25k": 3, "term": "military", "s": 0.17747858017135862, "y": 0.18727050183598531, "x": 0.7356181150550796}, {"ncat25k": 23, "cat25k": 3, "term": "dangerous", "s": 0.17747858017135862, "y": 0.1909424724602203, "x": 0.736842105263158}, {"ncat25k": 23, "cat25k": 20, "term": "last", "s": 0.45287637698898414, "y": 0.7392900856793145, "x": 0.7380660954712361}, {"ncat25k": 23, "cat25k": 3, "term": "between", "s": 0.17747858017135862, "y": 0.19951040391676866, "x": 0.7392900856793145}, {"ncat25k": 23, "cat25k": 3, "term": "second", "s": 0.17747858017135862, "y": 0.20195838433292532, "x": 0.7405140758873929}, {"ncat25k": 23, "cat25k": 6, "term": "working", "s": 0.23133414932680538, "y": 0.3035495716034272, "x": 0.7417380660954712}, {"ncat25k": 23, "cat25k": 17, "term": "korea", "s": 0.37331701346389234, "y": 0.7013463892288861, "x": 0.7429620563035495}, {"ncat25k": 23, "cat25k": 0, "term": "alliances", "s": 0.0, "y": 0.009791921664626684, "x": 0.7441860465116279}, {"ncat25k": 23, "cat25k": 0, "term": "mate", "s": 0.0, "y": 0.012239902080783353, "x": 0.7454100367197063}, {"ncat25k": 23, "cat25k": 0, "term": "running mate", "s": 0.0, "y": 0.01346389228886169, "x": 0.7466340269277846}, {"ncat25k": 23, "cat25k": 0, "term": "guy", "s": 0.0, "y": 0.03549571603427173, "x": 0.7478580171358629}, {"ncat25k": 23, "cat25k": 0, "term": "both", "s": 0.0, "y": 0.04161566707466341, "x": 0.7490820073439413}, {"ncat25k": 23, "cat25k": 0, "term": "team", "s": 0.0, "y": 0.05997552019583843, "x": 0.7503059975520195}, {"ncat25k": 23, "cat25k": 0, "term": "weapons program", "s": 0.0, "y": 0.0697674418604651, "x": 0.7515299877600979}, {"ncat25k": 23, "cat25k": 0, "term": "trump has", "s": 0.0, "y": 0.1175030599755202, "x": 0.7527539779681762}, {"ncat25k": 26, "cat25k": 53, "term": "other", "s": 0.6376988984088127, "y": 0.8788249694002448, "x": 0.7539779681762545}, {"ncat25k": 26, "cat25k": 53, "term": "some", "s": 0.6376988984088127, "y": 0.8812729498164015, "x": 0.7552019583843329}, {"ncat25k": 26, "cat25k": 3, "term": "without", "s": 0.17258261933904528, "y": 0.1664626682986536, "x": 0.7564259485924113}, {"ncat25k": 26, "cat25k": 56, "term": "way", "s": 0.6585067319461444, "y": 0.8935128518971848, "x": 0.7576499388004896}, {"ncat25k": 26, "cat25k": 42, "term": "back", "s": 0.5838433292533659, "y": 0.8592411260709915, "x": 0.7588739290085679}, {"ncat25k": 26, "cat25k": 6, "term": "top", "s": 0.2252141982864137, "y": 0.2533659730722155, "x": 0.7600979192166463}, {"ncat25k": 26, "cat25k": 31, "term": "even", "s": 0.5165238678090576, "y": 0.8164014687882497, "x": 0.7613219094247247}, {"ncat25k": 26, "cat25k": 14, "term": "nation", "s": 0.32558139534883723, "y": 0.6156670746634026, "x": 0.7625458996328028}, {"ncat25k": 26, "cat25k": 20, "term": "law", "s": 0.3769889840881273, "y": 0.736842105263158, "x": 0.7637698898408812}, {"ncat25k": 26, "cat25k": 36, "term": "need", "s": 0.5593635250917992, "y": 0.8347613219094248, "x": 0.7649938800489596}, {"ncat25k": 26, "cat25k": 3, "term": "keep", "s": 0.17258261933904528, "y": 0.18849449204406366, "x": 0.7662178702570379}, {"ncat25k": 26, "cat25k": 14, "term": "after", "s": 0.32558139534883723, "y": 0.6389228886168911, "x": 0.7674418604651163}, {"ncat25k": 26, "cat25k": 25, "term": "him", "s": 0.4712362301101592, "y": 0.7931456548347613, "x": 0.7686658506731946}, {"ncat25k": 26, "cat25k": 0, "term": "trust", "s": 0.0, "y": 0.019583843329253368, "x": 0.769889840881273}, {"ncat25k": 26, "cat25k": 0, "term": "choice", "s": 0.0, "y": 0.07711138310893513, "x": 0.7711138310893513}, {"ncat25k": 26, "cat25k": 0, "term": "stopped", "s": 0.0, "y": 0.10159118727050183, "x": 0.7723378212974297}, {"ncat25k": 26, "cat25k": 0, "term": "'ve got", "s": 0.0, "y": 0.10771113831089352, "x": 0.773561811505508}, {"ncat25k": 26, "cat25k": 0, "term": "toe", "s": 0.0, "y": 0.14443084455324356, "x": 0.7747858017135862}, {"ncat25k": 30, "cat25k": 50, "term": "good", "s": 0.609547123623011, "y": 0.8739290085679314, "x": 0.7760097919216646}, {"ncat25k": 30, "cat25k": 59, "term": "things", "s": 0.6352509179926561, "y": 0.8984088127294981, "x": 0.777233782129743}, {"ncat25k": 30, "cat25k": 42, "term": "us", "s": 0.5716034271725826, "y": 0.8506731946144431, "x": 0.7784577723378212}, {"ncat25k": 30, "cat25k": 50, "term": "new", "s": 0.609547123623011, "y": 0.8751529987760098, "x": 0.7796817625458996}, {"ncat25k": 30, "cat25k": 39, "term": "right", "s": 0.5544675642594858, "y": 0.8421052631578948, "x": 0.780905752753978}, {"ncat25k": 30, "cat25k": 61, "term": "were", "s": 0.6548347613219094, "y": 0.9069767441860466, "x": 0.7821297429620564}, {"ncat25k": 30, "cat25k": 14, "term": "put", "s": 0.31211750305997554, "y": 0.5973072215422277, "x": 0.7833537331701346}, {"ncat25k": 30, "cat25k": 6, "term": "wo", "s": 0.20930232558139536, "y": 0.2582619339045288, "x": 0.784577723378213}, {"ncat25k": 30, "cat25k": 6, "term": "wo n't", "s": 0.20930232558139536, "y": 0.26070991432068547, "x": 0.7858017135862914}, {"ncat25k": 30, "cat25k": 28, "term": "does n't", "s": 0.46878824969400246, "y": 0.8017135862913097, "x": 0.7870257037943696}, {"ncat25k": 30, "cat25k": 14, "term": "somebody", "s": 0.31211750305997554, "y": 0.6119951040391677, "x": 0.7882496940024479}, {"ncat25k": 30, "cat25k": 28, "term": "whether", "s": 0.46878824969400246, "y": 0.8041615667074663, "x": 0.7894736842105263}, {"ncat25k": 30, "cat25k": 20, "term": "police", "s": 0.36474908200734396, "y": 0.7380660954712361, "x": 0.7906976744186046}, {"ncat25k": 30, "cat25k": 11, "term": "went", "s": 0.28886168910648713, "y": 0.5030599755201958, "x": 0.791921664626683}, {"ncat25k": 30, "cat25k": 3, "term": "of state", "s": 0.17135862913096694, "y": 0.21909424724602203, "x": 0.7931456548347613}, {"ncat25k": 30, "cat25k": 6, "term": "record", "s": 0.20930232558139536, "y": 0.3145654834761322, "x": 0.7943696450428396}, {"ncat25k": 30, "cat25k": 0, "term": "school", "s": 0.0, "y": 0.006119951040391677, "x": 0.795593635250918}, {"ncat25k": 30, "cat25k": 0, "term": "safer", "s": 0.0, "y": 0.01591187270501836, "x": 0.7968176254589964}, {"ncat25k": 30, "cat25k": 0, "term": "program", "s": 0.0, "y": 0.06731946144430843, "x": 0.7980416156670747}, {"ncat25k": 30, "cat25k": 0, "term": "his tax", "s": 0.0, "y": 0.08935128518971848, "x": 0.7992656058751529}, {"ncat25k": 33, "cat25k": 151, "term": "country", "s": 0.7882496940024479, "y": 0.9694002447980415, "x": 0.8004895960832313}, {"ncat25k": 33, "cat25k": 73, "term": "years", "s": 0.6634026927784578, "y": 0.9192166462668299, "x": 0.8017135862913097}, {"ncat25k": 33, "cat25k": 78, "term": "secretary", "s": 0.6670746634026928, "y": 0.9265605875152999, "x": 0.8029375764993879}, {"ncat25k": 33, "cat25k": 14, "term": "returns", "s": 0.30477356181150556, "y": 0.6083231334149326, "x": 0.8041615667074663}, {"ncat25k": 33, "cat25k": 11, "term": "tax returns", "s": 0.28151774785801714, "y": 0.4761321909424725, "x": 0.8053855569155447}, {"ncat25k": 33, "cat25k": 3, "term": "security", "s": 0.1689106487148103, "y": 0.21175030599755204, "x": 0.806609547123623}, {"ncat25k": 33, "cat25k": 3, "term": "with russia", "s": 0.1689106487148103, "y": 0.23133414932680538, "x": 0.8078335373317013}, {"ncat25k": 33, "cat25k": 0, "term": "leader", "s": 0.0, "y": 0.04528763769889841, "x": 0.8090575275397797}, {"ncat25k": 33, "cat25k": 0, "term": "intelligence", "s": 0.0, "y": 0.12607099143206854, "x": 0.8102815177478581}, {"ncat25k": 36, "cat25k": 42, "term": "into", "s": 0.5152998776009792, "y": 0.8531211750305997, "x": 0.8115055079559363}, {"ncat25k": 36, "cat25k": 17, "term": "important", "s": 0.31089351285189726, "y": 0.664626682986536, "x": 0.8127294981640146}, {"ncat25k": 36, "cat25k": 28, "term": "why", "s": 0.38188494492044067, "y": 0.7968176254589964, "x": 0.813953488372093}, {"ncat25k": 36, "cat25k": 31, "term": "than", "s": 0.4541003671970624, "y": 0.8102815177478581, "x": 0.8151774785801713}, {"ncat25k": 36, "cat25k": 8, "term": "own", "s": 0.22888616891064872, "y": 0.34026927784577726, "x": 0.8164014687882497}, {"ncat25k": 36, "cat25k": 28, "term": "also", "s": 0.38188494492044067, "y": 0.8004895960832313, "x": 0.817625458996328}, {"ncat25k": 36, "cat25k": 6, "term": "support", "s": 0.19706242350061198, "y": 0.31211750305997554, "x": 0.8188494492044063}, {"ncat25k": 36, "cat25k": 0, "term": "virginia", "s": 0.0, "y": 0.004895960832313342, "x": 0.8200734394124847}, {"ncat25k": 36, "cat25k": 0, "term": "public", "s": 0.0, "y": 0.030599755201958387, "x": 0.8212974296205631}, {"ncat25k": 40, "cat25k": 11, "term": "united", "s": 0.2668298653610771, "y": 0.4100367197062424, "x": 0.8225214198286414}, {"ncat25k": 40, "cat25k": 11, "term": "united states", "s": 0.2668298653610771, "y": 0.4112607099143207, "x": 0.8237454100367196}, {"ncat25k": 40, "cat25k": 17, "term": "let me", "s": 0.3059975520195839, "y": 0.6609547123623011, "x": 0.824969400244798}, {"ncat25k": 40, "cat25k": 81, "term": "no", "s": 0.653610771113831, "y": 0.9302325581395349, "x": 0.8261933904528764}, {"ncat25k": 40, "cat25k": 64, "term": "now", "s": 0.5875152998776009, "y": 0.9094247246022031, "x": 0.8274173806609547}, {"ncat25k": 40, "cat25k": 59, "term": "go", "s": 0.576499388004896, "y": 0.8996328029375765, "x": 0.828641370869033}, {"ncat25k": 40, "cat25k": 47, "term": "where", "s": 0.5410036719706243, "y": 0.872705018359853, "x": 0.8298653610771114}, {"ncat25k": 40, "cat25k": 42, "term": "against", "s": 0.49204406364749087, "y": 0.8604651162790697, "x": 0.8310893512851897}, {"ncat25k": 40, "cat25k": 8, "term": "life", "s": 0.22643818849449204, "y": 0.35618115055079563, "x": 0.8323133414932681}, {"ncat25k": 40, "cat25k": 3, "term": "together", "s": 0.1664626682986536, "y": 0.17503059975520197, "x": 0.8335373317013464}, {"ncat25k": 40, "cat25k": 14, "term": "million", "s": 0.2839657282741738, "y": 0.6070991432068544, "x": 0.8347613219094248}, {"ncat25k": 40, "cat25k": 6, "term": "running", "s": 0.193390452876377, "y": 0.28029375764993886, "x": 0.835985312117503}, {"ncat25k": 40, "cat25k": 22, "term": "campaign", "s": 0.35128518971848227, "y": 0.769889840881273, "x": 0.8372093023255814}, {"ncat25k": 40, "cat25k": 3, "term": "talk about", "s": 0.1664626682986536, "y": 0.20685434516523868, "x": 0.8384332925336597}, {"ncat25k": 40, "cat25k": 8, "term": "pay", "s": 0.22643818849449204, "y": 0.3990208078335373, "x": 0.839657282741738}, {"ncat25k": 43, "cat25k": 126, "term": "look", "s": 0.7478580171358629, "y": 0.9571603427172583, "x": 0.8408812729498164}, {"ncat25k": 43, "cat25k": 39, "term": "world", "s": 0.46756425948592417, "y": 0.8372093023255814, "x": 0.8421052631578948}, {"ncat25k": 43, "cat25k": 56, "term": "ca", "s": 0.5507955936352509, "y": 0.8849449204406364, "x": 0.843329253365973}, {"ncat25k": 43, "cat25k": 56, "term": "ca n't", "s": 0.5507955936352509, "y": 0.8861689106487148, "x": 0.8445532435740514}, {"ncat25k": 43, "cat25k": 45, "term": "great", "s": 0.48837209302325585, "y": 0.8653610771113831, "x": 0.8457772337821298}, {"ncat25k": 43, "cat25k": 59, "term": "her", "s": 0.5605875152998776, "y": 0.9008567931456548, "x": 0.8470012239902082}, {"ncat25k": 43, "cat25k": 11, "term": "talk", "s": 0.23378212974296206, "y": 0.46144430844553247, "x": 0.8482252141982863}, {"ncat25k": 43, "cat25k": 6, "term": "worked", "s": 0.18604651162790697, "y": 0.2864137086903305, "x": 0.8494492044063647}, {"ncat25k": 43, "cat25k": 3, "term": "state", "s": 0.16523867809057527, "y": 0.21787025703794372, "x": 0.8506731946144431}, {"ncat25k": 43, "cat25k": 0, "term": "foundation", "s": 0.0, "y": 0.15299877600979192, "x": 0.8518971848225214}, {"ncat25k": 46, "cat25k": 14, "term": "states", "s": 0.27050183598531213, "y": 0.5458996328029376, "x": 0.8531211750305997}, {"ncat25k": 46, "cat25k": 17, "term": "taxes", "s": 0.2864137086903305, "y": 0.6572827417380661, "x": 0.8543451652386781}, {"ncat25k": 46, "cat25k": 61, "term": "well", "s": 0.5581395348837209, "y": 0.9045287637698898, "x": 0.8555691554467564}, {"ncat25k": 46, "cat25k": 89, "term": "say", "s": 0.631578947368421, "y": 0.9388004895960832, "x": 0.8567931456548348}, {"ncat25k": 46, "cat25k": 112, "term": "been", "s": 0.6707466340269278, "y": 0.9510403916768666, "x": 0.8580171358629131}, {"ncat25k": 46, "cat25k": 45, "term": "could", "s": 0.4736842105263159, "y": 0.8641370869033047, "x": 0.8592411260709915}, {"ncat25k": 46, "cat25k": 6, "term": "those", "s": 0.1835985312117503, "y": 0.2509179926560588, "x": 0.8604651162790697}, {"ncat25k": 46, "cat25k": 20, "term": "business", "s": 0.3072215422276622, "y": 0.7197062423500612, "x": 0.8616891064871481}, {"ncat25k": 46, "cat25k": 73, "term": "by", "s": 0.5850673194614443, "y": 0.9204406364749083, "x": 0.8629130966952264}, {"ncat25k": 46, "cat25k": 39, "term": "more", "s": 0.4553243574051408, "y": 0.8470012239902082, "x": 0.8641370869033047}, {"ncat25k": 46, "cat25k": 36, "term": "up", "s": 0.3880048959608324, "y": 0.8335373317013464, "x": 0.8653610771113831}, {"ncat25k": 46, "cat25k": 33, "term": "had", "s": 0.37454100367197063, "y": 0.824969400244798, "x": 0.8665850673194615}, {"ncat25k": 46, "cat25k": 14, "term": "american", "s": 0.27050183598531213, "y": 0.631578947368421, "x": 0.8678090575275397}, {"ncat25k": 46, "cat25k": 6, "term": "troops", "s": 0.1835985312117503, "y": 0.30110159118727053, "x": 0.8690330477356181}, {"ncat25k": 46, "cat25k": 3, "term": "nuclear weapons", "s": 0.16401468788249696, "y": 0.22766217870257038, "x": 0.8702570379436965}, {"ncat25k": 50, "cat25k": 59, "term": "thing", "s": 0.5214198286413709, "y": 0.8959608323133416, "x": 0.8714810281517749}, {"ncat25k": 50, "cat25k": 64, "term": "from", "s": 0.5495716034271726, "y": 0.9082007343941249, "x": 0.872705018359853}, {"ncat25k": 50, "cat25k": 61, "term": "like", "s": 0.5434516523867808, "y": 0.9033047735618115, "x": 0.8739290085679314}, {"ncat25k": 50, "cat25k": 56, "term": "really", "s": 0.5116279069767442, "y": 0.8910648714810282, "x": 0.8751529987760098}, {"ncat25k": 50, "cat25k": 81, "term": "'m", "s": 0.5887392900856793, "y": 0.9314565483476133, "x": 0.8763769889840881}, {"ncat25k": 50, "cat25k": 81, "term": "i 'm", "s": 0.5887392900856793, "y": 0.9326805385556916, "x": 0.8776009791921664}, {"ncat25k": 50, "cat25k": 73, "term": "out", "s": 0.5752753977968176, "y": 0.9216646266829865, "x": 0.8788249694002448}, {"ncat25k": 50, "cat25k": 22, "term": "then", "s": 0.30966952264381886, "y": 0.7674418604651163, "x": 0.8800489596083231}, {"ncat25k": 50, "cat25k": 3, "term": "weapons", "s": 0.16279069767441862, "y": 0.22643818849449204, "x": 0.8812729498164015}, {"ncat25k": 53, "cat25k": 56, "term": "your", "s": 0.4932680538555692, "y": 0.8922888616891065, "x": 0.8824969400244799}, {"ncat25k": 53, "cat25k": 20, "term": "work", "s": 0.28763769889840884, "y": 0.7209302325581396, "x": 0.8837209302325582}, {"ncat25k": 53, "cat25k": 39, "term": "got", "s": 0.3782129742962057, "y": 0.8482252141982863, "x": 0.8849449204406364}, {"ncat25k": 53, "cat25k": 0, "term": "vladimir", "s": 0.0, "y": 0.04283965728274174, "x": 0.8861689106487148}, {"ncat25k": 53, "cat25k": 0, "term": "vladimir putin", "s": 0.0, "y": 0.046511627906976744, "x": 0.8873929008567932}, {"ncat25k": 56, "cat25k": 59, "term": "there", "s": 0.49082007343941253, "y": 0.8947368421052632, "x": 0.8886168910648714}, {"ncat25k": 56, "cat25k": 109, "term": "them", "s": 0.6328029375764993, "y": 0.9473684210526316, "x": 0.8898408812729498}, {"ncat25k": 56, "cat25k": 165, "term": "because", "s": 0.7490820073439413, "y": 0.9718482252141983, "x": 0.8910648714810282}, {"ncat25k": 56, "cat25k": 106, "term": "think", "s": 0.6291309669522643, "y": 0.9461444308445532, "x": 0.8922888616891065}, {"ncat25k": 56, "cat25k": 56, "term": "my", "s": 0.48102815177478586, "y": 0.8886168910648714, "x": 0.8935128518971848}, {"ncat25k": 56, "cat25k": 89, "term": "do n't", "s": 0.5862913096695227, "y": 0.9400244798041616, "x": 0.8947368421052632}, {"ncat25k": 56, "cat25k": 36, "term": "how", "s": 0.3623011015911873, "y": 0.8310893512851897, "x": 0.8959608323133416}, {"ncat25k": 56, "cat25k": 20, "term": "defend", "s": 0.2827417380660955, "y": 0.7441860465116279, "x": 0.8971848225214198}, {"ncat25k": 56, "cat25k": 0, "term": "women", "s": 0.0, "y": 0.0832313341493268, "x": 0.8984088127294981}, {"ncat25k": 59, "cat25k": 53, "term": "their", "s": 0.4651162790697675, "y": 0.8800489596083231, "x": 0.8996328029375765}, {"ncat25k": 59, "cat25k": 8, "term": "he said", "s": 0.19461444308445533, "y": 0.32925336597307225, "x": 0.9008567931456548}, {"ncat25k": 59, "cat25k": 42, "term": "tax", "s": 0.3696450428396573, "y": 0.8543451652386781, "x": 0.9020807833537332}, {"ncat25k": 59, "cat25k": 84, "term": "'ve", "s": 0.5728274173806609, "y": 0.9339045287637698, "x": 0.9033047735618115}, {"ncat25k": 59, "cat25k": 28, "term": "first", "s": 0.3145654834761322, "y": 0.7980416156670747, "x": 0.9045287637698898}, {"ncat25k": 59, "cat25k": 39, "term": "does", "s": 0.36597307221542236, "y": 0.8457772337821298, "x": 0.9057527539779682}, {"ncat25k": 59, "cat25k": 22, "term": "nuclear", "s": 0.2900856793145655, "y": 0.7747858017135862, "x": 0.9069767441860466}, {"ncat25k": 63, "cat25k": 53, "term": "'ll", "s": 0.4565483476132191, "y": 0.8824969400244799, "x": 0.9082007343941249}, {"ncat25k": 63, "cat25k": 95, "term": "people", "s": 0.5789473684210525, "y": 0.9436964504283966, "x": 0.9094247246022031}, {"ncat25k": 63, "cat25k": 22, "term": "russia", "s": 0.28518971848225216, "y": 0.7711138310893513, "x": 0.9106487148102815}, {"ncat25k": 66, "cat25k": 120, "term": "all", "s": 0.620563035495716, "y": 0.9547123623011016, "x": 0.9118727050183599}, {"ncat25k": 66, "cat25k": 70, "term": "one", "s": 0.4944920440636475, "y": 0.9167686658506732, "x": 0.9130966952264381}, {"ncat25k": 66, "cat25k": 17, "term": "here", "s": 0.23255813953488372, "y": 0.6756425948592412, "x": 0.9143206854345165}, {"ncat25k": 66, "cat25k": 0, "term": "putin", "s": 0.0, "y": 0.044063647490820076, "x": 0.9155446756425949}, {"ncat25k": 69, "cat25k": 181, "term": "our", "s": 0.7233782129742962, "y": 0.9742962056303549, "x": 0.9167686658506732}, {"ncat25k": 69, "cat25k": 126, "term": "at", "s": 0.6193390452876377, "y": 0.9583843329253365, "x": 0.9179926560587515}, {"ncat25k": 69, "cat25k": 33, "term": "let", "s": 0.3170134638922889, "y": 0.8188494492044063, "x": 0.9192166462668299}, {"ncat25k": 69, "cat25k": 50, "term": "or", "s": 0.375764993880049, "y": 0.8776009791921664, "x": 0.9204406364749083}, {"ncat25k": 69, "cat25k": 20, "term": "make", "s": 0.2692778457772338, "y": 0.7184822521419828, "x": 0.9216646266829865}, {"ncat25k": 69, "cat25k": 31, "term": "president", "s": 0.3084455324357406, "y": 0.813953488372093, "x": 0.9228886168910648}, {"ncat25k": 69, "cat25k": 36, "term": "an", "s": 0.3243574051407589, "y": 0.8323133414932681, "x": 0.9241126070991432}, {"ncat25k": 73, "cat25k": 128, "term": "going", "s": 0.616891064871481, "y": 0.9608323133414933, "x": 0.9253365973072215}, {"ncat25k": 73, "cat25k": 75, "term": "get", "s": 0.4895960832313342, "y": 0.9241126070991432, "x": 0.9265605875152999}, {"ncat25k": 73, "cat25k": 0, "term": "governor pence", "s": 0.0, "y": 0.0036719706242350062, "x": 0.9277845777233782}, {"ncat25k": 76, "cat25k": 8, "term": "plan", "s": 0.1762545899632803, "y": 0.33414932680538556, "x": 0.9290085679314565}, {"ncat25k": 76, "cat25k": 81, "term": "know", "s": 0.4981640146878826, "y": 0.9290085679314565, "x": 0.9302325581395349}, {"ncat25k": 79, "cat25k": 198, "term": "very", "s": 0.7086903304773562, "y": 0.9767441860465117, "x": 0.9314565483476133}, {"ncat25k": 79, "cat25k": 109, "term": "me", "s": 0.5691554467564259, "y": 0.9485924112607099, "x": 0.9326805385556916}, {"ncat25k": 79, "cat25k": 0, "term": "elaine", "s": 0.0, "y": 0.0, "x": 0.9339045287637698}, {"ncat25k": 83, "cat25k": 140, "term": "what", "s": 0.6119951040391677, "y": 0.9645042839657283, "x": 0.9351285189718482}, {"ncat25k": 83, "cat25k": 81, "term": "as", "s": 0.47490820073439416, "y": 0.9277845777233782, "x": 0.9363525091799266}, {"ncat25k": 83, "cat25k": 84, "term": "did", "s": 0.48347613219094254, "y": 0.9351285189718482, "x": 0.9375764993880048}, {"ncat25k": 86, "cat25k": 67, "term": "want", "s": 0.386780905752754, "y": 0.9143206854345165, "x": 0.9388004895960832}, {"ncat25k": 89, "cat25k": 89, "term": "should", "s": 0.48225214198286415, "y": 0.9412484700122399, "x": 0.9400244798041616}, {"ncat25k": 89, "cat25k": 0, "term": "hillary clinton", "s": 0.0, "y": 0.008567931456548347, "x": 0.9412484700122399}, {"ncat25k": 92, "cat25k": 162, "term": "are", "s": 0.6156670746634026, "y": 0.9706242350061199, "x": 0.9424724602203183}, {"ncat25k": 92, "cat25k": 234, "term": "'re", "s": 0.7148102815177478, "y": 0.9791921664626683, "x": 0.9436964504283966}, {"ncat25k": 92, "cat25k": 120, "term": "when", "s": 0.5532435740514076, "y": 0.9534883720930232, "x": 0.9449204406364748}, {"ncat25k": 96, "cat25k": 109, "term": "just", "s": 0.5140758873929008, "y": 0.9498164014687882, "x": 0.9461444308445532}, {"ncat25k": 99, "cat25k": 64, "term": "would", "s": 0.3635250917992657, "y": 0.9130966952264381, "x": 0.9473684210526316}, {"ncat25k": 102, "cat25k": 42, "term": "can", "s": 0.2925336597307222, "y": 0.8518971848225214, "x": 0.9485924112607099}, {"ncat25k": 102, "cat25k": 89, "term": "will", "s": 0.4638922888616891, "y": 0.9375764993880048, "x": 0.9498164014687882}, {"ncat25k": 102, "cat25k": 11, "term": "his", "s": 0.17503059975520197, "y": 0.4626682986536108, "x": 0.9510403916768666}, {"ncat25k": 106, "cat25k": 0, "term": "pence", "s": 0.0, "y": 0.002447980416156671, "x": 0.952264381884945}, {"ncat25k": 109, "cat25k": 61, "term": "if", "s": 0.3525091799265606, "y": 0.9057527539779682, "x": 0.9534883720930232}, {"ncat25k": 119, "cat25k": 28, "term": "who", "s": 0.23011015911872706, "y": 0.795593635250918, "x": 0.9547123623011016}, {"ncat25k": 119, "cat25k": 64, "term": "clinton", "s": 0.3280293757649939, "y": 0.9106487148102815, "x": 0.95593635250918}, {"ncat25k": 119, "cat25k": 126, "term": "she", "s": 0.4957160342717259, "y": 0.9596083231334149, "x": 0.9571603427172583}, {"ncat25k": 119, "cat25k": 45, "term": "has", "s": 0.2913096695226438, "y": 0.8629130966952264, "x": 0.9583843329253365}, {"ncat25k": 119, "cat25k": 0, "term": "governor", "s": 0.0, "y": 0.0012239902080783355, "x": 0.9596083231334149}, {"ncat25k": 125, "cat25k": 128, "term": "so", "s": 0.4871481028151775, "y": 0.9620563035495716, "x": 0.9608323133414933}, {"ncat25k": 132, "cat25k": 95, "term": "about", "s": 0.37086903304773566, "y": 0.9424724602203183, "x": 0.9620563035495716}, {"ncat25k": 142, "cat25k": 332, "term": "they", "s": 0.6695226438188494, "y": 0.98531211750306, "x": 0.9632802937576499}, {"ncat25k": 149, "cat25k": 22, "term": "hillary", "s": 0.19583843329253364, "y": 0.7503059975520195, "x": 0.9645042839657283}, {"ncat25k": 158, "cat25k": 167, "term": "not", "s": 0.4969400244798042, "y": 0.9730722154222766, "x": 0.9657282741738066}, {"ncat25k": 162, "cat25k": 140, "term": "this", "s": 0.4626682986536108, "y": 0.9657282741738066, "x": 0.966952264381885}, {"ncat25k": 165, "cat25k": 128, "term": "on", "s": 0.3855569155446757, "y": 0.9632802937576499, "x": 0.9681762545899633}, {"ncat25k": 168, "cat25k": 145, "term": "be", "s": 0.46144430844553247, "y": 0.966952264381885, "x": 0.9694002447980415}, {"ncat25k": 178, "cat25k": 103, "term": "said", "s": 0.353733170134639, "y": 0.9449204406364748, "x": 0.9706242350061199}, {"ncat25k": 188, "cat25k": 435, "term": "have", "s": 0.6658506731946144, "y": 0.9865361077111383, "x": 0.9718482252141983}, {"ncat25k": 188, "cat25k": 226, "term": "but", "s": 0.5422276621787026, "y": 0.9779681762545899, "x": 0.9730722154222766}, {"ncat25k": 195, "cat25k": 123, "term": "for", "s": 0.3549571603427173, "y": 0.95593635250918, "x": 0.9742962056303549}, {"ncat25k": 205, "cat25k": 148, "term": "with", "s": 0.372093023255814, "y": 0.9681762545899633, "x": 0.9755201958384333}, {"ncat25k": 218, "cat25k": 246, "term": "do", "s": 0.5128518971848225, "y": 0.981640146878825, "x": 0.9767441860465117}, {"ncat25k": 221, "cat25k": 190, "term": "was", "s": 0.46022031823745413, "y": 0.9755201958384333, "x": 0.9779681762545899}, {"ncat25k": 231, "cat25k": 265, "term": "n't", "s": 0.5201958384332925, "y": 0.9828641370869032, "x": 0.9791921664626683}, {"ncat25k": 234, "cat25k": 3, "term": "donald", "s": 0.1591187270501836, "y": 0.17870257037943696, "x": 0.9804161566707467}, {"ncat25k": 234, "cat25k": 3, "term": "donald trump", "s": 0.1591187270501836, "y": 0.1799265605875153, "x": 0.981640146878825}, {"ncat25k": 274, "cat25k": 8, "term": "trump", "s": 0.16156670746634028, "y": 0.35985312117503065, "x": 0.9828641370869032}, {"ncat25k": 277, "cat25k": 237, "term": "is", "s": 0.45777233782129745, "y": 0.9804161566707467, "x": 0.9840881272949816}, {"ncat25k": 277, "cat25k": 564, "term": "it", "s": 0.6560587515299877, "y": 0.9938800489596082, "x": 0.98531211750306}, {"ncat25k": 357, "cat25k": 59, "term": "he", "s": 0.19828641370869032, "y": 0.8971848225214198, "x": 0.9865361077111383}, {"ncat25k": 363, "cat25k": 658, "term": "you", "s": 0.6217870257037944, "y": 0.9951040391676866, "x": 0.9877600979192166}, {"ncat25k": 406, "cat25k": 307, "term": "in", "s": 0.379436964504284, "y": 0.9840881272949816, "x": 0.988984088127295}, {"ncat25k": 419, "cat25k": 452, "term": "we", "s": 0.5079559363525091, "y": 0.9877600979192166, "x": 0.9902080783353733}, {"ncat25k": 429, "cat25k": 480, "term": "of", "s": 0.5091799265605875, "y": 0.9902080783353733, "x": 0.9914320685434517}, {"ncat25k": 433, "cat25k": 458, "term": "'s", "s": 0.49938800489596086, "y": 0.988984088127295, "x": 0.99265605875153}, {"ncat25k": 446, "cat25k": 820, "term": "i", "s": 0.6303549571603427, "y": 1.0, "x": 0.9938800489596082}, {"ncat25k": 591, "cat25k": 547, "term": "that", "s": 0.4724602203182375, "y": 0.99265605875153, "x": 0.9951040391676866}, {"ncat25k": 634, "cat25k": 485, "term": "a", "s": 0.38066095471236233, "y": 0.9914320685434517, "x": 0.996328029375765}, {"ncat25k": 819, "cat25k": 720, "term": "to", "s": 0.4663402692778458, "y": 0.996328029375765, "x": 0.9975520195838433}, {"ncat25k": 954, "cat25k": 818, "term": "and", "s": 0.4589963280293758, "y": 0.9987760097919216, "x": 0.9987760097919216}, {"ncat25k": 1063, "cat25k": 818, "term": "the", "s": 0.38433292533659735, "y": 0.9975520195838433, "x": 1.0}], "info": {"not_category_name": "Kaine Term", "category_terms": ["aisle", "fundamental", "our troops", "a shot", "firing a", "without firing", "weapons program", "iranian nuclear", "program", "choice"], "category_name": "Trump Term", "not_category_terms": ["aisle", "fundamental", "our troops", "a shot", "firing a", "without firing", "weapons program", "iranian nuclear", "program", "choice"]}}; }
+</script>
