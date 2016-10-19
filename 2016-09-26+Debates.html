@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8" />
-<title>2016-09-26 Debates</title>
+<title>Presidential Debates</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
@@ -11748,10 +11748,10 @@ div#notebook {
 
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[66]:</div>
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">scattertext</span> <span class="k">as</span> <span class="nn">ST</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">scattertext</span> <span class="k">as</span> <span class="nn">st</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">from</span> <span class="nn">pprint</span> <span class="k">import</span> <span class="n">pprint</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
@@ -11766,7 +11766,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[58]:</div>
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">nlp</span> <span class="o">=</span> <span class="n">spacy</span><span class="o">.</span><span class="n">en</span><span class="o">.</span><span class="n">English</span><span class="p">()</span>
@@ -11777,12 +11777,45 @@ div#notebook {
 </div>
 
 </div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Parse-debates-and-create-plotting-interface">Parse debates and create plotting interface<a class="anchor-link" href="#Parse-debates-and-create-plotting-interface">&#182;</a></h1>
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">lines</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;presidential-debate-2016-09-26.txt&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">debate_transcript_to_dataframe</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">speakers</span><span class="p">):</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">cur_speaker</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">speaker_start_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">r&#39;^([(]?[A-Z][A-Z][A-Z]+):?(.+)$&#39;</span><span class="p">)</span>
+    <span class="n">transcript</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">cur_statement</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="n">cur_speaker</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="n">speaker_start_re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;(&#39;</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">cur_speaker</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">transcript</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;speaker&#39;</span><span class="p">:</span> <span class="n">cur_speaker</span><span class="p">,</span> <span class="s1">&#39;statement&#39;</span><span class="p">:</span> <span class="n">cur_statement</span><span class="p">})</span>
+            <span class="n">cur_speaker</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">cur_statement</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+            <span class="k">for</span> <span class="n">other_name</span> <span class="ow">in</span> <span class="n">speakers</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">other_name</span><span class="o">+</span><span class="s1">&#39;:&#39;</span> <span class="ow">in</span> <span class="n">cur_statement</span><span class="p">:</span>
+                    <span class="n">cur_statement</span><span class="p">,</span> <span class="n">other_statement</span> <span class="o">=</span> <span class="n">cur_statement</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">other_name</span><span class="p">)</span>
+                    <span class="n">transcript</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;speaker&#39;</span><span class="p">:</span> <span class="n">cur_speaker</span><span class="p">,</span> <span class="s1">&#39;statement&#39;</span><span class="p">:</span> <span class="n">cur_statement</span><span class="o">.</span><span class="n">strip</span><span class="p">()})</span>
+                    <span class="n">transcript</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;speaker&#39;</span><span class="p">:</span> <span class="n">other_name</span><span class="p">,</span> <span class="s1">&#39;statement&#39;</span><span class="p">:</span> <span class="n">other_statement</span><span class="o">.</span><span class="n">strip</span><span class="p">()})</span>   
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cur_statement</span> <span class="o">+=</span> <span class="n">line</span> 
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">transcript</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">df</span>
 </pre></div>
 
 </div>
@@ -11792,31 +11825,30 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[53]:</div>
+<div class="prompt input_prompt">In&nbsp;[109]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">cur_speaker</span> <span class="o">=</span> <span class="kc">None</span>
-<span class="n">speaker_start_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">r&#39;^([(]?[A-Z][A-Z][A-Z]+):?(.+)$&#39;</span><span class="p">)</span>
-<span class="n">transcript</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="n">cur_statement</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
-<span class="n">cur_speaker</span> <span class="o">=</span> <span class="kc">None</span>
-<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
-    <span class="n">match</span> <span class="o">=</span> <span class="n">speaker_start_re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;(&#39;</span><span class="p">):</span>
-            <span class="k">continue</span>
-        <span class="k">if</span> <span class="n">cur_speaker</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">transcript</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;speaker&#39;</span><span class="p">:</span> <span class="n">cur_speaker</span><span class="p">,</span> <span class="s1">&#39;statement&#39;</span><span class="p">:</span> <span class="n">cur_statement</span><span class="p">})</span>
-        <span class="n">cur_speaker</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-        <span class="n">cur_statement</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
-        <span class="k">for</span> <span class="n">other_name</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;TRUMP&#39;</span><span class="p">,</span><span class="s1">&#39;CLINTON&#39;</span><span class="p">,</span><span class="s1">&#39;HOLT&#39;</span><span class="p">]:</span>
-            <span class="k">if</span> <span class="n">other_name</span><span class="o">+</span><span class="s1">&#39;:&#39;</span> <span class="ow">in</span> <span class="n">cur_statement</span><span class="p">:</span>
-                <span class="n">cur_statement</span><span class="p">,</span> <span class="n">other_statement</span> <span class="o">=</span> <span class="n">cur_statement</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">other_name</span><span class="p">)</span>
-                <span class="n">transcript</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;speaker&#39;</span><span class="p">:</span> <span class="n">cur_speaker</span><span class="p">,</span> <span class="s1">&#39;statement&#39;</span><span class="p">:</span> <span class="n">cur_statement</span><span class="o">.</span><span class="n">strip</span><span class="p">()})</span>
-                <span class="n">transcript</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;speaker&#39;</span><span class="p">:</span> <span class="n">other_name</span><span class="p">,</span> <span class="s1">&#39;statement&#39;</span><span class="p">:</span> <span class="n">other_statement</span><span class="o">.</span><span class="n">strip</span><span class="p">()})</span>   
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">cur_statement</span> <span class="o">+=</span> <span class="n">line</span> 
-<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">transcript</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">parties</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;QUIJANO&#39;</span><span class="p">:</span><span class="s1">&#39;Moderator&#39;</span><span class="p">,</span> 
+           <span class="s1">&#39;KAINE&#39;</span><span class="p">:</span><span class="s1">&#39;Democratic&#39;</span><span class="p">,</span> 
+           <span class="s1">&#39;PENCE&#39;</span><span class="p">:</span><span class="s1">&#39;Republican&#39;</span><span class="p">,</span> 
+           <span class="s1">&#39;HOLT&#39;</span><span class="p">:</span><span class="s1">&#39;Moderator&#39;</span><span class="p">,</span> 
+           <span class="s1">&#39;CLINTON&#39;</span><span class="p">:</span><span class="s1">&#39;Democratic&#39;</span><span class="p">,</span> 
+           <span class="s1">&#39;TRUMP&#39;</span><span class="p">:</span><span class="s1">&#39;Republican&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;COOPER&#39;</span><span class="p">:</span><span class="s1">&#39;Moderator&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;RADDATZ&#39;</span><span class="p">:</span><span class="s1">&#39;Moderator&#39;</span><span class="p">}</span>
+<span class="n">df_1st</span> <span class="o">=</span> <span class="n">debate_transcript_to_dataframe</span><span class="p">(</span><span class="s1">&#39;presidential-debate-2016-09-26.txt&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;TRUMP&#39;</span><span class="p">,</span><span class="s1">&#39;CLINTON&#39;</span><span class="p">,</span><span class="s1">&#39;HOLT&#39;</span><span class="p">])</span>
+<span class="n">df_vp</span> <span class="o">=</span> <span class="n">debate_transcript_to_dataframe</span><span class="p">(</span><span class="s1">&#39;vp-debate-2016-10-04.txt&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;PENCE&#39;</span><span class="p">,</span><span class="s1">&#39;KAINE&#39;</span><span class="p">,</span><span class="s1">&#39;QUIJANO&#39;</span><span class="p">])</span>
+<span class="n">df_1st</span><span class="p">[</span><span class="s1">&#39;debate&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;1st&#39;</span>
+<span class="n">df_vp</span><span class="p">[</span><span class="s1">&#39;debate&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;VP&#39;</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df_1st</span><span class="p">,</span> <span class="n">df_vp</span><span class="p">])</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">&#39;party&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;speaker&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">parties</span><span class="p">[</span><span class="n">x</span><span class="p">])</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">&#39;speaker and debate&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;speaker&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="s1">&#39; 1st&#39;</span><span class="p">)</span>
+<span class="n">df_2nd</span> <span class="o">=</span> <span class="n">debate_transcript_to_dataframe</span><span class="p">(</span><span class="s1">&#39;debate-2016-10-09-rush.txt&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;TRUMP&#39;</span><span class="p">,</span><span class="s1">&#39;CLINTON&#39;</span><span class="p">,</span><span class="s1">&#39;COOPER&#39;</span><span class="p">,</span><span class="s1">&#39;RADDATZ&#39;</span><span class="p">])</span>
+
+<span class="n">df_2nd</span><span class="p">[</span><span class="s1">&#39;speaker and debate&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">df_2nd</span><span class="p">[</span><span class="s1">&#39;speaker&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="s1">&#39; 2nd&#39;</span><span class="p">)</span>
+<span class="n">df_2nd</span><span class="p">[</span><span class="s1">&#39;party&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_2nd</span><span class="p">[</span><span class="s1">&#39;speaker&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">parties</span><span class="p">[</span><span class="n">x</span><span class="p">])</span>
+<span class="n">df_2nd</span><span class="p">[</span><span class="s1">&#39;debate&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;2nd&#39;</span>
+<span class="n">df_all</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df</span><span class="p">,</span> <span class="n">df_2nd</span><span class="p">])</span>
 </pre></div>
 
 </div>
@@ -11826,10 +11858,85 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[55]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span><span class="mi">4</span><span class="p">]</span>
+<div class=" highlight hl-ipython3"><pre><span></span> 
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[78]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">draw_plot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">category</span><span class="p">,</span> <span class="n">other_category</span><span class="p">,</span> <span class="n">category_col</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="n">corpus</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">CorpusFromPandas</span><span class="p">(</span><span class="n">data_frame</span> <span class="o">=</span> <span class="n">df</span><span class="p">[(</span><span class="n">df</span><span class="p">[</span><span class="n">category_col</span><span class="p">]</span> <span class="o">==</span> <span class="n">category</span><span class="p">)</span> 
+                                                              <span class="o">|</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">category_col</span><span class="p">]</span> <span class="o">==</span> <span class="n">other_category</span><span class="p">)],</span> 
+                                              <span class="n">category_col</span> <span class="o">=</span> <span class="n">category_col</span><span class="p">,</span> 
+                                              <span class="n">text_col</span> <span class="o">=</span> <span class="s1">&#39;statement&#39;</span><span class="p">,</span>
+                                              <span class="n">nlp</span> <span class="o">=</span> <span class="n">nlp</span><span class="p">)</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+    <span class="n">html</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">produce_scattertext_html</span><span class="p">(</span><span class="n">corpus</span><span class="p">,</span> 
+                                       <span class="n">category</span><span class="o">=</span><span class="n">category</span><span class="p">,</span> 
+                                       <span class="n">category_name</span><span class="o">=</span><span class="n">category</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">+</span><span class="s1">&#39; Term&#39;</span><span class="p">,</span> 
+                                       <span class="n">not_category_name</span><span class="o">=</span><span class="n">other_category</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39; Term&#39;</span><span class="p">,</span>
+                                       <span class="n">protocol</span><span class="o">=</span><span class="s1">&#39;https&#39;</span><span class="p">,</span>
+                                       <span class="n">pmi_filter_thresold</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                                       <span class="n">minimum_term_frequency</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">file_name</span> <span class="o">=</span> <span class="n">category</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;-&#39;</span> <span class="o">+</span> <span class="n">other_category</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">+</span> <span class="n">extra</span> <span class="o">+</span> <span class="s1">&#39;.html&#39;</span>
+    <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">html</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">IFrame</span><span class="p">(</span><span class="n">src</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[79]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">category</span><span class="p">,</span> <span class="n">other_category</span><span class="p">,</span> <span class="n">category_col</span> <span class="o">=</span> <span class="s1">&#39;CLINTON&#39;</span><span class="p">,</span> <span class="s1">&#39;TRUMP&#39;</span><span class="p">,</span> <span class="s1">&#39;speaker&#39;</span>
+<span class="n">corpus</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">CorpusFromPandas</span><span class="p">(</span><span class="n">data_frame</span> <span class="o">=</span> <span class="n">df</span><span class="p">[(</span><span class="n">df</span><span class="p">[</span><span class="n">category_col</span><span class="p">]</span> <span class="o">==</span> <span class="n">category</span><span class="p">)</span> 
+                                                              <span class="o">|</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">category_col</span><span class="p">]</span> <span class="o">==</span> <span class="n">other_category</span><span class="p">)],</span> 
+                                              <span class="n">category_col</span> <span class="o">=</span> <span class="n">category_col</span><span class="p">,</span> 
+                                              <span class="n">text_col</span> <span class="o">=</span> <span class="s1">&#39;statement&#39;</span><span class="p">,</span>
+                                              <span class="n">nlp</span> <span class="o">=</span> <span class="n">nlp</span><span class="p">)</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Find-most-characteristic-terms-used-by-Trump-and-Clinton">Find most characteristic terms used by Trump and Clinton<a class="anchor-link" href="#Find-most-characteristic-terms-used-by-Trump-and-Clinton">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[36]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">term_df</span> <span class="o">=</span> <span class="n">corpus</span><span class="o">.</span><span class="n">get_term_freq_df</span><span class="p">()</span>
+
+<span class="n">term_df</span><span class="p">[</span><span class="s1">&#39;Trump&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">corpus</span><span class="o">.</span><span class="n">get_scaled_f_scores</span><span class="p">(</span><span class="s1">&#39;TRUMP&#39;</span><span class="p">)</span>
+<span class="n">term_df</span><span class="p">[</span><span class="s1">&#39;Clinton&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">corpus</span><span class="o">.</span><span class="n">get_scaled_f_scores</span><span class="p">(</span><span class="s1">&#39;CLINTON&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Trump top terms&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">term_df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s1">&#39;Trump&#39;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span><span class="mi">20</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Clinton top terms&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">term_df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s1">&#39;Clinton&#39;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span><span class="mi">20</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -11840,87 +11947,41 @@ div#notebook {
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[55]:</div>
-
-<div class="output_html rendered_html output_subarea output_execute_result">
-<div>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>speaker</th>
-      <th>statement</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>HOLT</td>
-      <td>Good evening from Hofstra University in Hempst...</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>CLINTON</td>
-      <td>How are you, Donald?\n</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>HOLT</td>
-      <td>Good luck to you.\nWell, I don't expect us to ...</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>CLINTON</td>
-      <td>Well, thank you, Lester, and thanks to Hofstra...</td>
-    </tr>
-  </tbody>
-</table>
+<div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Index([&#39;clinton&#39;, &#39;secretary clinton&#39;, &#39;tell you&#39;, &#39;leaving&#39;, &#39;agree&#39;,
+       &#39;but you&#39;, &#39;i &#39;ll&#39;, &#39;you were&#39;, &#39;politicians&#39;, &#39;the war&#39;, &#39;tremendous&#39;,
+       &#39;wrong&#39;, &#39;should have&#39;, &#39;the way&#39;, &#39;chicago&#39;, &#39;i just&#39;, &#39;very very&#39;,
+       &#39;she does&#39;, &#39;our jobs&#39;, &#39;i agree&#39;],
+      dtype=&#39;object&#39;, name=&#39;term&#39;)
+Index([&#39;need to&#39;, &#39;&#39;ve got&#39;, &#39;that he&#39;, &#39;information&#39;, &#39;proposed&#39;, &#39;justice&#39;,
+       &#39;everyone&#39;, &#39;about what&#39;, &#39;national&#39;, &#39;people who&#39;, &#39;us to&#39;, &#39;part&#39;,
+       &#39;plans&#39;, &#39;too many&#39;, &#39;looked at&#39;, &#39;criminal justice&#39;, &#39;incomes&#39;, &#39;hope&#39;,
+       &#39;not just&#39;, &#39;the debt&#39;],
+      dtype=&#39;object&#39;, name=&#39;term&#39;)
+</pre>
 </div>
-</div>
-
 </div>
 
 </div>
 </div>
 
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Comare-Clinton-and-Trump's-1st-debate">Comare Clinton and Trump's 1st debate<a class="anchor-link" href="#Comare-Clinton-and-Trump's-1st-debate">&#182;</a></h1>
+</div>
+</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[61]:</div>
+<div class="prompt input_prompt">In&nbsp;[83]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">term_doc_mat</span> <span class="o">=</span> <span class="n">ST</span><span class="o">.</span><span class="n">TermDocMatrixFromPandas</span><span class="p">(</span><span class="n">data_frame</span> <span class="o">=</span> <span class="n">df</span><span class="p">[(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;speaker&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;CLINTON&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;speaker&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;TRUMP&#39;</span><span class="p">)],</span> 
-                                          <span class="n">category_col</span> <span class="o">=</span> <span class="s1">&#39;speaker&#39;</span><span class="p">,</span> 
-                                          <span class="n">text_col</span> <span class="o">=</span> <span class="s1">&#39;statement&#39;</span><span class="p">,</span>
-                                          <span class="n">nlp</span> <span class="o">=</span> <span class="n">nlp</span><span class="p">)</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[69]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">html</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">produce_scattertext_html</span><span class="p">(</span><span class="n">term_doc_mat</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="s1">&#39;CLINTON&#39;</span><span class="p">,</span> 
-                                   <span class="n">category_name</span><span class="o">=</span><span class="s1">&#39;Clinton Term&#39;</span><span class="p">,</span> <span class="n">not_category_name</span><span class="o">=</span><span class="s1">&#39;Trump Term&#39;</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[70]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">open</span><span class="p">(</span><span class="s1">&#39;20160926debate.html&#39;</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">html</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
-<span class="n">IFrame</span><span class="p">(</span><span class="n">src</span><span class="o">=</span><span class="s1">&#39;20160926debate.html&#39;</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">draw_plot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="s1">&#39;CLINTON&#39;</span><span class="p">,</span> <span class="s1">&#39;TRUMP&#39;</span><span class="p">,</span> <span class="s1">&#39;speaker&#39;</span><span class="p">,</span> <span class="s1">&#39;1st&#39;</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -11931,14 +11992,374 @@ div#notebook {
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[70]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[83]:</div>
 
 <div class="output_html rendered_html output_subarea output_execute_result">
 
         <iframe
             width="1000"
             height="1000"
-            src="20160926debate.html"
+            src="clinton-trump1st.html"
+            frameborder="0"
+            allowfullscreen
+        ></iframe>
+        
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Comare-Clinton-and-Trump's-2nd-debate">Comare Clinton and Trump's 2nd debate<a class="anchor-link" href="#Comare-Clinton-and-Trump's-2nd-debate">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[84]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">draw_plot</span><span class="p">(</span><span class="n">df_2nd</span><span class="p">,</span> <span class="s1">&#39;CLINTON&#39;</span><span class="p">,</span> <span class="s1">&#39;TRUMP&#39;</span><span class="p">,</span> <span class="s1">&#39;speaker&#39;</span><span class="p">,</span> <span class="s1">&#39;2nd&#39;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt output_prompt">Out[84]:</div>
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+
+        <iframe
+            width="1000"
+            height="1000"
+            src="clinton-trump2nd.html"
+            frameborder="0"
+            allowfullscreen
+        ></iframe>
+        
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Compare-Trump's-1st-and-2nd-Debates">Compare Trump's 1st and 2nd Debates<a class="anchor-link" href="#Compare-Trump's-1st-and-2nd-Debates">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[85]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">draw_plot</span><span class="p">(</span><span class="n">df_all</span><span class="p">,</span> <span class="s1">&#39;TRUMP 1st&#39;</span><span class="p">,</span> <span class="s1">&#39;TRUMP 2nd&#39;</span><span class="p">,</span> <span class="s1">&#39;speaker and debate&#39;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt output_prompt">Out[85]:</div>
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+
+        <iframe
+            width="1000"
+            height="1000"
+            src="trump 1st-trump 2nd.html"
+            frameborder="0"
+            allowfullscreen
+        ></iframe>
+        
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Compare-Clinton's-1st-and-2nd-Debates">Compare Clinton's 1st and 2nd Debates<a class="anchor-link" href="#Compare-Clinton's-1st-and-2nd-Debates">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[86]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">draw_plot</span><span class="p">(</span><span class="n">df_all</span><span class="p">,</span> <span class="s1">&#39;CLINTON 1st&#39;</span><span class="p">,</span> <span class="s1">&#39;CLINTON 2nd&#39;</span><span class="p">,</span> <span class="s1">&#39;speaker and debate&#39;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt output_prompt">Out[86]:</div>
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+
+        <iframe
+            width="1000"
+            height="1000"
+            src="clinton 1st-clinton 2nd.html"
+            frameborder="0"
+            allowfullscreen
+        ></iframe>
+        
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Compare-Clinton-to-Kaine">Compare Clinton to Kaine<a class="anchor-link" href="#Compare-Clinton-to-Kaine">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[93]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">draw_plot</span><span class="p">(</span><span class="n">df_all</span><span class="p">,</span> <span class="s1">&#39;CLINTON&#39;</span><span class="p">,</span> <span class="s1">&#39;KAINE&#39;</span><span class="p">,</span> <span class="s1">&#39;speaker&#39;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt output_prompt">Out[93]:</div>
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+
+        <iframe
+            width="1000"
+            height="1000"
+            src="clinton-kaine.html"
+            frameborder="0"
+            allowfullscreen
+        ></iframe>
+        
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Compare-Trump-to-Pence">Compare Trump to Pence<a class="anchor-link" href="#Compare-Trump-to-Pence">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[92]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">draw_plot</span><span class="p">(</span><span class="n">df_all</span><span class="p">,</span> <span class="s1">&#39;TRUMP&#39;</span><span class="p">,</span> <span class="s1">&#39;PENCE&#39;</span><span class="p">,</span> <span class="s1">&#39;speaker&#39;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt output_prompt">Out[92]:</div>
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+
+        <iframe
+            width="1000"
+            height="1000"
+            src="trump-pence.html"
+            frameborder="0"
+            allowfullscreen
+        ></iframe>
+        
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="The-VP-Debate">The VP Debate<a class="anchor-link" href="#The-VP-Debate">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[89]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">draw_plot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="s1">&#39;KAINE&#39;</span><span class="p">,</span> <span class="s1">&#39;PENCE&#39;</span><span class="p">,</span> <span class="s1">&#39;speaker&#39;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt output_prompt">Out[89]:</div>
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+
+        <iframe
+            width="1000"
+            height="1000"
+            src="kaine-pence.html"
+            frameborder="0"
+            allowfullscreen
+        ></iframe>
+        
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Compare-Democrats-to-Republicans">Compare Democrats to Republicans<a class="anchor-link" href="#Compare-Democrats-to-Republicans">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[94]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">draw_plot</span><span class="p">(</span><span class="n">df_all</span><span class="p">,</span> <span class="s1">&#39;Democratic&#39;</span><span class="p">,</span> <span class="s1">&#39;Republican&#39;</span><span class="p">,</span> <span class="s1">&#39;party&#39;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt output_prompt">Out[94]:</div>
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+
+        <iframe
+            width="1000"
+            height="1000"
+            src="democratic-republican.html"
+            frameborder="0"
+            allowfullscreen
+        ></iframe>
+        
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Compare-the-1st-and-2nd-debates">Compare the 1st and 2nd debates<a class="anchor-link" href="#Compare-the-1st-and-2nd-debates">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[110]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">draw_plot</span><span class="p">(</span><span class="n">df_all</span><span class="p">,</span> <span class="s1">&#39;1st&#39;</span><span class="p">,</span> <span class="s1">&#39;2nd&#39;</span><span class="p">,</span> <span class="s1">&#39;debate&#39;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt output_prompt">Out[110]:</div>
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+
+        <iframe
+            width="1000"
+            height="1000"
+            src="1st-2nd.html"
             frameborder="0"
             allowfullscreen
         ></iframe>
