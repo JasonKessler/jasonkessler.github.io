@@ -1,0 +1,187 @@
+State	Class	Portrait	Name	Party	Private Sector Experience	Public Sector Experience	Education	Assumed Office	Born	Seat Up
+Alabama	3	Richard Shelby, official portrait, 112th Congress crop.jpg	Richard Shelby	Republican	None	U.S. House, Alabama Senate	University of Alabama, Tuscaloosa (BA; LLB)
+Birmingham School of Law (JD)	January 3, 1987	May 6, 1934 (age 82)	2022
+Alabama	2	Jeff Sessions official portrait.jpg	Jeff Sessions	Republican	Lawyer in private practice	Alabama Attorney General, U.S. Attorney for the Southern District of Alabama	Huntingdon College (BA)
+University of Alabama, Tuscaloosa (JD)	January 3, 1997	December 24, 1946 (age 70)	2020
+Alaska	3	Lisa Murkowski.jpg	Lisa Murkowski	Republican	Lawyer in private practice	Alaska House	Georgetown University (BA)
+Willamette University (JD)	December 20, 2002	May 22, 1957 (age 59)	2022
+Alaska	2	Senator Dan Sullivan official.jpg	Dan Sullivan	Republican	Lawyer in private practice	Alaska Natural Resources Commissioner, Alaska Attorney General, U.S. Assistant Secretary of State for Economic and Business Affairs	Harvard University (BA)
+Georgetown University (MS; JD)	January 3, 2015	November 13, 1964 (age 52)	2020
+Arizona	3	John McCain official portrait 2009.jpg	John McCain	Republican	None	U.S. House, U.S. Navy Captain	United States Naval Academy (BS)	January 3, 1987	August 29, 1936 (age 80)	2022
+Arizona	1	Jeff Flake official Senate photo.jpg	Jeff Flake	Republican	Nonprofit director	U.S. House	Brigham Young University, Utah (BA; MA)	January 3, 2013	December 31, 1962 (age 54)	2018
+Arkansas	3	John Boozman, official portrait, 112th Congress.jpg	John Boozman	Republican	Optometrist	Rogers Public School Board, U.S. House	University of Arkansas, Fayetteville (attended)
+Southern College of Optometry (OD)	January 3, 2011	December 10, 1950 (age 66)	2022
+Arkansas	2	Tom Cotton official Senate photo.jpg	Tom Cotton	Republican	Lawyer	U.S. House	Harvard University (BA; JD)
+Claremont Graduate University (attended)	January 3, 2015	May 13, 1977 (age 39)	2020
+California	1	Dianne Feinstein, official Senate photo 2.jpg	Dianne Feinstein	Democratic	None	San Francisco Mayor, San Francisco Board	Stanford University (BA)	November 10, 1992	June 22, 1933 (age 83)	2018
+California	3	Kamala Harris Official Attorney General Photo.jpg	Kamala Harris	Democratic	None	California Attorney General, San Francisco District Attorney	Howard University (BA)
+University of California, Hastings (JD)	January 3, 2017	October 20, 1964 (age 52)	2022
+Colorado	3	Michael Bennet Official Photo.jpg	Michael Bennet	Democratic	Managing director of an investment firm	Denver Public Schools Superintendent	Wesleyan University (BA)
+Yale University (JD)	January 21, 2009	November 28, 1964 (age 52)	2022
+Colorado	2	Cory Gardner official Senate portrait.jpeg	Cory Gardner	Republican	None	U.S. House, Colorado House	Colorado State University, Fort Collins (BA)
+University of Colorado, Boulder (JD)	January 3, 2015	August 22, 1974 (age 42)	2020
+Connecticut	3	Richard Blumenthal Official Portrait.jpg	Richard Blumenthal	Democratic	Lawyer	Connecticut Attorney General, Connecticut Senate, Connecticut House	Harvard University (BA)
+Trinity College, Cambridge (attended)
+Yale University (JD)	January 5, 2011	February 13, 1946 (age 70)	2022
+Connecticut	1	Chris Murphy, official portrait, 113th Congress.jpg	Chris Murphy	Democratic	None	U.S. House, Connecticut Senate, Connecticut House	Williams College (BA)
+University of Connecticut, Hartford (JD)	January 3, 2013	August 3, 1973 (age 43)	2018
+Delaware	1	Tom Carper, official portrait, 112th Congress.jpg	Tom Carper	Democratic	None	Delaware Governor, U.S. House, Delaware Treasurer, U.S. Navy Captain	Ohio State University (BA)
+University of Delaware, Newark (MBA)	January 3, 2001	January 23, 1947 (age 69)	2018
+Delaware	2	Chris Coons, official portrait, 112th Congress.jpg	Chris Coons	Democratic	Nonprofit work, lawyer for a manufacturer	New Castle County Executive	Amherst College (BA)
+Yale University (MA, JD)	November 15, 2010	September 9, 1963 (age 53)	2020
+Florida	1	Bill Nelson.jpg	Bill Nelson	Democratic	Lawyer in private practice	Florida Treasurer, U.S. House, Florida House, Astronaut	University of Florida (attended)
+Yale University (BA)
+University of Virginia (JD)	January 3, 2001	September 29, 1942 (age 74)	2018
+Florida	3	Marco Rubio, Official Portrait, 112th Congress.jpg	Marco Rubio	Republican	Lawyer in private practice	Florida House Speaker	Tarkio College (attended)
+Santa Fe College (attended)
+University of Florida (BA)
+University of Miami (JD)	January 3, 2011	May 28, 1971 (age 45)	2022
+Georgia	3	Johnny Isakson official Senate photo.jpg	Johnny Isakson	Republican	Real estate broker	U.S. House, Georgia Senate, Georgia House	University of Georgia (BBA)	January 3, 2005	December 28, 1944 (age 72)	2022
+Georgia	2	David Perdue official Senate photo.jpg	David Perdue	Republican	Chief executive officer	None	Georgia Institute of Technology (BS; MS)	January 3, 2015	December 10, 1949 (age 67)	2020
+Hawaii	3	Brian Schatz, official portrait, 113th Congress 2.jpg	Brian Schatz	Democratic	CEO, director of nonprofits	Hawaii Lieutenant Governor, Hawaii House	Pomona College (BA)	December 26, 2012	October 20, 1972 (age 44)	2022
+Hawaii	1	Mazie Hirono, official portrait, 113th Congress.jpg	Mazie Hirono	Democratic	Lawyer in private practice	U.S. House, Hawaii House, Hawaii Lieutenant Governor	University of Hawaii, Manoa (BA)
+Georgetown University (JD)	January 3, 2013	November 3, 1947 (age 69)	2018
+Idaho	3	Mike Crapo Official Photo 110th Congress.jpg	Mike Crapo	Republican	Lawyer	U.S. House, Idaho Senate	Brigham Young University, Utah (BA)
+Harvard University (JD)	January 3, 1999	May 20, 1951 (age 65)	2022
+Idaho	2	Jim Risch official portrait.jpg	Jim Risch	Republican	Professor, rancher, president of nonprofit	Idaho Governor, Idaho Lieutenant Governor, Idaho Senate President pro tempore, Ada County Attorney	University of Wisconsin, Milwaukee (attended)
+University of Idaho, Moscow (BS; JD)	January 3, 2009	May 3, 1943 (age 73)	2020
+Illinois	2	Richard Durbin official photo.jpg	Dick Durbin	Democratic	Lawyer in private practice, professor	U.S. House	Georgetown University (BS; JD)	January 3, 1997	November 21, 1944 (age 72)	2020
+Illinois	3	Tammy Duckworth, official portrait, 113th Congress.jpg	Tammy Duckworth	Democratic	None	U.S. Army Lieutenant Colonel, U.S. House, Assistant Secretary of Veterans Affairs for Public and Intergovernmental Affairs, Illinois Director of Veterans Affairs	University of Hawaii, Manoa (BA)
+George Washington University (MA)
+Northern Illinois University (attended)
+Capella University (PhD)	January 3, 2017	March 12, 1968 (age 48)	2022
+Indiana	1	Joe Donnelly, official portrait, 113th Congress.jpg	Joe Donnelly	Democratic	Printer, lawyer in a law firm	U.S. House	University of Notre Dame (BA; JD)	January 3, 2013	September 29, 1955 (age 61)	2018
+Indiana	3	Todd Young, Official Portrait, 112th Congress.jpg	Todd Young	Republican	Attorney, adjunct professor	U.S. House	United States Naval Academy (BS)
+University of Chicago (MBA)
+University of London (MA)
+Indiana University, Indianapolis (JD)	January 3, 2017	August 24, 1972 (age 44)	2022
+Iowa	3	Sen Chuck Grassley official.jpg	Chuck Grassley	Republican	Farmer, sheet metal shearer, assembly line worker	U.S. House, Iowa House	University of Northern Iowa (BA; MA)
+University of Iowa (attended)	January 3, 1981	September 17, 1933 (age 83)	2022
+Iowa	2	Joni Ernst Official photo portrait 114th Congress.jpg	Joni Ernst	Republican	Farmer	U.S. Army Lieutenant Colonel, Iowa Senate	Iowa State University (BA)
+Columbus State University (MPA)	January 3, 2015	July 1, 1970 (age 46)	2020
+Kansas	2	Pat Roberts official Senate photo.jpg	Pat Roberts	Republican	Journalist	U.S. House	Kansas State University, Manhattan (BA)	January 3, 1997	April 20, 1936 (age 80)	2020
+Kansas	3	Jerry Moran, official portrait, 112th Congress headshot.jpg	Jerry Moran	Republican	Banker, lawyer in a law firm	U.S. House, Kansas Senate	Fort Hays State University (attended)
+University of Kansas, Lawrence (BS; JD)	January 3, 2011	May 29, 1954 (age 62)	2022
+Kentucky	2	Mitch McConnell official portrait 112th Congress.jpg	Mitch McConnell	Republican	None	U.S. Deputy Assistant Attorney General for Legislative Affairs, Jefferson County Executive	University of Louisville (BA)
+University of Kentucky (JD)	January 3, 1985	February 20, 1942 (age 74)	2020
+Kentucky	3	Rand Paul, official portrait, 112th Congress alternate.jpg	Rand Paul	Republican	Ophthalmologist	Congressional Intern	Baylor University (attended)
+Duke University (MD)	January 3, 2011	January 7, 1963 (age 54)	2022
+Louisiana	2	Bill Cassidy official Senate photo.jpg	Bill Cassidy	Republican	Physician	U.S. House, Louisiana Senate	Louisiana State University, Baton Rogue (BS)
+Louisiana State University, New Orleans (MD)	January 3, 2015	September 28, 1957 (age 59)	2020
+Louisiana	3	John Neely Kennedy, official portrait, 115th Congress.jpg	John N. Kennedy	Republican	Attorney, Law professor	Louisiana Secretary of Revenue, Governor's counsel, Louisiana Treasurer	Vanderbilt University (BA)
+University of Virginia (JD)
+Magdalen College, Oxford (BCL)	January 3, 2017	November 21, 1951 (age 65)	2022
+Maine	2	Sen Susan Collins official.jpg	Susan Collins	Republican	Executive director of the Center for Family Business at Husson University	Maine Professional and Financial Regulation Commissioner	St. Lawrence University (BA)	January 3, 1997	December 7, 1952 (age 64)	2020
+Maine	1	Angus King official portrait.jpg	Angus King	Independent	Founder and vice president of energy companies	Maine Governor	Dartmouth College (BA)
+University of Virginia (JD)	January 3, 2013	March 31, 1944 (age 72)	2018
+Maryland	1	Ben Cardin official Senate portrait.jpg	Ben Cardin	Democratic	Lawyer in private practice	U.S. House, Maryland House	University of Pittsburgh (BA)
+University of Maryland, Baltimore (JD)	January 3, 2007	October 5, 1943 (age 73)	2018
+Maryland	3	Chris Van Hollen official portrait, 2010.jpg	Chris Van Hollen	Democratic	Lawyer	U.S. House, Maryland General Assembly	Swarthmore College (BA)
+Georgetown University (JD)
+Harvard University (MPP)	January 3, 2017	January 10, 1959 (age 58)	2022
+Massachusetts	1	Elizabeth Warren, official portrait, 114th Congress.jpg	Elizabeth Warren	Democratic	Lawyer at a law firm and in private practice, law school professor, research associate, vice president of a nonprofit	CFPB Director, COP Chair	George Washington University (attended)
+University of Houston (BS)
+Rutgers University, Newark (JD)	January 3, 2013	June 22, 1949 (age 67)	2018
+Massachusetts	2	Edward Markey, official portrait, 114th Congress.jpg	Ed Markey	Democratic	Lawyer in private practice	U.S. House, Massachusetts House	Boston College (BA; JD)	July 16, 2013	July 11, 1946 (age 70)	2020
+Michigan	1	Debbie Stabenow, official portrait.jpg	Debbie Stabenow	Democratic	None	U.S. House, Michigan Senate, Michigan House, Ingham County Board	Michigan State University (BA; MSW)	January 3, 2001	April 29, 1950 (age 66)	2018
+Michigan	2	Gary Peters, official portrait, 114th Congress.jpg	Gary Peters	Democratic	Financial advisor, lecturer	U.S. House, Michigan Lottery Commissioner, Michigan Senate	Alma College (BA)
+University of Detroit (MBA)
+Wayne State University (JD)
+Michigan State University (MA)	January 3, 2015	December 1, 1958 (age 58)	2020
+Minnesota	1	Amy Klobuchar, official portrait, 113th Congress.jpg	Amy Klobuchar	Democratic	Lawyer in a law firm	Hennepin County Attorney	Yale University (BA)
+University of Chicago (JD)	January 3, 2007	May 25, 1960 (age 56)	2018
+Minnesota	2	Al Franken Official Senate Portrait.jpg	Al Franken	Democratic	Comedian, writer, radio talk show host	None	Harvard University (BA)	July 7, 2009	May 21, 1951 (age 65)	2020
+Mississippi	2	CochranThad(R-MS).jpg	Thad Cochran	Republican	Lawyer in private practice	U.S. House	University of Mississippi, Oxford (BA; JD)	December 27, 1978	December 7, 1937 (age 79)	2020
+Mississippi	1	SenatorRogerWicker(R-MS).jpg	Roger Wicker	Republican	None	U.S. House, Mississippi Senate	University of Mississippi, Oxford (BA; JD)	December 31, 2007	July 5, 1951 (age 65)	2018
+Missouri	1	Claire McCaskill, official Senate photo portrait, standing, 2007.jpg	Claire McCaskill	Democratic	Trial lawyer	Missouri Auditor, Missouri House, Jackson County Attorney	University of Missouri, Columbia (BS; JD)	January 3, 2007	July 24, 1953 (age 63)	2018
+Missouri	3	Roy Blunt, Official Portrait, 112th Congress.jpg	Roy Blunt	Republican	President of Southwest Baptist University	U.S. House, Missouri Secretary of State	Southwest Baptist University, Bolivar (BA)
+Missouri State University, Springfield (MA)	January 3, 2011	January 10, 1950 (age 67)	2022
+Montana	1	Jon Tester, official 110th Congress photo.jpg	Jon Tester	Democratic	Music teacher, farmer	Montana Senate President	University of Great Falls (BS)	January 3, 2007	August 21, 1956 (age 60)	2018
+Montana	2	Steve Daines official Senate portrait.jpg	Steve Daines	Republican	Businessperson	U.S. House	Montana State University, Bozeman (BS)	January 3, 2015	August 20, 1962 (age 54)	2020
+Nebraska	1	Deb Fischer official Senate photo.jpg	Deb Fischer	Republican	Rancher	Nebraska Legislature	University of Nebraska, Lincoln (BS)	January 3, 2013	March 1, 1951 (age 65)	2018
+Nebraska	2	Ben Sasse official portrait (crop).jpg	Ben Sasse	Republican	President of Midland University	U.S. Assistant Secretary of Health and Human Services for Planning and Evaluation	Harvard University (BA)
+St. John's College, Maryland (MA)
+Yale University (MA, MPhil, PhD)	January 3, 2015	February 22, 1972 (age 44)	2020
+Nevada	1	Dean Heller, Official Senate Portrait, 112th Congress.jpg	Dean Heller	Republican	Stockbroker, stock trader	U.S. House, Nevada Secretary of State, Nevada Assembly	University of Southern California (BBA)	May 9, 2011	May 10, 1960 (age 56)	2018
+Nevada	3	Catherine Cortez Masto (Media).jpg	Catherine Cortez Masto	Democratic	Attorney	Nevada Attorney General	University of Nevada, Reno (BS)
+Gonzaga University (JD)	January 3, 2017	March 29, 1964 (age 52)	2022
+New Hampshire	2	Jeanne Shaheen, official Senate photo portrait, 2009.jpg	Jeanne Shaheen	Democratic	Teacher, entrepreneur	New Hampshire Governor, New Hampshire Senate	Shippensburg University (BA)
+University of Mississippi, Oxford (MSS)	January 3, 2009	January 28, 1947 (age 69)	2020
+New Hampshire	3	Maggie Hassan, official portrait, 115th Congress.jpg	Maggie Hassan	Democratic	Attorney, healthcare executive	New Hampshire Governor, New Hampshire Senate Majority Leader	Brown University (BA)
+Northeastern University (JD)	January 3, 2017	February 27, 1958 (age 58)	2022
+New Jersey	1	Robert Menendez, official Senate photo.jpg	Bob Menendez	Democratic	Lawyer in private practice	U.S. House, New Jersey Senate, New Jersey General Assembly, Union City Mayor	St. Peter's University (BA)
+Rutgers University, Newark (JD)	January 18, 2006	January 1, 1954 (age 63)	2018
+New Jersey	2	Cory Booker, official portrait, 114th Congress.jpg	Cory Booker	Democratic	Pro bono lawyer	Newark Mayor	Stanford University (BA; MA)
+Queen's College, Oxford (MA)
+Yale University (JD)	October 31, 2013	April 22, 1969 (age 47)	2020
+New Mexico	2	Tom Udall official Senate portrait.jpg	Tom Udall	Democratic	None	U.S. House, New Mexico Attorney General, Assistant U.S. Attorney, law clerk for the 10th Circuit	Prescott College (BA)
+Downing College, Cambridge (LLB)
+University of New Mexico, Albuquerque (JD)	January 3, 2009	May 18, 1948 (age 68)	2020
+New Mexico	1	Martin Heinrich, official portrait, 113th Congress.jpg	Martin Heinrich	Democratic	Non-profit director, consultant	U.S. House, Albuquerque City Council	University of Missouri, Columbia (BS)
+University of New Mexico, Albuquerque (attended)	January 3, 2013	October 17, 1971 (age 45)	2018
+New York	3	Charles Schumer official portrait.jpg	Chuck Schumer	Democratic	None	U.S. House, New York Assembly	Harvard University (BA; JD)	January 3, 1999	November 23, 1950 (age 66)	2022
+New York	1	SenatorGillibrandpic.jpg	Kirsten Gillibrand	Democratic	Lawyer for law firms	U.S. House, law clerk for the 2nd Circuit, U.S. HUD Department special counsel	Dartmouth College (BA)
+University of California, Los Angeles (JD)	January 26, 2009	December 9, 1966 (age 50)	2018
+North Carolina	3	Richard Burr official portrait.jpg	Richard Burr	Republican	Sales manager, director of nonprofits	U.S. House	Wake Forest University (BA)	January 3, 2005	November 30, 1955 (age 61)	2022
+North Carolina	2	Senator Thom Tillis Official Portrait.jpg	Thom Tillis	Republican	Business consultant	North Carolina House Speaker	Chattanooga State Community College (attended)
+University of Maryland, University College (BA)	January 3, 2015	August 30, 1960 (age 56)	2020
+North Dakota	3	Hoeven Official Portrait 2014.JPG	John Hoeven	Republican	Banker	North Dakota Governor	Dartmouth College (BA)
+Northwestern University (MBA)	January 3, 2011	March 13, 1957 (age 59)	2022
+North Dakota	1	Heidi Heitkamp official portrait 113th Congress.jpg	Heidi Heitkamp	Democratic	Lawyer, gasification plant director	Lawyer for state government agencies, North Dakota Attorney General, North Dakota Tax Commissioner	University of North Dakota (BA)
+Lewis and Clark College (JD)	January 3, 2013	October 30, 1955 (age 61)	2018
+Ohio	1	Sherrod Brown official photo 2009 2.jpg	Sherrod Brown	Democratic	Teacher	U.S. House, Ohio Secretary of State, Ohio House	Yale University (BA)
+Ohio State University (MA; MPA)	January 3, 2007	November 9, 1952 (age 64)	2018
+Ohio	3	Rob Portman, official portrait, 112th Congress.jpg	Rob Portman	Republican	Farm hand, lobbyist, lawyer in a law firm	U.S. House, U.S. Trade Representative, Director of the Office of Management and Budget	Dartmouth College (BA)
+University of Michigan, Ann Arbor (JD)	January 3, 2011	December 19, 1955 (age 61)	2022
+Oklahoma	2	Jim Inhofe, official photo portrait, 2007.jpg	Jim Inhofe	Republican	Businessperson, developer, president of insurance company	U.S. Army, U.S. House, Tulsa Mayor, Oklahoma Senate, Oklahoma House	University of Tulsa (BA)	November 17, 1994	November 17, 1934 (age 82)	2020
+Oklahoma	3	James Lankford official Senate photo.jpg	James Lankford	Republican	Program director at Falls Creek Baptist Conference Center	U.S. House	University of Texas, Austin (BS)
+Southwestern Baptist Theological Seminary (MDiv)	January 3, 2015	March 4, 1968 (age 48)	2022
+Oregon	3	Ron Wyden official portrait crop.jpg	Ron Wyden	Democratic	Teacher, nonprofit director	U.S. House	University of California, Santa Barbara (attended)
+Stanford University (BA)
+University of Oregon (JD)	February 6, 1996	May 3, 1949 (age 67)	2022
+Oregon	2	Jeff Merkley.jpg	Jeff Merkley	Democratic	Director of nonprofits	Oregon House Speaker, Defense Department tech worker, CBO Analyst,	Stanford University (BA)
+Princeton University (MPA)	January 3, 2009	October 24, 1956 (age 60)	2020
+Pennsylvania	1	Senator Bob Casey official photo 2010.jpg	Bob Casey Jr.	Democratic	Teacher, basketball coach, lawyer in private practice	Pennsylvania Treasurer, Pennsylvania Auditor	College of the Holy Cross (BA)
+Catholic University of America (JD)	January 3, 2007	April 13, 1960 (age 56)	2018
+Pennsylvania	3	Pat Toomey, Official Portrait, 112th Congress.jpg	Pat Toomey	Republican	Currency trader, restaurant owner	U.S. House	Harvard University (BA)	January 3, 2011	November 17, 1961 (age 55)	2022
+Rhode Island	2	Jack Reed, official portrait, 112th Congress.jpg	Jack Reed	Democratic	Lawyer at law firms	U.S. Army Major, U.S. House, Rhode Island Senate	United States Military Academy (BS)
+Harvard University (MPP, JD)	January 3, 1997	November 12, 1949 (age 67)	2020
+Rhode Island	1	Sheldon Whitehouse 2010.jpg	Sheldon Whitehouse	Democratic	None	Law clerk for the West Virginia Supreme Court, Special Assistant to Attorney General, Governor's Executive Counsel, Rhode Island Attorney General, U.S. Attorney for the District of Rhode Island, Rhode Island Director of Business Regulation	Yale University (BA)
+University of Virginia (JD)	January 3, 2007	October 20, 1955 (age 61)	2018
+South Carolina	2	Lindsey Graham, Official Portrait 2006.jpg	Lindsey Graham	Republican	Lawyer in private practice	Judge advocate, military prosecutor, U.S. House, South Carolina House of Representatives	University of South Carolina, Columbia (BA; JD)	January 3, 2003	July 9, 1955 (age 61)	2020
+South Carolina	3	Tim Scott, official portrait, 113th Congress.jpg	Tim Scott	Republican	Insurance agent, financial adviser	U.S. House, South Carolina House, Charleston County Council	Presbyterian College (attended)
+Charleston Southern University (BS)	January 2, 2013	November 19, 1965 (age 51)	2022
+South Dakota	3	John Thune, official portrait, 111th Congress.jpg	John Thune	Republican	Municipal League Director, Railroad Director	U.S. House, Legislative aide, South Dakota Republican Party Executive Director	Biola University (BS)
+University of South Dakota (MBA)	January 3, 2005	January 7, 1961 (age 56)	2022
+South Dakota	2	Mike Rounds official Senate portrait.jpg	Mike Rounds	Republican	Businessperson	South Dakota Governor, South Dakota Senate	South Dakota State University (BS)	January 3, 2015	October 24, 1954 (age 62)	2020
+Tennessee	2	LamarAlexander.jpg	Lamar Alexander	Republican	None	Law clerk for the 5th Circuit, Senate staffer, Tennessee Governor, U.S. Secretary of Education	Vanderbilt University (BA)
+New York University (JD)	January 3, 2003	July 3, 1940 (age 76)	2020
+Tennessee	1	Bob Corker official Senate photo.jpg	Bob Corker	Republican	Construction laborer and superintendent, owner of construction and real estate companies	Chattanooga Mayor, Tennessee Finance and Administration Commissioner	University of Tennessee, Knoxville (BS)	January 3, 2007	August 24, 1952 (age 64)	2018
+Texas	2	John Cornyn official portrait, 2009.jpg	John Cornyn	Republican	Lawyer	State district judge, Texas Attorney General, Texas Supreme Court Associate Justice	Trinity University, Texas (BA)
+St. Mary's University, Texas (JD)
+University of Virginia (LLM)	December 1, 2002	February 2, 1952 (age 64)	2020
+Texas	1	Ted Cruz, official portrait, 113th Congress.jpg	Ted Cruz	Republican	Lawyer in a law firm	Law clerk for the U.S. 4th Circuit and Supreme Court, U.S. Associate Deputy Attorney General, federal policy advisor, Texas Solicitor General	Princeton University (BA)
+Harvard University (JD)	January 3, 2013	December 22, 1970 (age 46)	2018
+Utah	1	Orrin Hatch, Official Photograph.jpg	Orrin Hatch	Republican	Janitor, construction worker, bishop, lawyer	None	Brigham Young University, Utah (BA)
+University of Pittsburgh (JD)	January 3, 1977	March 22, 1934 (age 82)	2018
+Utah	3	Mike Lee official portrait 112th Congress.jpg	Mike Lee	Republican	Lawyer in a law firm	Law clerk for the U.S. District Court and 3rd Circuit, Assistant U.S. Attorney	Brigham Young University, Utah (BA; JD)	January 3, 2011	June 4, 1971 (age 45)	2022
+Vermont	3	Leahy2009.jpg	Patrick Leahy	Democratic	Lawyer in private practice	Chittenden County State's Attorney	St. Michael's College (BA)
+Georgetown University (JD)	January 3, 1975	March 31, 1940 (age 76)	2022
+Vermont	1	Bernie Sanders.jpg	Bernie Sanders	Independent[1]	Filmmaker, carpenter,[2] writer, researcher	Burlington Mayor, U.S. House	Brooklyn College (attended)
+University of Chicago (BS)	January 3, 2007	September 8, 1941 (age 75)	2018
+Virginia	2	Mark Warner, official 111th Congress photo portrait.jpg	Mark Warner	Democratic	Businessperson, venture capitalist	Virginia Governor, Virginia Democratic Party Chair	George Washington University (BA)
+Harvard University (JD)	January 3, 2009	December 15, 1954 (age 62)	2020
+Virginia	1	Tim Kaine, official 113th Congress photo portrait.jpg	Tim Kaine	Democratic	Missionary, law clerk for the 11th Circuit, lawyer in private practice, teacher	Virginia Governor, Virginia Lieutenant Governor, Richmond Mayor, Richmond City Council, Democratic National Committee Chair	University of Missouri, Columbia (BA)
+Harvard University (JD)	January 3, 2013	February 26, 1958 (age 58)	2018
+Washington	3	Patty Murray, official portrait, 113th Congress.jpg	Patty Murray	Democratic	Preschool teacher, parenting teacher, lobbyist	Washington Senate, Shoreline School Board	Washington State University, Pullman (BA)	January 3, 1993	October 11, 1950 (age 66)	2022
+Washington	1	Maria Cantwell, official portrait, 110th Congress.jpg	Maria Cantwell	Democratic	Marketing vice president	U.S. House, Washington House	Miami University (BA)	January 3, 2001	October 13, 1958 (age 58)	2018
+West Virginia	1	Joe Manchin official portrait 112th Congress.jpg	Joe Manchin	Democratic	President of a coal mining company	West Virginia Governor, West Virginia Secretary of State, West Virginia Senate, West Virginia House	West Virginia University, Morgantown (BS)	November 15, 2010	August 24, 1947 (age 69)	2018
+West Virginia	2	Shelley Moore Capito official Senate photo.jpg	Shelley Moore Capito	Republican	None	U.S. House	Duke University (BS)
+University of Virginia (MEd)	January 3, 2015	November 26, 1953 (age 63)	2020
+Wisconsin	3	Ron Johnson, official portrait, 112th Congress.jpg	Ron Johnson	Republican	Accountant, CEO of plastics manufacturer	None	University of Minnesota, Twin Cities (BS)	January 3, 2011	April 8, 1955 (age 61)	2022
+Wisconsin	1	Tammy Baldwin, official portrait, 113th Congress.jpg	Tammy Baldwin	Democratic	Lawyer in private practice	U.S. House, Wisconsin Assembly, Dane County Board	Smith College (BA)
+University of Wisconsin, Madison (JD)	January 3, 2013	February 11, 1962 (age 54)	2018
+Wyoming	2	Mike Enzi, official portrait, 111th Congress.jpg	Mike Enzi	Republican	Shoe salesman, president of nonprofit, accountant for an oil drilling company, executive director for a gas/coal/utilities company	Wyoming Air National Guard, Member of the Coal Advisory Committee (U.S. Interior Department), Wyoming Senate, Wyoming House, Gillette Mayor	George Washington University (BS)
+University of Denver (MBA)	January 3, 1997	February 1, 1944 (age 72)	2020
+Wyoming	1	John Barrasso official portrait 112th Congress.jpg	John Barrasso	Republican	Physician in private practice, orthopedic surgeon, chief of staff of a medical center, president/physician for several nonprofits	Wyoming Senate	Rensselaer Polytechnic Institute (attended)
+Georgetown University (BS; MD)	June 25, 2007	July 21, 1952 (age 64)	2018
