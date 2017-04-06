@@ -3951,7 +3951,8 @@ function buildViz(widthInPixels = 800,
                   showCharacteristic = true,
                   wordVecMaxPValue = false,
                   saveSvgButton = false,
-                  reverseSortScoresForNotCategory = false) {
+                  reverseSortScoresForNotCategory = false,
+                  minPVal=0.05) {
     var divName = 'd3-div-1';
 
     // Set the dimensions of the canvas / graph
@@ -4312,11 +4313,18 @@ function buildViz(widthInPixels = 800,
             return d.y;
         }) + 0.1]);
 
+        /*
+        data.sort(function (a, b) {
+            return Math.abs(b.os) - Math.abs(a.os)
+        });
+        */
+
 
         //var rangeTree = null; // keep boxes of all points and labels here
         var rectHolder = new RectangleHolder();
         // Add the scatterplot
-        mysvg = svg.selectAll("dot")
+        mysvg = svg
+            .selectAll("dot")
             .data(data)
             .enter()
             .append("circle")
@@ -4622,8 +4630,8 @@ function buildViz(widthInPixels = 800,
             if (wordVecMaxPValue) {
                 function signifTest(x) {
                     if (isAssociatedToCategory)
-                        return x.p >= 0.95;
-                    return x.p <= 0.05;
+                        return x.p >= 1-minPVal;
+                    return x.p <= minPVal;
                 }
 
                 sortedData = sortedData.filter(signifTest)
@@ -4683,8 +4691,12 @@ function buildViz(widthInPixels = 800,
             svg.attr('width', word.node().getBBox().x + 3 * maxWidth + 10);
         }
 
-
-        for (i = 0; i < data.length; labelPointsIfPossible(i++));
+        var numPointsLabeled = 0;
+        for (var i = 0; i < data.length; i++) {
+            if(labelPointsIfPossible(i)) numPointsLabeled++;
+        }
+        console.log('numPointsLabeled');
+        console.log(numPointsLabeled);
 
 
         function populateCorpusStats() {
