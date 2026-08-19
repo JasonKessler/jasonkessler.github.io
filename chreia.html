@@ -15,16 +15,21 @@
     .timer-label { margin:0; color:var(--muted); font-size:.82rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
     #timer-display { display:block; margin-top:2px; font-size:1.6rem; font-weight:700; font-variant-numeric:tabular-nums; }
     .timer-actions { display:flex; gap:8px; } .timer button { padding:8px 11px; font-size:.82rem; }
+    .slot-window { position:relative; width:100%; overflow:hidden; padding:28px 30px; border:6px solid #4c3928; border-radius:12px; background:linear-gradient(135deg,#fffdf6 0%,#eee0c5 100%); box-shadow:inset 0 0 0 2px #c8a56a, inset 0 0 28px #60401d20, 0 6px 0 #b89968; }
+    .slot-window::before { content:"CHREIA REEL"; position:absolute; top:0; left:50%; transform:translate(-50%,-1px); padding:4px 14px; border-radius:0 0 6px 6px; background:#4c3928; color:#f8f3e8; font:700 .66rem/1 system-ui,sans-serif; letter-spacing:.12em; }
+    .chreia-slot { height:270px; display:flex; flex-direction:column; justify-content:center; }
+    .exercise { height:210px; margin-top:38px; display:flex; flex-direction:column; justify-content:center; }
+    .exercise::before { content:"EXERCISE REEL"; }
     #speaker { margin:0 0 9px; font-size:1.25rem; font-weight:700; }
-    blockquote { margin:0; padding:25px 0; border-block:1px solid var(--line); font-size:clamp(1.3rem, 3.5vw, 1.65rem); line-height:1.5; font-style:italic; }
-    .exercise { margin-top:32px; }
+    blockquote { margin:0; font-size:clamp(1.3rem, 3.5vw, 1.65rem); line-height:1.5; font-style:italic; }
     h2 { margin:7px 0 10px; font-size:1.65rem; font-weight:400; }
     #instruction, #source { font:1.05rem/1.7 system-ui, sans-serif; }
     #instruction { margin:0; max-width:70ch; }
     #source { margin:24px 0 0; padding:22px; border:1px solid var(--line); border-radius:6px; color:var(--muted); white-space:pre-line; }
     #source a { color:var(--accent); font-weight:700; }
     .spinning { animation:slotPulse .12s linear infinite alternate; }
-    @keyframes slotPulse { from { opacity:.42; transform:translateY(-3px); } to { opacity:1; transform:translateY(3px); } }
+    @keyframes slotPulse { from { opacity:.35; transform:translateY(-13px); filter:blur(1.2px); } to { opacity:1; transform:translateY(13px); filter:blur(0); } }
+    @media (max-width:560px) { .slot-window { padding:26px 20px; border-width:5px; } .chreia-slot { height:310px; } .exercise { height:240px; } }
     [hidden] { display:none; }
     .actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:32px; }
     button { padding:12px 16px; border:1px solid var(--ink); border-radius:5px; background:transparent; color:var(--ink); font:600 .95rem system-ui, sans-serif; cursor:pointer; }
@@ -37,8 +42,8 @@
     <p class="eyebrow">Progymnasmata</p>
     <h1>Chreia</h1>
     <section class="timer" aria-label="Exercise timer"><div><p class="timer-label">Writing time</p><time id="timer-display" datetime="PT2M">2:00</time></div><div class="timer-actions"><button type="button" id="timer-toggle">Start</button><button type="button" id="timer-reset">Reset</button></div></section>
-    <section aria-labelledby="speaker"><p id="speaker">Diogenes of Sinope</p><blockquote id="chreia">When he saw a child drinking from its hands, Diogenes threw away his cup, saying that the child had surpassed him in simplicity.</blockquote></section>
-    <section class="exercise" aria-labelledby="step-name">
+    <section class="slot-window chreia-slot" aria-labelledby="speaker"><p id="speaker">Diogenes of Sinope</p><blockquote id="chreia">When he saw a child drinking from its hands, Diogenes threw away his cup, saying that the child had surpassed him in simplicity.</blockquote></section>
+    <section class="slot-window exercise" aria-labelledby="step-name">
       <h2 id="step-name">State the saying</h2><p id="instruction">Introduce the speaker and clearly state the saying or action. Give enough context to understand what occurred.</p>
     </section>
     <p id="source" hidden></p>
