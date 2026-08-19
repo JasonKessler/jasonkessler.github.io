@@ -17,9 +17,9 @@
     .timer-actions { display:flex; gap:8px; } .timer button { padding:8px 11px; font-size:.82rem; }
     .slot-window { position:relative; width:100%; overflow:hidden; padding:28px 30px; border:6px solid #4c3928; border-radius:12px; background:linear-gradient(135deg,#fffdf6 0%,#eee0c5 100%); box-shadow:inset 0 0 0 2px #c8a56a, inset 0 0 28px #60401d20, 0 6px 0 #b89968; }
     .slot-window::before { content:"CHREIA REEL"; position:absolute; top:0; left:50%; transform:translate(-50%,-1px); padding:4px 14px; border-radius:0 0 6px 6px; background:#4c3928; color:#f8f3e8; font:700 .66rem/1 system-ui,sans-serif; letter-spacing:.12em; }
-    .chreia-slot { height:270px; display:flex; flex-direction:column; justify-content:center; }
-    .exercise { height:300px; margin-top:38px; display:flex; flex-direction:column; justify-content:center; }
-    .exercise::before { content:"EXERCISE REEL"; }
+    .chreia-slot { height:270px; margin-top:38px; display:flex; flex-direction:column; justify-content:center; }
+    .exercise { height:300px; display:flex; flex-direction:column; justify-content:center; }
+    .exercise::before { content:"TASK"; }
     #speaker { margin:0 0 9px; font-size:1.25rem; font-weight:700; }
     blockquote { margin:0; font-size:clamp(1.3rem, 3.5vw, 1.65rem); line-height:1.5; font-style:italic; }
     h2 { margin:7px 0 10px; font-size:1.65rem; font-weight:400; }
@@ -44,10 +44,10 @@
     <p class="eyebrow">Progymnasmata</p>
     <h1>Chreia</h1>
     <section class="timer" aria-label="Exercise timer"><div><p class="timer-label">Speaking time</p><time id="timer-display" datetime="PT2M">2:00</time></div><div class="timer-actions"><button type="button" id="timer-toggle">Start</button><button type="button" id="timer-reset">Reset</button></div></section>
-    <section class="slot-window chreia-slot" aria-labelledby="speaker"><p id="speaker">Diogenes of Sinope</p><blockquote id="chreia">When he saw a child drinking from its hands, Diogenes threw away his cup, saying that the child had surpassed him in simplicity.</blockquote></section>
     <section class="slot-window exercise" aria-labelledby="step-name">
       <h2 id="step-name">Recitation</h2><p id="greek-term">ἀπαγγελία · apangelia</p><p id="instruction">Repeat the chreia clearly, retaining its essential meaning.</p><p id="task-example"><strong>Example:</strong> “Diogenes said that the problem is not life itself but living badly.”</p>
     </section>
+    <section class="slot-window chreia-slot" aria-labelledby="speaker"><p id="speaker">Diogenes of Sinope</p><blockquote id="chreia">When he saw a child drinking from its hands, Diogenes threw away his cup, saying that the child had surpassed him in simplicity.</blockquote></section>
     <p id="source" hidden></p>
     <div class="actions"><button type="button" id="another">Give me another</button><button type="button" id="show-source">Show source</button></div>
     <footer>A rhetorical exercise based on the classical progymnasmata. The task names follow Theon’s eight chreia exercises as discussed in <a href="https://www.mdpi.com/2077-1444/16/12/1574" target="_blank" rel="noopener noreferrer">Eriksson, “John Cassian, Rhetoric and Education”</a>. Displayed chreia wording is a readable modern paraphrase; use the source citation for the ancient text.</footer>
