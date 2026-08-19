@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chreia Exercise</title>
+  <style>
+    :root { --paper:#f8f3e8; --ink:#28231c; --muted:#6e6558; --accent:#7a4e22; --line:#d9cdb9; }
+    * { box-sizing:border-box; }
+    body { margin:0; min-height:100vh; display:grid; place-items:center; padding:24px; background:#e7dfd1; color:var(--ink); font-family:Georgia, "Times New Roman", serif; }
+    main { width:min(760px, 100%); padding:clamp(28px, 6vw, 52px); background:var(--paper); border:1px solid var(--line); border-radius:10px; box-shadow:0 12px 36px #32230f20; }
+    .eyebrow, .label { margin:0; color:var(--muted); font:700 .78rem/1.2 system-ui, sans-serif; letter-spacing:.12em; text-transform:uppercase; }
+    h1 { margin:8px 0 34px; font-size:clamp(2.25rem, 8vw, 4rem); font-weight:400; }
+    #speaker { margin:0 0 9px; font-size:1.25rem; font-weight:700; }
+    blockquote { margin:0; padding:25px 0; border-block:1px solid var(--line); font-size:clamp(1.3rem, 3.5vw, 1.65rem); line-height:1.5; font-style:italic; }
+    .exercise { margin-top:32px; }
+    h2 { margin:7px 0 10px; font-size:1.65rem; font-weight:400; }
+    #instruction, #source { font:1rem/1.6 system-ui, sans-serif; }
+    #instruction { margin:0; }
+    #source { margin:18px 0 0; color:var(--muted); }
+    [hidden] { display:none; }
+    .actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:32px; }
+    button { padding:12px 16px; border:1px solid var(--ink); border-radius:5px; background:transparent; color:var(--ink); font:600 .95rem system-ui, sans-serif; cursor:pointer; }
+    button:hover, button:focus-visible { background:var(--ink); color:var(--paper); }
+    footer { margin-top:34px; color:var(--muted); font:.8rem/1.4 system-ui, sans-serif; }
+  </style>
+</head>
+<body>
+  <main>
+    <p class="eyebrow">Progymnasmata</p>
+    <h1>Chreia</h1>
+    <section aria-labelledby="speaker"><p id="speaker">Diogenes of Sinope</p><blockquote id="chreia">When he saw a child drinking from its hands, Diogenes threw away his cup, saying that the child had surpassed him in simplicity.</blockquote></section>
+    <section class="exercise" aria-labelledby="step-name">
+      <p class="label" id="step-number">Step 1</p><h2 id="step-name">State the saying</h2><p id="instruction">Introduce the speaker and clearly state the saying or action. Give enough context to understand what occurred.</p>
+    </section>
+    <p id="source" hidden></p>
+    <div class="actions"><button type="button" id="another">Give me another</button><button type="button" id="show-source">Show source</button></div>
+    <footer>A rhetorical exercise based on the classical progymnasmata. Displayed wording is a readable modern paraphrase; use the source citation for the ancient text.</footer>
+  </main>
+  <script>
+    const chreiai = [
+      {speaker:"Diogenes of Sinope", text:"When he saw a child drinking from its hands, Diogenes threw away his cup, saying that the child had surpassed him in simplicity.", source:"Diogenes Laertius, Lives of Eminent Philosophers 6.37."},
+      {speaker:"Diogenes of Sinope", text:"When Alexander asked if he could do anything for him, Diogenes replied, ‘Stand out of my sunlight.’", source:"Diogenes Laertius, Lives of Eminent Philosophers 6.38; Plutarch, Alexander 14."},
+      {speaker:"Diogenes of Sinope", text:"Told that life was an evil, Diogenes answered that the evil was not life itself, but living badly.", source:"Diogenes Laertius, Lives of Eminent Philosophers 6.55."},
+      {speaker:"Diogenes of Sinope", text:"When people praised someone who spoke well but did not act well, Diogenes compared him to a harp: it produces sound but cannot hear it.", source:"Diogenes Laertius, Lives of Eminent Philosophers 6.59."},
+      {speaker:"Socrates", text:"Seeing a man display a tear in his cloak, Socrates said that he could see the man’s love of fame peeping through it.", source:"Diogenes Laertius, Lives of Eminent Philosophers 2.36."},
+      {speaker:"Socrates", text:"Asked how a person might become good and noble, Socrates advised learning from knowledgeable people which faults one ought to avoid.", source:"Diogenes Laertius, Lives of Eminent Philosophers 2.31."},
+      {speaker:"Plato", text:"When someone excused gambling because the stakes were small, Plato answered that the habit was not small.", source:"Diogenes Laertius, Lives of Eminent Philosophers 3.38."},
+      {speaker:"Aristippus", text:"Asked why he paid a high price for a fish, Aristippus said that he bought not the fish but the pleasure it gave him.", source:"Diogenes Laertius, Lives of Eminent Philosophers 2.75."},
+      {speaker:"Epicurus", text:"Epicurus taught that someone for whom a little is not enough will find nothing enough.", source:"Aelian, Varia Historia 4.13."},
+      {speaker:"Epictetus", text:"Epictetus taught that people are disturbed not by things themselves, but by their judgments about things.", source:"Epictetus, Enchiridion 5."},
+      {speaker:"Leonidas of Sparta", text:"When Xerxes ordered the Spartans to hand over their weapons, Leonidas replied, ‘Come and take them.’", source:"Plutarch, Sayings of Spartans, Leonidas 11 (225c)."},
+      {speaker:"Agis of Sparta", text:"Asked how many enemies the Spartans faced, Agis answered: ‘Enough for us to fight.’", source:"Plutarch, Sayings of Spartans, Agis 3 (215d)."},
+      {speaker:"Julius Caesar", text:"After his swift victory at Zela, Caesar summarized it in three words: ‘I came, I saw, I conquered.’", source:"Plutarch, Caesar 50; Suetonius, Julius 37."},
+      {speaker:"Cato the Younger", text:"Cato held that it was better to suffer wrong than to commit it.", source:"Plutarch, Cato the Younger 9."}
+    ];
+    const steps = [
+      ["State the saying", "Introduce the speaker and clearly state the saying or action. Give enough context to understand what occurred."],
+      ["Praise the speaker", "Commend the speaker. Explain what wisdom, courage, character, or experience gives the saying authority."],
+      ["Paraphrase", "Restate the saying in your own words while preserving its essential meaning."],
+      ["Explain the cause", "Explain why the speaker said or did this. What circumstances produced it, and what underlying truth does it express?"],
+      ["Contrast", "Show what follows when someone ignores the principle. Give an opposing example or consequence."],
+      ["Comparison", "Compare the principle with a similar example from history, ordinary life, literature, or nature."],
+      ["Provide testimony", "Support the principle with the words or example of another respected historical, literary, or philosophical figure."],
+      ["Epilogue", "Conclude with a brief statement that reinforces the lesson and explains why the saying remains worth remembering."]
+    ];
+    let lastChreia = -1, lastStep = -1;
+    function randomIndex(length, previous) { if (length < 2) return 0; let n; do { n = crypto?.getRandomValues ? crypto.getRandomValues(new Uint32Array(1))[0] % length : Math.floor(Math.random() * length); } while (n === previous); return n; }
+    function newExercise() { lastChreia = randomIndex(chreiai.length, lastChreia); lastStep = randomIndex(steps.length, lastStep); const c = chreiai[lastChreia], s = steps[lastStep]; document.querySelector('#speaker').textContent = c.speaker; document.querySelector('#chreia').textContent = c.text; document.querySelector('#step-number').textContent = `Step ${lastStep + 1}`; document.querySelector('#step-name').textContent = s[0]; document.querySelector('#instruction').textContent = s[1]; const source = document.querySelector('#source'); source.textContent = `Source: ${c.source}`; source.hidden = true; document.querySelector('#show-source').textContent = 'Show source'; }
+    document.querySelector('#another').addEventListener('click', newExercise);
+    document.querySelector('#show-source').addEventListener('click', event => { const source = document.querySelector('#source'); source.hidden = !source.hidden; event.currentTarget.textContent = source.hidden ? 'Show source' : 'Hide source'; });
+    newExercise();
+  </script>
+</body>
+</html>
