@@ -41,9 +41,13 @@
     #source a { color:var(--accent); font-weight:700; }
     .source-note { display:block; margin-top:10px; color:var(--muted); font:italic .85rem/1.45 system-ui, sans-serif; }
     .pronunciation { color:var(--accent); font:600 .78em/1.2 system-ui, sans-serif; white-space:nowrap; }
+    .figure-context { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:14px; margin-top:20px; }
+    .figure-context > div { padding:16px 18px; border:1px solid var(--line); border-radius:6px; background:#fffaf0; }
+    .figure-context h2 { margin:0 0 7px; color:var(--accent); font-size:.8rem; letter-spacing:.07em; text-transform:uppercase; }
+    .figure-context p { margin:0; font:.91rem/1.5 system-ui, sans-serif; }
     .spinning { animation:slotPulse .12s linear infinite alternate; }
     @keyframes slotPulse { from { opacity:.35; transform:translateY(-13px); filter:blur(1.2px); } to { opacity:1; transform:translateY(13px); filter:blur(0); } }
-    @media (max-width:560px) { .slot-window { padding:26px 20px 62px; border-width:5px; } .chreia-slot { height:330px; } .exercise { height:510px; } .task-example { grid-template-columns:minmax(0, 1fr) 26px minmax(0, 1fr); gap:6px; font-size:.78rem; } .example-pane { padding:9px; } .example-arrow { font-size:1.45rem; } }
+    @media (max-width:560px) { .slot-window { padding:26px 20px 62px; border-width:5px; } .chreia-slot { height:330px; } .exercise { height:510px; } .task-example { grid-template-columns:minmax(0, 1fr) 26px minmax(0, 1fr); gap:6px; font-size:.78rem; } .example-pane { padding:9px; } .example-arrow { font-size:1.45rem; } .figure-context { grid-template-columns:1fr; gap:10px; } }
     [hidden] { display:none; }
     .reel-actions { position:absolute; right:14px; bottom:12px; z-index:1; display:flex; justify-content:flex-end; }
     .reel-actions button { padding:8px 11px; color:var(--accent); border-color:var(--accent); background:#fffaf0; font-size:.8rem; box-shadow:0 2px 0 #b89968; }
@@ -70,6 +74,7 @@
       <h2 id="step-name">Praise the speaker</h2><p id="greek-term">ἐγκώμιον · enkomion</p><p id="instruction">Briefly praise the speaker or doer, then develop one quality that lends authority to the chreia.</p><div id="task-example" class="task-example"><div class="example-pane"><span class="example-label">Classical example chreia</span>Isocrates said: “The root of education is bitter, but its fruit is sweet.”</div><span class="example-arrow" aria-hidden="true">→</span><div class="example-pane"><span class="example-label">Praise the speaker</span>“Isocrates was wise,” followed by a short development of his wisdom.</div></div><p class="example-source">The elaboration and its examples are from <em>Preliminary Exercises Attributed to Hermogenes</em>, in Kennedy’s translation, pp. 78–79. <a href="https://www.sbl-site.org/wp-content/uploads/2024/11/KennedyProgymnasmata.pdf" target="_blank" rel="noopener noreferrer">Read the translation ↗</a></p><div class="reel-actions"><button type="button" id="spin-task">Spin exercise</button></div>
     </section>
     <section class="slot-window chreia-slot" data-reel-label="CHREIA REEL" aria-labelledby="speaker"><p id="speaker">Diogenes of Sinope</p><blockquote id="chreia">When he saw a child drinking from its hands, Diogenes threw away his cup, saying that the child had surpassed him in simplicity.</blockquote><div class="reel-actions"><button type="button" id="spin-chreia">Spin chreia</button></div></section>
+    <section class="figure-context" aria-label="Figure and exercise context"><div><h2 id="figure-heading">About the figure</h2><p id="figure-overview"></p></div><div><h2 id="entry-context-heading">Chreia context</h2><p id="entry-context"></p></div></section>
     <p id="source" hidden></p>
     <div class="actions"><button type="button" id="another" class="lever-button" aria-label="Spin again"></button><button type="button" id="show-source">Show source</button></div>
     <footer>A rhetorical exercise based on the classical progymnasmata. The exercise sequence follows the chreia elaboration (<em>exergasia</em>) described in <em>Preliminary Exercises Attributed to Hermogenes</em>; see also <a href="https://www.mdpi.com/2077-1444/16/12/1574" target="_blank" rel="noopener noreferrer">Eriksson, “John Cassian, Rhetoric and Education”</a>. Use the display filter to select chreiai, directly quoted maxims, or both; each entry includes its full relevant source context and a link to the online text.</footer>
@@ -207,6 +212,44 @@
     };
     Object.assign(greekPronunciations, {"Alcander":"al-KAN-der", "Alexander":"al-ig-ZAN-der", "Antipater":"an-TIP-uh-ter", "Archidamus":"ar-KID-uh-mus", "Bito":"BYE-toe", "Cephalo":"SEF-uh-lo", "Eumenes":"yoo-MEE-neez", "Hades":"HAY-deez", "Herodotus":"huh-ROD-uh-tus", "Midas":"MY-dus", "Namertes":"nah-MER-teez", "Philip":"FILL-ip", "Plutarch":"PLOO-tark", "Timon":"TYE-mon"});
     const greekNamePattern = new RegExp(`(?<![A-Za-zÆæ])(${Object.keys(greekPronunciations).sort((a, b) => b.length - a.length).join('|')})(?![A-Za-zÆæ])`, 'g');
+    const figureProfiles = {
+      "Agasicles":"A Spartan king known chiefly from later collections of Spartan sayings; tradition presents him as a model of paternal, law-bound rule.",
+      "Agesilaus II of Sparta":"Spartan king (r. 398–360 BCE), an energetic commander whose campaigns made Sparta powerful but also exposed its limits.",
+      "Agis II of Sparta":"Spartan king (r. 427–400 BCE) during the Peloponnesian War, remembered in later tradition for laconic public judgments.",
+      "Anacharsis":"A semi-legendary Scythian sage said to have visited Athens; Greek writers use him as an outsider who sees Greek customs sharply.",
+      "Andromachus of Tauromenium":"Ruler of Tauromenium in Sicily and father of the historian Timaeus; Plutarch presents him as resisting Carthaginian intimidation.",
+      "Antisthenes":"An Athenian Socratic philosopher (c. 445–365 BCE), later treated as a forerunner of Cynicism for his emphasis on virtue and independence.",
+      "Aratus":"Statesman of Sicyon (c. 271–213 BCE) and a leading figure in the Achaean League, noted for diplomacy and resistance to Macedonian control.",
+      "Archidamus III of Sparta":"Spartan king (r. 360–338 BCE), a commander from the late period of Spartan power.",
+      "Aristippus":"A pupil of Socrates and founder of the Cyrenaic school, which treated pleasure as life’s immediate good while stressing self-command.",
+      "Arthur Schopenhauer":"German philosopher (1788–1860), known for a pessimistic account of desire and suffering, and for his influence on Nietzsche.",
+      "Caesar Augustus":"Rome’s first emperor (r. 27 BCE–14 CE), who ended the civil wars and established the long-lasting imperial order.",
+      "Cato the Elder":"Roman senator and moralist (234–149 BCE), famous for austere habits, forceful speeches, and defense of traditional Roman discipline.",
+      "Cicero":"Roman orator, statesman, and philosopher (106–43 BCE), whose speeches and letters illuminate the Republic’s final decades.",
+      "Cimon":"Athenian statesman and general (c. 510–450 BCE), prominent in the early Delian League and remembered for victories over Persia.",
+      "Cleomenes I of Sparta":"Spartan king (c. 520–490 BCE), a forceful and controversial ruler active in Greek politics before the Persian Wars.",
+      "Diogenes of Sinope":"A fourth-century BCE Cynic philosopher, celebrated for provocative public acts that challenged wealth, status, and convention.",
+      "Epictetus":"A Stoic teacher (c. 50–135 CE), formerly enslaved; his teachings emphasize control of one’s judgments and responses.",
+      "Epicurus":"Athenian philosopher (341–270 BCE) who taught that tranquility comes from modest pleasure, friendship, and freedom from needless fear.",
+      "Friedrich Nietzsche":"German philosopher (1844–1900), a critic of conventional morality whose aphorisms probe culture, value, power, and art.",
+      "Gorgo of Sparta":"Spartan queen, daughter of Cleomenes I and wife of Leonidas, remembered for unusually sharp political counsel in Greek tradition.",
+      "Julius Caesar":"Roman general and statesman (100–44 BCE) whose victories and political rise helped end the Roman Republic.",
+      "King Theopompus of Sparta":"An early Spartan king in later tradition, credited with constitutional changes; the historical details and dating remain uncertain.",
+      "Leonidas of Sparta":"Spartan king who led the Greek defense at Thermopylae in 480 BCE and became an emblem of disciplined resistance.",
+      "Lycurgus of Sparta":"The traditional Spartan lawgiver, probably legendary, to whom later writers attributed Sparta’s discipline, laws, and social order.",
+      "Lycurgus the Orator":"Athenian statesman and orator (c. 390–324 BCE), associated with financial reforms and civic rebuilding after Chaeronea.",
+      "Namertes":"A Spartan envoy preserved only in Plutarch’s collection of sayings; the anecdote uses adversity as a test of friendship.",
+      "Pausanias of Sparta":"Spartan commander and regent, victor at Plataea in 479 BCE; later tradition associates him with intrigue and Persian contacts.",
+      "Pericles":"Athenian statesman (c. 495–429 BCE) who led Athens during its cultural height and the opening years of the Peloponnesian War.",
+      "Phocion":"Athenian general and statesman (c. 402–318 BCE), respected for personal integrity and cautious advice amid volatile democratic politics.",
+      "Plato":"Athenian philosopher (c. 428–348 BCE), student of Socrates and founder of the Academy, whose dialogues shaped Western philosophy.",
+      "Silenus":"A mythic companion and tutor of Dionysus, often represented as an old satyr whose comic appearance conceals unsettling wisdom.",
+      "Socrates":"Athenian philosopher (469–399 BCE), known through the writings of his students for his searching questions about virtue and knowledge.",
+      "Solon":"Athenian lawgiver and poet (c. 630–560 BCE), credited with reforms that eased social conflict and helped shape later Athenian politics.",
+      "The Andrians":"The citizens of Andros, a Cycladic island; in Plutarch’s story they answer Athenian pressure with a witty claim of poverty.",
+      "Themistocles":"Athenian statesman and naval strategist (c. 524–459 BCE), central to the Greek victory over Persia at Salamis.",
+      "Thucydides, son of Melesias":"An Athenian aristocrat and political opponent of Pericles, distinct from the historian Thucydides.",
+    };
     function escapeHtml(value) { return value.replace(/[&<>\"]/g, character => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;'}[character])); }
     function annotateGreekNames(value, seen = new Set()) { return escapeHtml(value).replace(greekNamePattern, name => { if (seen.has(name)) return name; seen.add(name); return `${name} <span class="pronunciation">(${greekPronunciations[name]})</span>`; }); }
     function randomIndex(length, previous) { if (length < 2) return 0; let n; do { n = crypto?.getRandomValues ? crypto.getRandomValues(new Uint32Array(1))[0] % length : Math.floor(Math.random() * length); } while (n === previous); return n; }
@@ -219,9 +262,11 @@
     const classicalExample = "Isocrates said: “The root of education is bitter, but its fruit is sweet.”";
     function taskExample(s) { const seen = new Set(); return `<div class="example-pane"><span class="example-label">Classical example chreia</span>${annotateGreekNames(classicalExample, seen)}</div><span class="example-arrow" aria-hidden="true">→</span><div class="example-pane"><span class="example-label">${s.name}</span>${annotateGreekNames(s.model, seen)}</div>`; }
     function paintTask(s) { document.querySelector('#step-name').textContent = s.name; document.querySelector('#greek-term').textContent = s.greek; document.querySelector('#instruction').textContent = s.instruction; document.querySelector('#task-example').innerHTML = taskExample(s); }
+    function entryContext(c) { return c.type === 'maxim' ? 'A maxim is a compact general claim, not an anecdote. Use the exercise to unfold its reasoning, limits, and an illustrating case; the source context below gives its textual setting.' : `A chreia is a compact anecdote built around a memorable saying or action. This one is attributed to ${c.speaker}; the source context below gives the immediate setting.`; }
+    function paintFigureContext(c) { const isMaxim = c.type === 'maxim'; document.querySelector('#figure-heading').textContent = `About ${isMaxim ? 'the author' : 'the figure'}`; document.querySelector('#figure-overview').textContent = figureProfiles[c.speaker] || 'A figure identified in the source tradition for this entry.'; document.querySelector('#entry-context-heading').textContent = `${isMaxim ? 'Maxim' : 'Chreia'} context`; document.querySelector('#entry-context').textContent = entryContext(c); }
     function paintChreia(c, seen = new Set()) { document.querySelector('#speaker').innerHTML = annotateGreekNames(c.speaker, seen); document.querySelector('#chreia').innerHTML = annotateGreekNames(c.text, seen); const isMaxim = c.type === 'maxim'; document.querySelector('.chreia-slot').dataset.reelLabel = isMaxim ? 'MAXIM REEL' : 'CHREIA REEL'; document.querySelector('#spin-chreia').textContent = isMaxim ? 'Spin maxim' : 'Spin chreia'; }
     function updateSource(c, hideSource = true, seen = new Set()) { const source = document.querySelector('#source'); source.innerHTML = `<strong>Source:</strong> ${annotateGreekNames(c.source, seen)}<br><br><strong>Source context:</strong> ${annotateGreekNames(c.passage, seen)}<br><span class="source-note">The text above gives the full relevant source unit: the complete paragraph where the edition groups the anecdote as a paragraph, or the complete numbered aphorism where it stands alone.</span><br><br><a href="${sourceUrl(c)}" target="_blank" rel="noopener noreferrer">Read the source context online ↗</a>`; if (hideSource) { source.hidden = true; document.querySelector('#show-source').textContent = 'Show source'; } }
-    function renderChreia(c, hideSource = true) { const seen = new Set(); paintChreia(c, seen); updateSource(c, hideSource, seen); }
+    function renderChreia(c, hideSource = true) { const seen = new Set(); paintChreia(c, seen); paintFigureContext(c); updateSource(c, hideSource, seen); }
     function render(c, s, hideSource = true) { renderChreia(c, hideSource); paintTask(s); }
     function setSpinControlsDisabled(disabled) { ['#another', '#spin-task', '#spin-chreia'].forEach(selector => { document.querySelector(selector).disabled = disabled; }); }
     function spinReel(slots, preview, settle, duration, done) { slots.forEach(el => el.classList.add('spinning')); preview(); const fastSpin = setInterval(preview, 95); setTimeout(() => { clearInterval(fastSpin); preview(); setTimeout(preview, 55); setTimeout(preview, 130); setTimeout(() => { settle(); slots.forEach(el => el.classList.remove('spinning')); done(); }, 250); }, duration - 250); }
