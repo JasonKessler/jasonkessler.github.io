@@ -41,7 +41,7 @@
     #speaker { margin:0 0 7px; font-size:1.1rem; font-weight:700; }
     blockquote { margin:0; font-size:clamp(1.03rem, 2.5vw, 1.25rem); line-height:1.45; font-style:italic; }
     h2 { margin:5px 0 8px; font-size:1.5rem; font-weight:400; }
-    #instruction, #source, #entry-context-container { font:1rem/1.5 system-ui, sans-serif; }
+    #instruction, #source, #entry-context-container, #later-reception { font:1rem/1.5 system-ui, sans-serif; }
     #instruction { margin:0; max-width:70ch; }
     .exercise-heading { display:flex; align-items:baseline; gap:.55rem; white-space:nowrap; }
     .exercise-heading #step-name { margin:5px 0 8px; font-size:clamp(1.08rem, 4.4vw, 1.5rem); }
@@ -52,8 +52,11 @@
     .example-arrow { display:grid; place-items:center; color:var(--accent); font:1.25rem/1 Georgia, "Times New Roman", serif; }
     .example-source { display:block; margin-top:5px; color:var(--muted); font:.66rem/1.25 system-ui, sans-serif; }
     .example-source a { color:var(--accent); font-weight:700; }
-    #source, #entry-context-container { margin:24px 0 0; padding:22px; border:1px solid var(--line); border-radius:6px; color:var(--muted); white-space:pre-line; }
-    #source a { color:var(--accent); font-weight:700; }
+    #source, #entry-context-container, #later-reception { margin:24px 0 0; padding:22px; border:1px solid var(--line); border-radius:6px; color:var(--muted); white-space:pre-line; }
+    #source a, #later-reception a { color:var(--accent); font-weight:700; }
+    #later-reception h2 { margin:0 0 8px; color:var(--accent); font:700 .82rem/1.2 system-ui,sans-serif; letter-spacing:.07em; text-transform:uppercase; }
+    #later-reception-source { margin:0 0 12px; font:.86rem/1.4 system-ui,sans-serif; }
+    #later-reception-passage { margin:0 0 14px; font:italic .96rem/1.55 Georgia,"Times New Roman",serif; white-space:pre-line; }
     .source-note { display:block; margin-top:10px; color:var(--muted); font:italic .85rem/1.45 system-ui, sans-serif; }
     .pronunciation { color:var(--accent); font:600 .78em/1.2 system-ui, sans-serif; white-space:nowrap; }
     .figure-context { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:14px; margin-top:20px; }
@@ -78,7 +81,7 @@
 <body>
   <main>
     <p class="eyebrow">Chreia Slot Machine</p>
-    <nav class="content-filter" aria-label="Content type"><span class="filter-label">Display</span><button type="button" data-filter="all" aria-pressed="true">All</button><button type="button" data-filter="chreia" aria-pressed="false">Chreiai</button><button type="button" data-filter="maxim" aria-pressed="false">Maxims</button><span class="spin-divider" aria-hidden="true"></span><button type="button" id="another" class="spin-all">Spin all</button></nav>
+    <nav class="content-filter" aria-label="Content type"><span class="filter-label">Display</span><button type="button" data-filter="all" aria-pressed="true">All</button><button type="button" data-filter="chreia" aria-pressed="false">Chreiai</button><button type="button" data-filter="maxim" aria-pressed="false">Maxims</button><button type="button" data-filter="reception" aria-pressed="false">Later reception</button><span class="spin-divider" aria-hidden="true"></span><button type="button" id="another" class="spin-all">Spin all</button></nav>
     <details class="source-picker"><summary>Sources · <span id="source-selection-status" role="status">All selected</span></summary><fieldset id="source-picker-fields"><legend>Choose source authors, not the figures quoted. Combine any number.</legend><div class="source-picker-actions"><button type="button" id="sources-all">Select all</button><button type="button" id="sources-none">Clear all</button></div><div id="source-options" class="source-options"></div></fieldset></details>
     <section class="timer" aria-label="Exercise timer"><div><p class="timer-label">Speaking time</p><time id="timer-display" datetime="PT2M">2:00</time></div><div class="timer-actions"><button type="button" id="timer-toggle">Start</button><button type="button" id="timer-reset">Reset</button></div></section>
     <section class="slot-window exercise" aria-labelledby="step-name">
@@ -88,8 +91,9 @@
     <section id="figure-context" class="figure-context" aria-label="About the figures or authors"><div><h2>About the figure</h2><p></p></div></section>
     <p id="entry-context-container" aria-label="Hint or context" hidden><strong id="entry-context-label">AI Generated Hint/Context:</strong> <span id="entry-context"></span></p>
     <p id="source" hidden></p>
-    <div class="actions"><button type="button" id="show-hint" aria-expanded="false">Show hint</button><button type="button" id="show-source" aria-expanded="false">Show source</button></div>
-    <footer>A rhetorical exercise based on the classical progymnasmata. The exercise sequence follows the chreia elaboration (<em>exergasia</em>) described in <em>Preliminary Exercises Attributed to Hermogenes</em>; see also <a href="https://www.mdpi.com/2077-1444/16/12/1574" target="_blank" rel="noopener noreferrer">Eriksson, “John Cassian, Rhetoric and Education”</a>. Use the display filter to select chreiai, directly quoted maxims, or both; each entry includes its full relevant source context and a link to the online text. Pronunciation labels use readable reconstructed Classical Greek-style spellings: <em>kh</em>, <em>th</em>, and <em>ph</em> are breathed consonants; <em>ü</em> is like the vowel in German <em>über</em>.</footer>
+    <section id="later-reception" aria-label="Later thinker’s passage" hidden><h2 id="later-reception-heading">Later reception</h2><p id="later-reception-source"></p><blockquote id="later-reception-passage"></blockquote><a id="later-reception-link" target="_blank" rel="noopener noreferrer">Read the later passage online ↗</a></section>
+    <div class="actions"><button type="button" id="show-hint" aria-expanded="false">Show hint</button><button type="button" id="show-source" aria-expanded="false">Show source</button><button type="button" id="show-reception" aria-expanded="false" hidden>Show later passage</button></div>
+    <footer>A rhetorical exercise based on the classical progymnasmata. The exercise sequence follows the chreia elaboration (<em>exergasia</em>) described in <em>Preliminary Exercises Attributed to Hermogenes</em>; see also <a href="https://www.mdpi.com/2077-1444/16/12/1574" target="_blank" rel="noopener noreferrer">Eriksson, “John Cassian, Rhetoric and Education”</a>. Use the display filter to select chreiai, directly quoted maxims, or entries with documented later reception; each entry includes its full relevant source context and a link to the online text. Pronunciation labels use readable reconstructed Classical Greek-style spellings: <em>kh</em>, <em>th</em>, and <em>ph</em> are breathed consonants; <em>ü</em> is like the vowel in German <em>über</em>.</footer>
   </main>
   <script>
     const chreiai = [
@@ -640,7 +644,11 @@
         url:'https://penelope.uchicago.edu/Thayer/E/Roman/Texts/Diogenes_Laertius/Lives_of_the_Eminent_Philosophers/10/Epicurus%2A.html#8',
         passage:'Epicurus used to call this Nausiphanes jelly-fish, an illiterate, a fraud, and a trollop; Plato’s school he called “the toadies of Dionysius,” their master himself the “golden” Plato, and Aristotle a profligate, who after devouring his patrimony took to soldiering and selling drugs; Protagoras a pack-carrier and the scribe of Democritus and village schoolmaster; Heraclitus a muddler; Democritus Lerocritus (the nonsense-monger); and Antidorus Sannidorus (fawning gift-bearer); the Cynics foes of Greece; the Dialecticians despoilers; and Pyrrho an ignorant boor.',
         hintLabel:'Nietzsche’s interpretation',
-        hintUrl:'https://www.gutenberg.org/files/4363/4363-h/4363-h.htm'
+        hintUrl:'https://www.gutenberg.org/files/4363/4363-h/4363-h.htm',
+        laterAuthor:'Friedrich Nietzsche',
+        laterSource:'Friedrich Nietzsche, Beyond Good and Evil §7, Project Gutenberg edition.',
+        laterPassage:'How malicious philosophers can be! I know of nothing more stinging than the joke Epicurus took the liberty of making on Plato and the Platonists; he called them Dionysiokolakes. In its original sense, and on the face of it, the word signifies “Flatterers of Dionysius”—consequently, tyrants’ accessories and lick-spittles; besides this, however, it is as much as to say, “They are all ACTORS, there is nothing genuine about them” (for Dionysiokolax was a popular name for an actor). And the latter is really the malignant reproach that Epicurus cast upon Plato: he was annoyed by the grandiose manner, the mise en scene style of which Plato and his scholars were masters—of which Epicurus was not a master!',
+        laterUrl:'https://www.gutenberg.org/files/4363/4363-h/4363-h.htm'
       },
       {
         speaker:'Socrates',
@@ -649,7 +657,11 @@
         url:'https://classics.mit.edu/Plato/phaedo.html',
         passage:'He wanted to know why you who never before wrote a line of poetry, now that you are in prison are putting Aesop into verse, and also composing that hymn in honor of Apollo. Tell him, Cebes, he replied, that I had no idea of rivalling him or his poems; which is the truth, for I knew that I could not do that. But I wanted to see whether I could purge away a scruple which I felt about certain dreams. In the course of my life I have often had intimations in dreams “that I should make music.” The same dream came to me sometimes in one form, and sometimes in another, but always saying the same or nearly the same words: Make and cultivate music, said the dream. And hitherto I had imagined that this was only intended to exhort and encourage me in the study of philosophy, which has always been the pursuit of my life, and is the noblest and best of music. The dream was bidding me to do what I was already doing, in the same way that the competitor in a race is bidden by the spectators to run when he is already running. But I was not certain of this, as the dream might have meant music in the popular sense of the word, and being under sentence of death, and the festival giving me a respite, I thought that I should be safer if I satisfied the scruple, and, in obedience to the dream, composed a few verses before I departed. And first I made a hymn in honor of the god of the festival, and then considering that a poet, if he is really to be a poet or maker, should not only put words together but make stories, and as I have no invention, I took some fables of Aesop, which I had ready at hand and knew, and turned them into verse.',
         hintLabel:'Nietzsche’s interpretation',
-        hintUrl:'https://www.gutenberg.org/files/51356/51356-h/51356-h.htm'
+        hintUrl:'https://www.gutenberg.org/files/51356/51356-h/51356-h.htm',
+        laterAuthor:'Friedrich Nietzsche',
+        laterSource:'Friedrich Nietzsche, The Birth of Tragedy §14, Wm. A. Haussmann translation.',
+        laterPassage:'For that despotic logician had now and then the feeling of a gap, or void, a sentiment of semi-reproach, as of a possibly neglected duty with respect to art. There often came to him, as he tells his friends in prison, one and the same dream-apparition, which kept constantly repeating to him: “Socrates, practise music.” Up to his very last days he solaces himself with the opinion that his philosophising is the highest form of poetry, and finds it hard to believe that a deity will remind him of the “common, popular music.” Finally, when in prison, he consents to practise also this despised music, in order thoroughly to unburden his conscience. And in this frame of mind he composes a poem on Apollo and turns a few Æsopian fables into verse. The prompting voice of the Socratic dream-vision is the only sign of doubtfulness as to the limits of logical nature. “Perhaps”—thus he had to ask himself—“what is not intelligible to me is not therefore unreasonable? Perhaps there is a realm of wisdom from which the logician is banished? Perhaps art is even a necessary correlative of and supplement to science?”',
+        laterUrl:'https://www.gutenberg.org/files/51356/51356-h/51356-h.htm'
       },
       {
         speaker:'Themistocles',
@@ -658,7 +670,11 @@
         url:'https://classics.mit.edu/Plutarch/themisto.html',
         passage:'For it is said that Themistocles was so transported with the thoughts of glory and so inflamed with the passion for great actions, that, though he was still young when the battle of Marathon was fought against the Persians, upon the skilful conduct of the general, Miltiades, being everywhere talked about, he was observed to be thoughtful and reserved, alone by himself; he passed the nights without sleep, and avoided all his usual places of recreation, and to those who wondered at the change, and inquired the reason of it, he gave the answer, that “the trophy of Miltiades would not let him sleep.” And when others were of opinion that the battle of Marathon would be an end to the war, Themistocles thought that it was but the beginning for far greater conflicts, and for these, to the benefit of all Greece, he kept himself in continual readiness, and his city also in proper training, foreseeing from far before what would happen.',
         hintLabel:'Nietzsche’s interpretation',
-        hintUrl:'https://www.gutenberg.org/files/51548/51548-h/51548-h.htm'
+        hintUrl:'https://www.gutenberg.org/files/51548/51548-h/51548-h.htm',
+        laterAuthor:'Friedrich Nietzsche',
+        laterSource:'Friedrich Nietzsche, “Homer’s Contest,” in Early Greek Philosophy and Other Essays, Project Gutenberg edition.',
+        laterPassage:'The greater and more sublime however a Greek is, the brighter in him appears the ambitious flame, devouring everybody who runs with him on the same track. Aristotle once made a list of such contests on a large scale; among them is the most striking instance how even a dead person can still incite a living one to consuming jealousy; thus for example Aristotle designates the relation between the Kolophonian Xenophanes and Homer. We do not understand this attack on the national hero of poetry in all its strength, if we do not imagine, as later on also with Plato, the root of this attack to be the ardent desire to step into the place of the overthrown poet and to inherit his fame. Every great Hellene hands on the torch of the contest; at every great virtue a new light is kindled. If the young Themistocles could not sleep at the thought of the laurels of Miltiades so his early awakened bent released itself only in the long emulation with Aristides in that uniquely noteworthy, purely instinctive genius of his political activity, which Thucydides describes.',
+        laterUrl:'https://www.gutenberg.org/files/51548/51548-h/51548-h.htm'
       },
       {
         speaker:'Caesar Augustus',
@@ -667,7 +683,11 @@
         url:'https://penelope.uchicago.edu/Thayer/E/Roman/Texts/Suetonius/12Caesars/Augustus%2A.html#99',
         passage:'On the last day of his life he asked every now and then whether there was any disturbance without on his account; then calling for a mirror, he had his hair combed and his falling jaws set straight. After that, calling in his friends and asking whether it seemed to them that he had played the comedy of life fitly, he added the tag: “Since well I’ve played my part, all clap your hands / And from the stage dismiss me with applause.” Then he sent them all off, and while he was asking some newcomers from the city about the daughter of Drusus, who was ill, he suddenly passed away as he was kissing Livia, with these last words: “Live mindful of our wedlock, Livia, and farewell,” thus blessed with an easy death and such a one as he had always longed for.',
         hintLabel:'Nietzsche’s interpretation',
-        hintUrl:'https://www.gutenberg.org/files/52124/52124-h/52124-h.htm'
+        hintUrl:'https://www.gutenberg.org/files/52124/52124-h/52124-h.htm',
+        laterAuthor:'Friedrich Nietzsche',
+        laterSource:'Friedrich Nietzsche, The Joyful Wisdom §36, Project Gutenberg edition.',
+        laterPassage:'Last Words.—It will be recollected that the Emperor Augustus, that terrible man, who had himself as much in his own power and could be silent as well as any wise Socrates, became indiscreet about himself in his last words; for the first time he let his mask fall, when he gave to understand that he had carried a mask and played a comedy,—he had played the father of his country and wisdom on the throne well, even to the point of illusion! Plaudite amid, comœdia finita est!—The thought of the dying Nero: qualis artifex pereo! was also the thought of the dying Augustus: histrionic conceit! histrionic loquacity! And the very counterpart to the dying Socrates!',
+        laterUrl:'https://www.gutenberg.org/files/52124/52124-h/52124-h.htm'
       }
     ];
     chreiai.push(...nietzscheAncientChreiai.map(({context, ...entry}) => entry));
@@ -684,7 +704,11 @@
         url:'https://lexundria.com/plut_sol/1.31.3/prr',
         passage:'Now Solon, after beginning his great work on the story or fable of the lost Atlantis, which, as he had heard from the learned men of Saïs, particularly concerned the Athenians, abandoned it, not for lack of leisure, as Plato says, but rather because of his old age, fearing the magnitude of the task. For that he had abundant leisure, such verses as these testify:— “But I grow old ever learning many things;” and again, “But now the works of the Cyprus-born goddess are dear to my soul, / Of Dionysus, too, and the Muses, which impart delights to men.”',
         hintLabel:'Nietzsche’s interpretation',
-        hintUrl:'https://www.gutenberg.org/cache/epub/37841/pg37841-images.html'
+        hintUrl:'https://www.gutenberg.org/cache/epub/37841/pg37841-images.html',
+        laterAuthor:'Friedrich Nietzsche',
+        laterSource:'Friedrich Nietzsche, Human, All Too Human II §301, Project Gutenberg edition.',
+        laterPassage:'The Partisan.—The true partisan learns nothing more, he only experiences and judges. It is significant that Solon, who was never a partisan but pursued his aims above and apart from parties or even against them, was the father of that simple phrase wherein lies the secret of the health and vitality of Athens: “I grow old, but I am always learning.”',
+        laterUrl:'https://www.gutenberg.org/cache/epub/37841/pg37841-images.html'
       },
       {
         text:'The greatest of blessings come to us through madness, when it is sent as a gift of the gods.',
@@ -692,7 +716,11 @@
         url:'https://www.perseus.tufts.edu/hopper/text?doc=Perseus%3Atext%3A1999.01.0174%3Atext%3DPhaedrus%3Asection%3D244a',
         passage:'For if it were a simple fact that insanity is an evil, the saying would be true; but in reality the greatest of blessings come to us through madness, when it is sent as a gift of the gods. The prophetess at Delphi and the priestesses at Dodona when they have been insane have conferred many splendid benefits upon Greece both in private and public affairs, but few or none when they have been in their right minds. And if we should speak of the Sibyl and all the others who by inspired prophecy have foretold many things to many persons and thereby guided them aright toward the future, we should make a long story.',
         hintLabel:'Nietzsche’s interpretation',
-        hintUrl:'https://www.gutenberg.org/files/39955/39955-h/39955-h.html'
+        hintUrl:'https://www.gutenberg.org/files/39955/39955-h/39955-h.html',
+        laterAuthor:'Friedrich Nietzsche',
+        laterSource:'Friedrich Nietzsche, Dawn §14, Project Gutenberg edition.',
+        laterPassage:'Men of earlier ages were far more inclined to believe that, wherever traces of insanity showed themselves, a certain proportion of genius and wisdom was likewise present—something “divine,” as they whispered to one another. More than this, they expressed their opinions on the point with sufficient emphasis. “All the greatest benefits of Greece have sprung from madness,” said Plato, setting on record the opinion of the entire ancient world. Let us take a step further: all those superior men, who felt themselves irresistibly urged on to throw off the yoke of some morality or other, had no other resource—if they were not really mad—than to feign madness, or actually to become insane. And this holds good for innovators in every department of life, and not only in religion and politics.',
+        laterUrl:'https://www.gutenberg.org/files/39955/39955-h/39955-h.html'
       }
     ];
     maxims.push(...nietzscheAncientMaxims.map(entry => ({...entry, type:'maxim', speaker:entry === nietzscheAncientMaxims[0] ? 'Solon' : 'Plato'})));
@@ -921,7 +949,7 @@
     function sourceAuthor(entry) { return entry.source.split(',')[0].trim(); }
     const sourceAuthors = [...new Set(allItems.map(sourceAuthor))].sort((a, b) => a.localeCompare(b));
     let selectedSources = new Set(sourceAuthors);
-    function activeItems() { const items = currentFilter === 'chreia' ? chreiai : currentFilter === 'maxim' ? maxims : allItems; return items.filter(entry => selectedSources.has(sourceAuthor(entry))); }
+    function activeItems() { const items = currentFilter === 'chreia' ? chreiai : currentFilter === 'maxim' ? maxims : currentFilter === 'reception' ? allItems.filter(entry => entry.laterPassage) : allItems; return items.filter(entry => selectedSources.has(sourceAuthor(entry))); }
     function updateSourceSelectionStatus() { document.querySelector('#source-selection-status').textContent = `${selectedSources.size === sourceAuthors.length ? 'All selected' : `${selectedSources.size} of ${sourceAuthors.length} selected`} · ${activeItems().length} entries`; }
     function applyContentFilters() {
       lastChreia = -1; lastSpeaker = ''; speakerCycle = []; resetTimer(false);
@@ -930,10 +958,12 @@
       else {
         currentEntry = null; syncSelectionUrl();
         document.querySelector('#speaker').textContent = 'No matching entries';
-        document.querySelector('#chreia').textContent = 'Select a source, choose Select all, or change the All / Chreiai / Maxims filter.';
+        document.querySelector('#chreia').textContent = 'Select a source, choose Select all, or change the display filter.';
         document.querySelector('.chreia-slot').dataset.reelLabel = 'CHREIA / MAXIM REEL';
         document.querySelector('#figure-context').innerHTML = '';
-        ['#source', '#entry-context-container'].forEach(selector => document.querySelector(selector).hidden = true);
+        ['#source', '#entry-context-container', '#later-reception'].forEach(selector => document.querySelector(selector).hidden = true);
+        document.querySelector('#show-reception').hidden = true;
+        document.querySelector('#show-reception').setAttribute('aria-expanded', 'false');
         ['source', 'hint'].forEach(name => { const button = document.querySelector(`#show-${name}`); button.textContent = `Show ${name}`; button.setAttribute('aria-expanded', 'false'); });
       }
       ['#show-source', '#show-hint'].forEach(selector => document.querySelector(selector).disabled = !items.length);
@@ -975,8 +1005,9 @@
     function figureCard(heading, name) { return `<div><h2>${escapeHtml(heading)}</h2><p><strong>${escapeHtml(name)}</strong> — ${escapeHtml(figureProfiles[name] || 'A figure identified in the source tradition for this entry.')}</p></div>`; }
     function paintFigureContext(c) { const isMaxim = c.type === 'maxim', primary = canonicalFigureName(c.speaker), related = namedFigures(c); document.querySelector('#figure-context').innerHTML = [figureCard(`About ${isMaxim ? 'the author' : 'the figure'}`, primary), ...related.map(name => figureCard(isMaxim ? 'Also mentioned' : 'Also in this chreia', name))].join(''); document.querySelector('#entry-context-label').textContent = `${c.hintLabel || 'AI Generated Hint/Context'}:`; document.querySelector('#entry-context').innerHTML = `${escapeHtml(entryContext(c))}${c.hintUrl ? ` <a href="${c.hintUrl}" target="_blank" rel="noopener noreferrer">Read Nietzsche’s passage online ↗</a>` : ''}`; }
     function paintChreia(c, seen = new Set()) { document.querySelector('#speaker').innerHTML = annotateGreekNames(c.speaker, seen); document.querySelector('#chreia').innerHTML = annotateGreekNames(c.text, seen); const isMaxim = c.type === 'maxim'; document.querySelector('.chreia-slot').dataset.reelLabel = isMaxim ? 'MAXIM REEL' : 'CHREIA REEL'; document.querySelector('#spin-chreia').textContent = isMaxim ? 'Spin maxim' : 'Spin chreia'; }
+    function updateLaterReception(c) { const panel = document.querySelector('#later-reception'), button = document.querySelector('#show-reception'); panel.hidden = true; button.setAttribute('aria-expanded', 'false'); if (!c.laterPassage) { button.hidden = true; return; } const surname = c.laterAuthor.split(/\s+/).at(-1); document.querySelector('#later-reception-heading').textContent = `${c.laterAuthor} on this ${c.type === 'maxim' ? 'maxim' : 'chreia'}`; document.querySelector('#later-reception-source').textContent = c.laterSource; document.querySelector('#later-reception-passage').textContent = c.laterPassage; const link = document.querySelector('#later-reception-link'); link.href = c.laterUrl; link.textContent = `Read ${surname}’s passage online ↗`; button.hidden = false; button.textContent = `Show ${surname} passage`; }
     function updateSource(c, hideSource = true, seen = new Set()) { const source = document.querySelector('#source'); const context = document.querySelector('#entry-context-container'); const sourceToggle = document.querySelector('#show-source'); const hintToggle = document.querySelector('#show-hint'); source.innerHTML = `<strong>Source:</strong> ${annotateGreekNames(c.source, seen)}<br><br><strong>${c.excerpt ? 'Source excerpt:' : 'Source passage:'}</strong> ${annotateGreekNames(c.passage, seen)}<br><span class="source-note">${c.excerpt ? 'A brief quotation from the linked work. Read the surrounding passage online; Show hint explains its context.' : 'The text above gives the full relevant source unit: the complete paragraph where the edition groups the anecdote as a paragraph, or the complete numbered aphorism where it stands alone.'}</span><br><br><a href="${sourceUrl(c)}" target="_blank" rel="noopener noreferrer">Read the source context online ↗</a>`; if (hideSource) { source.hidden = true; context.hidden = true; sourceToggle.textContent = 'Show source'; sourceToggle.setAttribute('aria-expanded', 'false'); hintToggle.textContent = 'Show hint'; hintToggle.setAttribute('aria-expanded', 'false'); } }
-    function renderChreia(c, hideSource = true, syncUrl = false) { const seen = new Set(); paintChreia(c, seen); paintFigureContext(c); updateSource(c, hideSource, seen); currentEntry = c; if (syncUrl) syncSelectionUrl(); }
+    function renderChreia(c, hideSource = true, syncUrl = false) { const seen = new Set(); paintChreia(c, seen); paintFigureContext(c); updateSource(c, hideSource, seen); updateLaterReception(c); currentEntry = c; if (syncUrl) syncSelectionUrl(); }
     function render(c, s, hideSource = true) { renderChreia(c, hideSource); renderTask(s); syncSelectionUrl(); }
     function setSpinControlsDisabled(disabled) { ['#another', '#spin-chreia'].forEach(selector => { document.querySelector(selector).disabled = disabled || !activeItems().length; }); document.querySelector('#spin-task').disabled = disabled; document.querySelector('#source-picker-fields').disabled = disabled; document.querySelectorAll('[data-filter]').forEach(button => button.disabled = disabled); }
     function spinReel(slots, preview, settle, duration, done) { slots.forEach(el => el.classList.add('spinning')); preview(); const fastSpin = setInterval(preview, 95); setTimeout(() => { clearInterval(fastSpin); preview(); setTimeout(preview, 55); setTimeout(preview, 130); setTimeout(() => { settle(); slots.forEach(el => el.classList.remove('spinning')); done(); }, 250); }, duration - 250); }
@@ -995,6 +1026,7 @@
     document.querySelector('#timer-reset').addEventListener('click', () => resetTimer(false));
     document.querySelector('#show-source').addEventListener('click', event => { const source = document.querySelector('#source'); source.hidden = !source.hidden; event.currentTarget.textContent = source.hidden ? 'Show source' : 'Hide source'; event.currentTarget.setAttribute('aria-expanded', String(!source.hidden)); });
     document.querySelector('#show-hint').addEventListener('click', event => { const context = document.querySelector('#entry-context-container'); context.hidden = !context.hidden; event.currentTarget.textContent = context.hidden ? 'Show hint' : 'Hide hint'; event.currentTarget.setAttribute('aria-expanded', String(!context.hidden)); });
+    document.querySelector('#show-reception').addEventListener('click', event => { const panel = document.querySelector('#later-reception'); panel.hidden = !panel.hidden; const surname = currentEntry?.laterAuthor?.split(/\s+/).at(-1) || 'later'; event.currentTarget.textContent = panel.hidden ? `Show ${surname} passage` : `Hide ${surname} passage`; event.currentTarget.setAttribute('aria-expanded', String(!panel.hidden)); });
     initializeSourcePicker(); initialExercise(); resetTimer(false);
   </script>
 </body>
