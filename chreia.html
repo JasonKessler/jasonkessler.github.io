@@ -55,8 +55,9 @@
     #source, #entry-context-container, #later-reception { margin:24px 0 0; padding:22px; border:1px solid var(--line); border-radius:6px; color:var(--muted); white-space:pre-line; }
     #source a, #later-reception a { color:var(--accent); font-weight:700; }
     #later-reception h2 { margin:0 0 8px; color:var(--accent); font:700 .82rem/1.2 system-ui,sans-serif; letter-spacing:.07em; text-transform:uppercase; }
-    #later-reception-source { margin:0 0 12px; font:.86rem/1.4 system-ui,sans-serif; }
-    #later-reception-passage { margin:0 0 14px; font:italic .96rem/1.55 Georgia,"Times New Roman",serif; white-space:pre-line; }
+    .later-reception-item + .later-reception-item { margin-top:20px; padding-top:20px; border-top:1px solid var(--line); }
+    .later-reception-source { margin:0 0 12px; font:.86rem/1.4 system-ui,sans-serif; }
+    .later-reception-passage { margin:0 0 14px; font:italic .96rem/1.55 Georgia,"Times New Roman",serif; white-space:pre-line; }
     .source-note { display:block; margin-top:10px; color:var(--muted); font:italic .85rem/1.45 system-ui, sans-serif; }
     .pronunciation { color:var(--accent); font:600 .78em/1.2 system-ui, sans-serif; white-space:nowrap; }
     .figure-context { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:14px; margin-top:20px; }
@@ -91,7 +92,7 @@
     <section id="figure-context" class="figure-context" aria-label="About the figures or authors"><div><h2>About the figure</h2><p></p></div></section>
     <p id="entry-context-container" aria-label="Hint or context" hidden><strong id="entry-context-label">AI Generated Hint/Context:</strong> <span id="entry-context"></span></p>
     <p id="source" hidden></p>
-    <section id="later-reception" aria-label="Later thinker’s passage" hidden><h2 id="later-reception-heading">Later reception</h2><p id="later-reception-source"></p><blockquote id="later-reception-passage"></blockquote><a id="later-reception-link" target="_blank" rel="noopener noreferrer">Read the later passage online ↗</a></section>
+    <section id="later-reception" aria-label="Later thinkers’ passages" hidden><div id="later-reception-list"></div></section>
     <div class="actions"><button type="button" id="show-hint" aria-expanded="false">Show hint</button><button type="button" id="show-source" aria-expanded="false">Show source</button><button type="button" id="show-reception" aria-expanded="false" hidden>Show later passage</button></div>
     <footer>A rhetorical exercise based on the classical progymnasmata. The exercise sequence follows the chreia elaboration (<em>exergasia</em>) described in <em>Preliminary Exercises Attributed to Hermogenes</em>; see also <a href="https://www.mdpi.com/2077-1444/16/12/1574" target="_blank" rel="noopener noreferrer">Eriksson, “John Cassian, Rhetoric and Education”</a>. Use the display filter to select chreiai, directly quoted maxims, or entries with documented later reception; each entry includes its full relevant source context and a link to the online text. Pronunciation labels use readable reconstructed Classical Greek-style spellings: <em>kh</em>, <em>th</em>, and <em>ph</em> are breathed consonants; <em>ü</em> is like the vowel in German <em>über</em>.</footer>
   </main>
@@ -740,6 +741,71 @@
       'Nietzsche uses Solon’s continuing willingness to learn as the opposite of partisan closure. A genuine partisan, he argues, stops learning and merely sorts experience into settled judgments; Solon’s intellectual independence represents the health and openness Nietzsche associates with Athens.',
       'Nietzsche broadens Plato’s qualified praise of divinely given madness into a historical argument: innovators often needed inspired or deliberately assumed madness to challenge the morality of custom. Plato is speaking specifically about beneficial divine mania; Nietzsche turns that category into an explanation of cultural transformation.'
     );
+    const senecaAnecdotes = [
+      {
+        speaker:"Socrates",
+        text:"When Socrates was struck on the ear, he merely said that it was a pity a man could not tell when he ought to wear his helmet while out walking.",
+        source:"Seneca, On Anger 3.11, in Minor Dialogues, translated by Aubrey Stewart.",
+        url:"https://www.gutenberg.org/files/64576/64576-h/64576-h.htm",
+        passage:"There are many ways in which anger may be checked; most things may be turned into jest. It is said that Socrates when he was given a box on the ear, merely said that it was a pity a man could not tell when he ought to wear his helmet out walking. It does not so much matter how an injury is done, as how it is borne; and I do not see how moderation can be hard to practise, when I know that even despots, though success and impunity combine to swell their pride, have sometimes restrained their natural ferocity.",
+        context:"Seneca uses Socrates to show that an insult acquires much of its force from the injured person’s response. Instead of treating the blow as an assault on his dignity, Socrates converts it into a joke about failed preparation. The reply preserves self-command without pretending that the blow was reasonable."
+      },
+      {
+        speaker:"Pisistratus",
+        text:"When a drunken guest bitterly reproached Pisistratus, his companions tried to inflame the Athenian ruler’s anger. Pisistratus remained calm and said that he was no more angry with the man than with someone who had run into him blindfold.",
+        source:"Seneca, On Anger 3.11, in Minor Dialogues, translated by Aubrey Stewart.",
+        url:"https://www.gutenberg.org/files/64576/64576-h/64576-h.htm",
+        passage:"At any rate, tradition informs us that once, when a guest in his cups bitterly reproached Pisistratus, the despot of Athens, for his cruelty, many of those present offered to lay hands on the traitor, and one said one thing and one another to kindle his wrath, he bore it coolly, and replied to those who were egging him on, that he was no more angry with the man than he should be with one who ran against him blindfold.",
+        context:"Seneca pairs this tradition with Socrates’ joking response to a blow. Pisistratus treats drunken abuse as impaired action rather than deliberate injury. The political point is sharper because he possessed the power to punish: restraint is tested when anger has both an audience and willing agents."
+      },
+      {
+        speaker:"Diogenes of Sinope",
+        text:"When Diogenes’ only enslaved attendant, Manes, ran away and someone pointed him out, Diogenes refused to fetch him back: “It is a shame that Manes should be able to live without Diogenes, and that Diogenes should not be able to live without Manes.”",
+        source:"Seneca, On Tranquillity of Mind 8, in Minor Dialogues, translated by Aubrey Stewart.",
+        url:"https://www.gutenberg.org/files/64576/64576-h/64576-h.htm",
+        passage:"But Diogenes’s only slave ran away from him, and when he was pointed out to Diogenes, he did not think him worth fetching back. “It is a shame,” he said, “that Manes should be able to live without Diogenes, and that Diogenes should not be able to live without Manes.” He seems to me to have said, “Fortune, mind your own business: Diogenes has nothing left that belongs to you. Did my slave run away? nay, he went away from me as a free man.” A household of slaves requires food and clothing: the bellies of so many hungry creatures have to be filled: we must buy raiment for them, we must watch their most thievish hands, and we must make use of the services of people who weep and execrate us. How far happier is he who is indebted to no man for anything except for what he can deprive himself of with the greatest ease!",
+        context:"Seneca places the story in an argument that possessions create vulnerability to fortune. His explicit gloss turns Diogenes’ refusal into a declaration of independence: the loss exposes no essential need. The passage also preserves the coercive institution it seeks to philosophize—Manes’ escape is recast by Seneca as departure into freedom."
+      },
+      {
+        speaker:"Zeno of Citium",
+        text:"When Zeno heard that a shipwreck had destroyed all his property, he remarked, “Fortune bids me follow philosophy in lighter marching order.”",
+        source:"Seneca, On Tranquillity of Mind 14, in Minor Dialogues, translated by Aubrey Stewart.",
+        url:"https://www.gutenberg.org/files/64576/64576-h/64576-h.htm",
+        passage:"Moreover, we ought to cultivate an easy temper, and not become over fond of the lot which fate has assigned to us, but transfer ourselves to whatever other condition chance may lead us, and fear no alteration, either in our purposes or our position in life, provided that we do not become subject to caprice, which of all vices is the most hostile to repose. The mind ought in all cases to be called away from the contemplation of external things to that of itself: let it confide in itself, rejoice in itself, admire its own works; avoid as far as may be those of others, and devote itself to itself; let it not feel losses, and put a good construction even upon misfortunes. Zeno, the chief of our school, when he heard the news of a shipwreck, in which all his property had been lost, remarked, “Fortune bids me follow philosophy in lighter marching order.”",
+        context:"Seneca introduces Zeno while arguing that tranquillity requires adaptability without fickleness. Zeno does not deny the wreck; he redescribes the loss as a command to travel more lightly. Calling him “the chief of our school” identifies the anecdote as a foundational Stoic model of turning fortune into philosophical discipline."
+      },
+      {
+        speaker:"Socrates",
+        text:"When Socrates became angry, he lowered his voice and spoke sparingly. His friends recognized the restraint and accused him of anger; he welcomed the criticism because many could perceive his anger while no one had to feel it.",
+        source:"Seneca, On Anger 3.13, in Minor Dialogues, translated by Aubrey Stewart.",
+        url:"https://www.gutenberg.org/files/64576/64576-h/64576-h.htm",
+        passage:"With Socrates it was a sign of anger when he lowered his voice, and became sparing of speech; it was evident at such times that he was exercising restraint over himself. His friends, consequently, used to detect him acting thus, and convict him of being angry; nor was he displeased at being charged with concealment of anger; indeed, how could he help being glad that many men should perceive his anger, yet that none should feel it? they would however, have felt it had not he granted to his friends the same right of criticizing his own conduct which he himself assumed over theirs. How much more needful is it for us to do this? let us beg all our best friends to give us their opinion with the greatest freedom at the very time when we can bear it least, and never to be compliant with us when we are angry.",
+        context:"Seneca presents Socrates’ quiet voice as an observable technique of restraint, not as proof that the passion had vanished. The friends’ freedom to name his anger completes the practice: self-command is supported by reciprocal criticism, especially at the moment when criticism is hardest to accept."
+      },
+      {
+        speaker:"Antisthenes",
+        text:"When Antisthenes was reproached because his mother was a Thracian foreigner, he replied that the mother of the gods also came from Mount Ida.",
+        source:"Seneca, On the Firmness of the Wise Man 18, in Minor Dialogues, translated by Aubrey Stewart.",
+        url:"https://www.gutenberg.org/files/64576/64576-h/64576-h.htm",
+        passage:"Let us look at the examples of those men whose endurance we admire, as, for instance, that of Socrates, who took in good part the published and acted jibes of the comedians upon himself, and laughed no less than he did when he was drenched with dirty water by his wife Xanthippe. Antisthenes was reproached with his mother being a barbarian and a Thracian; he answered that the mother of the gods, too, came from Mount Ida.",
+        context:"Seneca is teaching indifference to social insult. The taunt attacks Antisthenes through his mother’s foreign birth; his answer refuses the premise that such ancestry is shameful and answers low status with divine precedent. In Greek myth, the Mother of the Gods was associated with Phrygian Mount Ida."
+      }
+    ];
+    chreiai.push(...senecaAnecdotes.map(({context, ...entry}) => entry));
+    chreiaContexts.push(...senecaAnecdotes.map(entry => entry.context));
+    const senecaMaxims = [
+      {
+        type:"maxim",
+        speaker:"Demetrius the Cynic",
+        text:"No one seems to me more unhappy than the man whom no misfortune has ever befallen.",
+        source:"Seneca, On Providence 3, in Minor Dialogues, translated by Aubrey Stewart.",
+        url:"https://www.gutenberg.org/files/64576/64576-h/64576-h.htm",
+        passage:"Among many grand sayings of our Demetrius is this, which I have but just heard, and which still rings and thrills in my ears: “No one,” said he, “seems to me more unhappy than the man whom no misfortune has ever befallen.” He never has had an opportunity of testing himself; though everything has happened to him according to his wish, nay, even before he has formed a wish, yet the gods have judged him unfavourably; he has never been deemed worthy to conquer ill fortune, which avoids the greatest cowards, as though it said, “Why should I take that man for my antagonist? He will straightway lay down his arms: I shall not need all my strength against him: he will be put to flight by a mere menace: he dares not even face me; let me look around for some other with whom I may fight hand to hand: I blush to join battle with one who is prepared to be beaten.” A gladiator deems it a disgrace to be matched with an inferior, and knows that to win without danger is to win without glory. Just so Fortune; she seeks out the bravest to match herself with, passes over some with disdain, and makes for the most unyielding and upright of men, to exert her strength against them.",
+        context:"Seneca says that he had only just heard this maxim from Demetrius, the Cynic philosopher he admired. Its paradox serves the essay’s argument that adversity can benefit a good person by making character visible and tested. The gladiator comparison explains why an entirely untried life may be enviable in comfort yet deficient in demonstrated courage."
+      }
+    ];
+    maxims.push(...senecaMaxims);
+    maximContexts.push(...senecaMaxims.map(entry => entry.context));
     const heideggerMaxims = [
       {text:'Authentic silence is possible only in genuine discourse.', source:'Martin Heidegger, Being and Time, §34, translated by Joan Stambaugh, revised by Dennis J. Schmidt, p. 159.', url:'https://www.beyng.com/pages/en/BeingandTimeSS/BeingandTimeSS.159.html', context:'In his discussion of discourse and listening, Heidegger distinguishes meaningful silence from merely failing to speak. Someone who understands a situation and has something to say can communicate through restraint. Silence can make understanding possible in ways that endless talk obscures; wordlessness alone does not accomplish this.'},
       {text:'Science does not think.', source:'Martin Heidegger, What Is Called Thinking?, translated by J. Glenn Gray, p. 134.', url:'https://www.beyng.com/pages/en/WhatIsCalledThinking/WhatIsCalledThinking.134.html', context:'Heidegger immediately qualifies this claim: science does not think in the sense in which philosophical thinkers do. His distinction concerns questioning the foundations that specialized inquiry ordinarily presupposes, not whether scientists use intelligence. He explicitly warns that the statement gives thinking no license to ignore the sciences or simply invent ideas.'},
@@ -780,6 +846,7 @@
     Object.assign(greekPronunciations, {'Thales':'THAH-lehss'});
     Object.assign(greekPronunciations, {'Artemis':'AR-teh-miss', 'Darius':'dah-REH-yoss', 'Pythagoras':'pü-THAH-goh-rahss', 'Xenophanes':'kseh-NOH-fah-nehss', 'Hecataeus':'heh-kah-TAI-oss'});
     Object.assign(greekPronunciations, {'Aesop':'EE-sop', 'Apollo':'uh-POL-oh', 'Miltiades':'mil-TYE-uh-deez'});
+    Object.assign(greekPronunciations, {'Pisistratus':'pee-SEE-strah-toss', 'Manes':'MAH-nehss', 'Demetrius':'deh-MEH-tree-oss'});
     const greekNamePattern = new RegExp(`(?<![A-Za-zÆæ])(${Object.keys(greekPronunciations).sort((a, b) => b.length - a.length).join('|')})(?![A-Za-zÆæ])`, 'g');
     const figureProfiles = {
       "Tiberius":"Second Roman emperor (r. 14–37 CE), an experienced general and administrator whose guarded temperament made his relations with the senate tense. Tacitus portrays him as valuing aristocratic independence while simultaneously concentrating imperial power and encouraging the fear that destroyed it.",
@@ -932,6 +999,11 @@
       "Xenophanes":"Poet and philosopher from Colophon, active in the late sixth and early fifth centuries BCE. He attacked anthropomorphic representations of the gods and reflected on knowledge and nature. Later tradition sometimes made him Heraclitus’s teacher, though Heraclitus includes him among learned figures who lacked understanding.",
       "Hecataeus":"Early Greek geographer and prose historian from Miletus, active around 500 BCE. He organized genealogical and geographical traditions and criticized implausible stories. Heraclitus cites his wide learning as another example of information that does not by itself produce insight."
     });
+    Object.assign(figureProfiles, {
+      "Pisistratus":"Athenian ruler of the sixth century BCE who seized power in three stages and governed as a tyrant. Later authors often contrasted his extra-constitutional rule with personal moderation; Seneca uses that tradition to show political power refusing the invitation to punish a drunken insult.",
+      "Manes":"The enslaved attendant said by Seneca to have escaped from Diogenes. Nothing independent is known about him. Seneca makes his flight expose the philosopher’s remaining dependence, while also redescribing Manes’ escape as a departure into freedom.",
+      "Demetrius the Cynic":"First-century CE Cynic philosopher admired by Seneca for austerity, frankness, and moral courage. Seneca calls him “our Demetrius” and repeatedly uses his conversation as living philosophical testimony; he is distinct from the Macedonian king Demetrius Poliorcetes."
+    });
     const figureAliases = {
       "Agesilaus":"Agesilaus II of Sparta", "Agis":"Agis II of Sparta", "Alcamenes":"Alcamenes of Sparta", "Alcander":"Alcander", "Alexander":"Alexander the Great", "Andromachus":"Andromachus of Tauromenium", "Antigonus":"Antigonus I Monophthalmus", "Antipater":"Antipater", "Archidamus":"Archidamus III of Sparta", "Aristagoras":"Aristagoras of Miletus", "Ariston":"Ariston of Chios", "Bito":"Cleobis and Bito", "Caesar":"Julius Caesar", "Cato":"Cato the Elder", "Cephalo":"Cephalo", "Cleanthes":"Cleanthes", "Cleobis":"Cleobis and Bito", "Cleomenes":"Cleomenes I of Sparta", "Crantor":"Crantor of Soli", "Crates":"Crates of Thebes", "Croesus":"Croesus", "Diagoras":"Diagoras of Melos", "Diogenes":"Diogenes of Sinope", "Dionysius":"Dionysius I of Syracuse", "Dionysus":"Dionysus", "Epaminondas":"Epaminondas", "Eumenes":"Eumenes of Cardia", "Gorgo":"Gorgo of Sparta", "Harmodius":"Harmodius", "Hecataeus":"Hecataeus", "Heraclitus":"Heraclitus", "Hephaestus":"Hephaestus", "Hegesias":"Hegesias", "Hesiod":"Hesiod", "Hipparchia":"Hipparchia", "Leosthenes":"Leosthenes", "Leonidas":"Leonidas of Sparta", "Midas":"Midas", "Pausanias":"Pausanias of Sparta", "Philip":"Philip V of Macedon", "Philophanes":"Philophanes", "Polemo":"Polemo", "Pythagoras":"Pythagoras", "Sophocles":"Sophocles", "Stilpo":"Stilpo of Megara", "Theodorus":"Theodorus the Cyrenaic", "Theopompus":"Theopompus", "Thucydides":"Thucydides, son of Melesias", "Xeniades":"Xeniades", "Xenocrates":"Xenocrates", "Xenophanes":"Xenophanes", "Zeno":"Zeno of Citium"
     };
@@ -939,6 +1011,7 @@
     Object.assign(figureAliases, {
       "Aemilius":"Lucius Aemilius Paullus", "Albinus":"Clodius Albinus", "Antiochus":"Antiochus III", "Camillus":"Marcus Furius Camillus", "Cardinal Rouen":"Cardinal Rouen", "Chabrias":"Chabrias", "Demetrius":"Demetrius I Poliorcetes", "Fabius Maximus":"Fabius Maximus", "Iphicrates":"Iphicrates", "Maximilian":"Maximilian I", "Niger":"Pescennius Niger", "Perseus":"Perseus of Macedon", "Ptolemy":"Ptolemy I Soter", "Pyrrhus":"Pyrrhus of Epirus", "Scipio":"Scipio Africanus"
     });
+    figureAliases["Demetrius the Cynic"] = "Demetrius the Cynic";
     function annotateGreekNames(value, seen = new Set()) { return escapeHtml(value).replace(greekNamePattern, name => { if (seen.has(name)) return name; seen.add(name); return `${name} <span class="pronunciation">(${greekPronunciations[name]})</span>`; }); }
     function randomIndex(length, previous) { if (length < 2) return 0; let n; do { n = crypto?.getRandomValues ? crypto.getRandomValues(new Uint32Array(1))[0] % length : Math.floor(Math.random() * length); } while (n === previous); return n; }
     const allItems = [...chreiai, ...maxims];
@@ -960,7 +1033,13 @@ The Shadow: None, except perhaps the wish that the philosophic “dog” express
 The Wanderer: What am I to do?
 
 The Shadow: Walk under those fir-trees and look around you towards the mountains; the sun is sinking.`,
-        laterUrl:'https://www.gutenberg.org/cache/epub/37841/pg37841-images.html#Pg365'
+        laterUrl:'https://www.gutenberg.org/cache/epub/37841/pg37841-images.html#Pg365',
+        laterReceptions:[{
+          author:'Marcus Tullius Cicero',
+          source:'Cicero, Tusculan Disputations 5.32, translated chiefly by C. D. Yonge, Project Gutenberg edition.',
+          passage:'But Diogenes took a greater liberty, like a Cynic, when Alexander asked him if he wanted anything: “Just at present,” said he, “I wish that you would stand a little out of the line between me and the sun,” for Alexander was hindering him from sunning himself. And, indeed, this very man used to maintain how much he surpassed the Persian king in his manner of life and fortune; for that he himself was in want of nothing, while the other never had enough; and that he had no inclination for those pleasures of which the other could never get enough to satisfy himself, and that the other could never obtain his.',
+          url:'https://www.gutenberg.org/files/14988/14988-h/14988-h.htm#page-197'
+        }]
       },
       'maxim-heraclitus-141f4et': {
         laterAuthor:'Friedrich Nietzsche',
@@ -972,7 +1051,13 @@ The Shadow: Walk under those fir-trees and look around you towards the mountains
         laterAuthor:'Michel de Montaigne',
         laterSource:'Michel de Montaigne, Essays I.18, “That Men Are Not to Judge of Our Happiness Till After Death,” translated by Charles Cotton and edited by William Carew Hazlitt, Project Gutenberg edition.',
         laterPassage:`The very children know the story of King Croesus to this purpose, who being taken prisoner by Cyrus, and by him condemned to die, as he was going to execution cried out, “O Solon, Solon!” which being presently reported to Cyrus, and he sending to inquire of him what it meant, Croesus gave him to understand that he now found the teaching Solon had formerly given him true to his cost; which was, “That men, however fortune may smile upon them, could never be said to be happy till they had been seen to pass over the last day of their lives,” by reason of the uncertainty and mutability of human things, which, upon very light and trivial occasions, are subject to be totally changed into a quite contrary condition. And so it was that Agesilaus made answer to one who was saying what a happy young man the King of Persia was, to come so young to so mighty a kingdom: “‘Tis true,” said he, “but neither was Priam unhappy at his years.”`,
-        laterUrl:'https://www.gutenberg.org/files/3600/3600-h/3600-h.htm#link2HCH0018'
+        laterUrl:'https://www.gutenberg.org/files/3600/3600-h/3600-h.htm#link2HCH0018',
+        laterReceptions:[{
+          author:'G. W. F. Hegel',
+          source:'G. W. F. Hegel, Lectures on the History of Philosophy, volume I, introduction to Greek philosophy, translated by E. S. Haldane, Project Gutenberg edition.',
+          passage:'One of the most celebrated sayings is that of Solon in his conversation with Crœsus, which Herodotus (I. 30-33) has in his own way given us very fully. The result arrived at is this:—“Nobody is to be esteemed happy before his death.” But the noteworthy point in this narrative is that from it we can get a better idea of the standpoint of Greek reflection in the time of Solon. We see that happiness is put forward as the highest aim, that which is most to be desired and which is the end of man. For in order that any one should be conceived of as happy, we must await his death, for happiness depends upon his condition to the end, and upon the fact that his death should be a pious one and be consistent with his higher destiny. Because the life of Crœsus had not yet expired, Solon could not deem him happy. And the history of Crœsus bears evidence that no momentary state deserves the name of happiness.',
+          url:'https://www.gutenberg.org/files/51635/51635-h/51635-h.htm'
+        }]
       },
       'chreia-thucydides-son-of-melesias-1lrp5rz': {
         laterAuthor:'Michel de Montaigne',
@@ -1014,7 +1099,13 @@ The Shadow: Walk under those fir-trees and look around you towards the mountains
         laterAuthor:'Michel de Montaigne',
         laterSource:'Michel de Montaigne, Essays I.38, “Of Solitude,” translated by Charles Cotton and edited by William Carew Hazlitt, Project Gutenberg edition.',
         laterPassage:`Stilpo having escaped from the burning of his town, where he lost wife, children, and goods, Demetrius Poliorcetes seeing him, in so great a ruin of his country, appear with an undisturbed countenance, asked him if he had received no loss? To which he made answer, No; and that, thank God, nothing was lost of his.—[Seneca, Ep. 7.]—This also was the meaning of the philosopher Antisthenes, when he pleasantly said, that “men should furnish themselves with such things as would float, and might with the owner escape the storm”;—[Diogenes Laertius, vi. 6.] and certainly a wise man never loses anything if he have himself.`,
-        laterUrl:'https://www.gutenberg.org/files/3600/3600-h/3600-h.htm#link2HCH0038'
+        laterUrl:'https://www.gutenberg.org/files/3600/3600-h/3600-h.htm#link2HCH0038',
+        laterReceptions:[{
+          author:'Seneca',
+          source:'Seneca, On the Firmness of the Wise Man 5–6, in Minor Dialogues, translated by Aubrey Stewart, Project Gutenberg edition.',
+          passage:'Demetrius, who was surnamed Poliorcetes, took Megara, and the philosopher Stilbo, when asked by him whether he had lost anything, answered, “No, I carry all my property about me.” Yet his inheritance had been given up to pillage, his daughters had been outraged by the enemy, his country had fallen under a foreign dominion, and it was the king, enthroned on high, surrounded by the spears of his victorious troops, who put this question to him; yet he struck the victory out of the king’s hands, and proved that, though the city was taken, he himself was not only unconquered but unharmed, for he bore with him those true goods which no one can lay hands upon. What was being plundered and carried away hither and thither he did not consider to be his own, but to be merely things which come and go at the caprice of fortune; therefore he had not loved them as his own.',
+          url:'https://www.gutenberg.org/files/64576/64576-h/64576-h.htm'
+        }]
       },
       'chreia-socrates-1f9zwl4': {
         laterAuthor:'G. W. F. Hegel',
@@ -1048,6 +1139,15 @@ The Shadow: Walk under those fir-trees and look around you towards the mountains
       }
     };
     for (const entry of allItems) Object.assign(entry, additionalLaterReception[entryQueryId(entry)] || {});
+    function laterReceptionsFor(entry) {
+      const legacy = entry.laterPassage ? [{
+        author:entry.laterAuthor,
+        source:entry.laterSource,
+        passage:entry.laterPassage,
+        url:entry.laterUrl
+      }] : [];
+      return [...legacy, ...(entry.laterReceptions || [])];
+    }
     function exerciseQueryId(step) { return querySlug(step.name); }
     function syncSelectionUrl() {
       const url = new URL(window.location.href);
@@ -1066,7 +1166,7 @@ The Shadow: Walk under those fir-trees and look around you towards the mountains
     function sourceAuthor(entry) { return entry.source.split(',')[0].trim(); }
     const sourceAuthors = [...new Set(allItems.map(sourceAuthor))].sort((a, b) => a.localeCompare(b));
     let selectedSources = new Set(sourceAuthors);
-    function activeItems() { const items = currentFilter === 'chreia' ? chreiai : currentFilter === 'maxim' ? maxims : currentFilter === 'reception' ? allItems.filter(entry => entry.laterPassage) : allItems; return items.filter(entry => selectedSources.has(sourceAuthor(entry))); }
+    function activeItems() { const items = currentFilter === 'chreia' ? chreiai : currentFilter === 'maxim' ? maxims : currentFilter === 'reception' ? allItems.filter(entry => laterReceptionsFor(entry).length) : allItems; return items.filter(entry => selectedSources.has(sourceAuthor(entry))); }
     function updateSourceSelectionStatus() { document.querySelector('#source-selection-status').textContent = `${selectedSources.size === sourceAuthors.length ? 'All selected' : `${selectedSources.size} of ${sourceAuthors.length} selected`} · ${activeItems().length} entries`; }
     function applyContentFilters() {
       lastChreia = -1; lastSpeaker = ''; speakerCycle = []; resetTimer(false);
@@ -1122,7 +1222,19 @@ The Shadow: Walk under those fir-trees and look around you towards the mountains
     function figureCard(heading, name) { return `<div><h2>${escapeHtml(heading)}</h2><p><strong>${escapeHtml(name)}</strong> — ${escapeHtml(figureProfiles[name] || 'A figure identified in the source tradition for this entry.')}</p></div>`; }
     function paintFigureContext(c) { const isMaxim = c.type === 'maxim', primary = canonicalFigureName(c.speaker), related = namedFigures(c); document.querySelector('#figure-context').innerHTML = [figureCard(`About ${isMaxim ? 'the author' : 'the figure'}`, primary), ...related.map(name => figureCard(isMaxim ? 'Also mentioned' : 'Also in this chreia', name))].join(''); document.querySelector('#entry-context-label').textContent = `${c.hintLabel || 'AI Generated Hint/Context'}:`; document.querySelector('#entry-context').innerHTML = `${escapeHtml(entryContext(c))}${c.hintUrl ? ` <a href="${c.hintUrl}" target="_blank" rel="noopener noreferrer">Read Nietzsche’s passage online ↗</a>` : ''}`; }
     function paintChreia(c, seen = new Set()) { document.querySelector('#speaker').innerHTML = annotateGreekNames(c.speaker, seen); document.querySelector('#chreia').innerHTML = annotateGreekNames(c.text, seen); const isMaxim = c.type === 'maxim'; document.querySelector('.chreia-slot').dataset.reelLabel = isMaxim ? 'MAXIM REEL' : 'CHREIA REEL'; document.querySelector('#spin-chreia').textContent = isMaxim ? 'Spin maxim' : 'Spin chreia'; }
-    function updateLaterReception(c) { const panel = document.querySelector('#later-reception'), button = document.querySelector('#show-reception'); panel.hidden = true; button.setAttribute('aria-expanded', 'false'); if (!c.laterPassage) { button.hidden = true; return; } const surname = c.laterAuthor.split(/\s+/).at(-1); document.querySelector('#later-reception-heading').textContent = `${c.laterAuthor} on this ${c.type === 'maxim' ? 'maxim' : 'chreia'}`; document.querySelector('#later-reception-source').textContent = c.laterSource; document.querySelector('#later-reception-passage').textContent = c.laterPassage; const link = document.querySelector('#later-reception-link'); link.href = c.laterUrl; link.textContent = `Read ${surname}’s passage online ↗`; button.hidden = false; button.textContent = `Show ${surname} passage`; }
+    function receptionButtonLabel(c, action = 'Show') { const receptions = laterReceptionsFor(c); if (receptions.length > 1) return `${action} ${receptions.length} later passages`; const surname = receptions[0]?.author?.split(/\s+/).at(-1) || 'later'; return `${action} ${surname} passage`; }
+    function updateLaterReception(c) {
+      const panel = document.querySelector('#later-reception'), button = document.querySelector('#show-reception'), receptions = laterReceptionsFor(c);
+      panel.hidden = true;
+      button.setAttribute('aria-expanded', 'false');
+      if (!receptions.length) { button.hidden = true; return; }
+      document.querySelector('#later-reception-list').innerHTML = receptions.map(reception => {
+        const surname = reception.author.split(/\s+/).at(-1);
+        return `<article class="later-reception-item"><h2>${escapeHtml(reception.author)} on this ${c.type === 'maxim' ? 'maxim' : 'chreia'}</h2><p class="later-reception-source">${escapeHtml(reception.source)}</p><blockquote class="later-reception-passage">${escapeHtml(reception.passage)}</blockquote><a href="${escapeHtml(reception.url)}" target="_blank" rel="noopener noreferrer">Read ${escapeHtml(surname)}’s passage online ↗</a></article>`;
+      }).join('');
+      button.hidden = false;
+      button.textContent = receptionButtonLabel(c);
+    }
     function updateSource(c, hideSource = true, seen = new Set()) { const source = document.querySelector('#source'); const context = document.querySelector('#entry-context-container'); const sourceToggle = document.querySelector('#show-source'); const hintToggle = document.querySelector('#show-hint'); source.innerHTML = `<strong>Source:</strong> ${annotateGreekNames(c.source, seen)}<br><br><strong>${c.excerpt ? 'Source excerpt:' : 'Source passage:'}</strong> ${annotateGreekNames(c.passage, seen)}<br><span class="source-note">${c.excerpt ? 'A brief quotation from the linked work. Read the surrounding passage online; Show hint explains its context.' : 'The text above gives the full relevant source unit: the complete paragraph where the edition groups the anecdote as a paragraph, or the complete numbered aphorism where it stands alone.'}</span><br><br><a href="${sourceUrl(c)}" target="_blank" rel="noopener noreferrer">Read the source context online ↗</a>`; if (hideSource) { source.hidden = true; context.hidden = true; sourceToggle.textContent = 'Show source'; sourceToggle.setAttribute('aria-expanded', 'false'); hintToggle.textContent = 'Show hint'; hintToggle.setAttribute('aria-expanded', 'false'); } }
     function renderChreia(c, hideSource = true, syncUrl = false) { const seen = new Set(); paintChreia(c, seen); paintFigureContext(c); updateSource(c, hideSource, seen); updateLaterReception(c); currentEntry = c; if (syncUrl) syncSelectionUrl(); }
     function render(c, s, hideSource = true) { renderChreia(c, hideSource); renderTask(s); syncSelectionUrl(); }
@@ -1143,7 +1255,7 @@ The Shadow: Walk under those fir-trees and look around you towards the mountains
     document.querySelector('#timer-reset').addEventListener('click', () => resetTimer(false));
     document.querySelector('#show-source').addEventListener('click', event => { const source = document.querySelector('#source'); source.hidden = !source.hidden; event.currentTarget.textContent = source.hidden ? 'Show source' : 'Hide source'; event.currentTarget.setAttribute('aria-expanded', String(!source.hidden)); });
     document.querySelector('#show-hint').addEventListener('click', event => { const context = document.querySelector('#entry-context-container'); context.hidden = !context.hidden; event.currentTarget.textContent = context.hidden ? 'Show hint' : 'Hide hint'; event.currentTarget.setAttribute('aria-expanded', String(!context.hidden)); });
-    document.querySelector('#show-reception').addEventListener('click', event => { const panel = document.querySelector('#later-reception'); panel.hidden = !panel.hidden; const surname = currentEntry?.laterAuthor?.split(/\s+/).at(-1) || 'later'; event.currentTarget.textContent = panel.hidden ? `Show ${surname} passage` : `Hide ${surname} passage`; event.currentTarget.setAttribute('aria-expanded', String(!panel.hidden)); });
+    document.querySelector('#show-reception').addEventListener('click', event => { const panel = document.querySelector('#later-reception'); panel.hidden = !panel.hidden; event.currentTarget.textContent = receptionButtonLabel(currentEntry, panel.hidden ? 'Show' : 'Hide'); event.currentTarget.setAttribute('aria-expanded', String(!panel.hidden)); });
     initializeSourcePicker(); initialExercise(); resetTimer(false);
   </script>
 </body>
