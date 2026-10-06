@@ -931,6 +931,79 @@
     function querySlug(value) { return value.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 36); }
     function stableHash(value) { let hash = 2166136261; for (let index = 0; index < value.length; index++) hash = Math.imul(hash ^ value.charCodeAt(index), 16777619); return (hash >>> 0).toString(36); }
     function entryQueryId(entry) { return `${entry.type === 'maxim' ? 'maxim' : 'chreia'}-${querySlug(entry.speaker)}-${stableHash(`${entry.speaker}\u0000${entry.text}`)}`; }
+    const additionalLaterReception = {
+      'chreia-diogenes-of-sinope-m6wgiq': {
+        laterAuthor:'Friedrich Nietzsche',
+        laterSource:'Friedrich Nietzsche, The Wanderer and His Shadow §366, in Human, All Too Human II, translated by Paul V. Cohn, Project Gutenberg edition.',
+        laterPassage:`The Wanderer: Oh, is it already time to part? And I had to hurt you in the end—I saw you became darker.
+
+The Shadow: I blushed the only colour I have at command. I remembered that I had often lain at your feet like a dog, and that you then——
+
+The Wanderer: Can I not with all speed do something to please you? Have you no wish?
+
+The Shadow: None, except perhaps the wish that the philosophic “dog” expressed to Alexander the Great—just move a little out of my light; I feel cold.
+
+The Wanderer: What am I to do?
+
+The Shadow: Walk under those fir-trees and look around you towards the mountains; the sun is sinking.`,
+        laterUrl:'https://www.gutenberg.org/cache/epub/37841/pg37841-images.html#Pg365'
+      },
+      'maxim-heraclitus-141f4et': {
+        laterAuthor:'Friedrich Nietzsche',
+        laterSource:'Friedrich Nietzsche, Human, All Too Human II §223, translated by Paul V. Cohn, Project Gutenberg edition.',
+        laterPassage:`Whither We must Travel.—Immediate self-observation is not enough, by a long way, to enable us to learn to know ourselves. We need history, for the past continues to flow through us in a hundred channels. We ourselves are, after all, nothing but our own sensation at every moment of this continued flow. Even here, when we wish to step down into the stream of our apparently most peculiar and personal development, Heraclitus' aphorism, “You cannot step twice into the same river,” holds good.—This is a piece of wisdom which has, indeed, gradually become trite, but nevertheless has remained as strong and true as it ever was.`,
+        laterUrl:'https://www.gutenberg.org/cache/epub/37841/pg37841-images.html#Pg117'
+      },
+      'chreia-solon-o2x77q': {
+        laterAuthor:'Michel de Montaigne',
+        laterSource:'Michel de Montaigne, Essays I.18, “That Men Are Not to Judge of Our Happiness Till After Death,” translated by Charles Cotton and edited by William Carew Hazlitt, Project Gutenberg edition.',
+        laterPassage:`The very children know the story of King Croesus to this purpose, who being taken prisoner by Cyrus, and by him condemned to die, as he was going to execution cried out, “O Solon, Solon!” which being presently reported to Cyrus, and he sending to inquire of him what it meant, Croesus gave him to understand that he now found the teaching Solon had formerly given him true to his cost; which was, “That men, however fortune may smile upon them, could never be said to be happy till they had been seen to pass over the last day of their lives,” by reason of the uncertainty and mutability of human things, which, upon very light and trivial occasions, are subject to be totally changed into a quite contrary condition. And so it was that Agesilaus made answer to one who was saying what a happy young man the King of Persia was, to come so young to so mighty a kingdom: “‘Tis true,” said he, “but neither was Priam unhappy at his years.”`,
+        laterUrl:'https://www.gutenberg.org/files/3600/3600-h/3600-h.htm#link2HCH0018'
+      },
+      'chreia-thucydides-son-of-melesias-1lrp5rz': {
+        laterAuthor:'Michel de Montaigne',
+        laterSource:'Michel de Montaigne, Essays I.51, “Of the Vanity of Words,” translated by Charles Cotton and edited by William Carew Hazlitt, Project Gutenberg edition.',
+        laterPassage:`A rhetorician of times past said, that to make little things appear great was his profession. This was a shoemaker, who can make a great shoe for a little foot.—[A saying of Agesilaus.]—They would in Sparta have sent such a fellow to be whipped for making profession of a tricky and deceitful act; and I fancy that Archidamus, who was king of that country, was a little surprised at the answer of Thucydides, when inquiring of him, which was the better wrestler, Pericles, or he, he replied, that it was hard to affirm; for when I have thrown him, said he, he always persuades the spectators that he had no fall and carries away the prize. —[Quintilian, ii. 15.]—`,
+        laterUrl:'https://www.gutenberg.org/files/3600/3600-h/3600-h.htm#link2HCH0051'
+      },
+      'chreia-king-theopompus-of-sparta-1l4ujg0': {
+        laterAuthor:'Michel de Montaigne',
+        laterSource:'Michel de Montaigne, Essays I.41, “Not to Communicate a Man’s Honour,” translated by Charles Cotton and edited by William Carew Hazlitt, Project Gutenberg edition.',
+        laterPassage:`Many at Rome thought, and would usually say, that the greatest of Scipio’s acts were in part due to Laelius, whose constant practice it was still to advance and support Scipio’s grandeur and renown, without any care of his own. And Theopompus, king of Sparta, to him who told him the republic could not miscarry since he knew so well how to command, “Tis rather,” answered he, “because the people know so well how to obey.”`,
+        laterUrl:'https://www.gutenberg.org/files/3600/3600-h/3600-h.htm#link2HCH0041'
+      },
+      'chreia-diogenes-of-sinope-19f013k': {
+        laterAuthor:'Michel de Montaigne',
+        laterSource:'Michel de Montaigne, Essays I.11, “Of Prognostications,” translated by Charles Cotton and edited by William Carew Hazlitt, Project Gutenberg edition.',
+        laterPassage:`I think never the better of them for some such accidental hit. There would be more certainty in it if there were a rule and a truth of always lying. Besides, nobody records their flimflams and false prognostics, forasmuch as they are infinite and common; but if they chop upon one truth, that carries a mighty report, as being rare, incredible, and prodigious. So Diogenes, surnamed the Atheist, answered him in Samothrace, who, showing him in the temple the several offerings and stories in painting of those who had escaped shipwreck, said to him, “Look, you who think the gods have no care of human things, what do you say to so many persons preserved from death by their especial favour?” “Why, I say,” answered he, “that their pictures are not here who were cast away, who are by much the greater number.”—[Cicero, De Natura Deor., i. 37.]`,
+        laterUrl:'https://www.gutenberg.org/files/3600/3600-h/3600-h.htm#link2HCH0011'
+      },
+      'chreia-diogenes-of-sinope-15q6l10': {
+        laterAuthor:'Michel de Montaigne',
+        laterSource:'Michel de Montaigne, Essays I.25, “Of the Education of Children,” translated by Charles Cotton and edited by William Carew Hazlitt, Project Gutenberg edition.',
+        laterPassage:`Leo, prince of the Phliasians, asking Heraclides Ponticus—[It was not Heraclides of Pontus who made this answer, but Pythagoras.]—of what art or science he made profession: “I know,” said he, “neither art nor science, but I am a philosopher.” One reproaching Diogenes that, being ignorant, he should pretend to philosophy; “I therefore,” answered he, “pretend to it with so much the more reason.” Hegesias entreated that he would read a certain book to him: “You are pleasant,” said he; “you choose those figs that are true and natural, and not those that are painted; why do you not also choose exercises which are naturally true, rather than those written?”`,
+        laterUrl:'https://www.gutenberg.org/files/3600/3600-h/3600-h.htm#link2HCH0025'
+      },
+      'chreia-cato-the-elder-1nrbbgh': {
+        laterAuthor:'Michel de Montaigne',
+        laterSource:'Michel de Montaigne, Essays III.8, “Of the Art of Conference,” translated by Charles Cotton and edited by William Carew Hazlitt, Project Gutenberg edition.',
+        laterPassage:`There may, peradventure, be some of my own complexion who better instruct myself by contrariety than by similitude, and by avoiding than by imitation. The elder Cato was regarding this sort of discipline, when he said, “that the wise may learn more of fools, than fools can of the wise”; and Pausanias tells us of an ancient player upon the harp, who was wont to make his scholars go to hear one who played very ill, who lived over against him, that they might learn to hate his discords and false measures. The horror of cruelty more inclines me to clemency, than any example of clemency could possibly do. A good rider does not so much mend my seat, as an awkward attorney or a Venetian, on horseback; and a clownish way of speaking more reforms mine than the most correct.`,
+        laterUrl:'https://www.gutenberg.org/files/3600/3600-h/3600-h.htm#link2HCH0101'
+      },
+      'chreia-pacuvius-calavius-12946y6': {
+        laterAuthor:'Michel de Montaigne',
+        laterSource:'Michel de Montaigne, Essays III.9, “Of Vanity,” translated by Charles Cotton and edited by William Carew Hazlitt, Project Gutenberg edition.',
+        laterPassage:`Whoever would look direct at a cure, and well consider of it before he began, would be very willing to withdraw his hands from meddling in it. Pacuvius Calavius corrected the vice of this proceeding by a notable example. His fellow-citizens were in mutiny against their magistrates; he being a man of great authority in the city of Capua, found means one day to shut up the Senators in the palace; and calling the people together in the market-place, there told them that the day was now come wherein at full liberty they might revenge themselves on the tyrants by whom they had been so long oppressed, and whom he had now, all alone and unarmed, at his mercy. He then advised that they should call these out, one by one, by lot, and should individually determine as to each, causing whatever should be decreed to be immediately executed; with this proviso, that they should, at the same time, depute some honest man in the place of him who was condemned, to the end there might be no vacancy in the Senate. They had no sooner heard the name of one senator but a great cry of universal dislike was raised up against him. “I see,” says Pacuvius, “that we must put him out; he is a wicked fellow; let us look out a good one in his room.” Immediately there was a profound silence, every one being at a stand whom to choose. But one, more impudent than the rest, having named his man, there arose yet a greater consent of voices against him, an hundred imperfections being laid to his charge, and as many just reasons why he should not stand. These contradictory humours growing hot, it fared worse with the second senator and the third, there being as much disagreement in the election of the new, as consent in the putting out of the old. In the end, growing weary of this bustle to no purpose, they began, some one way and some another, to steal out of the assembly: every one carrying back this resolution in his mind, that the oldest and best known evil was ever more supportable than one that was, new and untried.`,
+        laterUrl:'https://www.gutenberg.org/files/3600/3600-h/3600-h.htm#link2HCH0102'
+      },
+      'chreia-stilpo-of-megara-lvqnc3': {
+        laterAuthor:'Michel de Montaigne',
+        laterSource:'Michel de Montaigne, Essays I.38, “Of Solitude,” translated by Charles Cotton and edited by William Carew Hazlitt, Project Gutenberg edition.',
+        laterPassage:`Stilpo having escaped from the burning of his town, where he lost wife, children, and goods, Demetrius Poliorcetes seeing him, in so great a ruin of his country, appear with an undisturbed countenance, asked him if he had received no loss? To which he made answer, No; and that, thank God, nothing was lost of his.—[Seneca, Ep. 7.]—This also was the meaning of the philosopher Antisthenes, when he pleasantly said, that “men should furnish themselves with such things as would float, and might with the owner escape the storm”;—[Diogenes Laertius, vi. 6.] and certainly a wise man never loses anything if he have himself.`,
+        laterUrl:'https://www.gutenberg.org/files/3600/3600-h/3600-h.htm#link2HCH0038'
+      }
+    };
+    for (const entry of allItems) Object.assign(entry, additionalLaterReception[entryQueryId(entry)] || {});
     function exerciseQueryId(step) { return querySlug(step.name); }
     function syncSelectionUrl() {
       const url = new URL(window.location.href);
