@@ -848,6 +848,7 @@
     Object.assign(greekPronunciations, {'Artemis':'AR-teh-miss', 'Darius':'dah-REH-yoss', 'Pythagoras':'pü-THAH-goh-rahss', 'Xenophanes':'kseh-NOH-fah-nehss', 'Hecataeus':'heh-kah-TAI-oss'});
     Object.assign(greekPronunciations, {'Aesop':'EE-sop', 'Apollo':'uh-POL-oh', 'Miltiades':'mil-TYE-uh-deez'});
     Object.assign(greekPronunciations, {'Pisistratus':'pee-SEE-strah-toss', 'Manes':'MAH-nehss', 'Demetrius':'deh-MEH-tree-oss'});
+    Object.assign(greekPronunciations, {Aeschylus:'eye-SKHOO-loss', Damocles:'dah-moh-KLEHSS', Plutarch:'PLOO-tar-khoss'});
     const greekNamePattern = new RegExp(`(?<![A-Za-zÆæ])(${Object.keys(greekPronunciations).sort((a, b) => b.length - a.length).join('|')})(?![A-Za-zÆæ])`, 'g');
     const figureProfiles = {
       "Tiberius":"Second Roman emperor (r. 14–37 CE), an experienced general and administrator whose guarded temperament made his relations with the senate tense. Tacitus portrays him as valuing aristocratic independence while simultaneously concentrating imperial power and encouraging the fear that destroyed it.",
@@ -1062,6 +1063,98 @@
     ];
     chreiai.push(...newDiogenesAnecdotes);
     chreiaContexts.push(...newDiogenesAnecdotes.map(entry => entry.context));
+    // Orators' reception: keep the ancient material separate from its later application.
+    // Modern copyrighted works use brief quotations plus clearly labeled summaries.
+    const oratorChreiai = [
+      {
+        speaker:"Diogenes of Sinope",
+        text:"When someone reminded Diogenes that the people of Sinope had sentenced him to exile, he replied, ‘And I them, to home-staying.’ They could banish him, but he could regard their remaining at home as the worse sentence.",
+        source:"Diogenes Laertius, Lives of Eminent Philosophers 6.49, R. D. Hicks translation.",
+        url:"https://penelope.uchicago.edu/Thayer/E/Roman/Texts/Diogenes_Laertius/Lives_of_the_Eminent_Philosophers/6/Diogenes*.html#49",
+        passage:'When some one reproached him with his exile, his reply was, "Nay, it was through that, you miserable fellow, that I came to be a philosopher." Again, when some one reminded him that the people of Sinope had sentenced him to exile, "And I them," said he, "to home-staying."',
+        context:"Diogenes reverses the civic judgment against him: exclusion from one's native city need not be a loss if philosophical independence matters more than belonging. This is the second exile retort in 6.49, distinct from his preceding claim that exile made him a philosopher. The final sentence on the reel explains the joke rather than quoting Hicks.",
+        laterReceptions:[{
+          author:"Edmund Burke",
+          source:"Edmund Burke, An Appeal from the New to the Old Whigs (1791), opening; Works, vol. IV.",
+          url:"https://www.gutenberg.org/files/15700/15700-h/15700-h.htm#:~:text=Whether%20Diogenes%20the%20Cynic",
+          context:"Burke answers former political allies who have repudiated his book on the French Revolution and urged him to retire. He uses Diogenes' reversal to suggest that exclusion cannot punish someone who already prefers departure. His picturesque account of Diogenes' circumstances is Burke's retelling, not additional evidence about the ancient philosopher.",
+          passage:'Whether Diogenes the Cynic was a true philosopher cannot easily be determined. He has written nothing. But the sayings of his which are handed down by others are lively, and may be easily and aptly applied on many occasions by those whose wit is not so perfect as their memory. This Diogenes (as every one will recollect) was citizen of a little bleak town situated on the coast of the Euxine, and exposed to all the buffets of that inhospitable sea. He lived at a great distance from those weather-beaten walls, in ease and indolence, and in the midst of literary leisure, when he was informed that his townsmen had condemned him to be banished from Sinope; he answered coolly, "And I condemn them to live in Sinope."\n\nThe gentlemen of the party in which Mr. Burke has always acted, in passing upon him the sentence of retirement, have done nothing more than to confirm the sentence which he had long before passed upon himself. When that retreat was choice, which the tribunal of his peers inflict as punishment, it is plain he does not think their sentence intolerably severe. Whether they, who are to continue in the Sinope which shortly he is to leave, will spend the long years, which I hope remain to them, in a manner more to their satisfaction than he shall slide down, in silence and obscurity, the slope of his declining days, is best known to Him who measures out years, and days, and fortunes.'
+        }]
+      },
+      {
+        speaker:"Socrates",
+        text:"Defending himself at his trial, Socrates compared Athens to a large, well-bred horse that had grown sluggish and needed a gadfly's sting. He said, ‘I think the god fastened me upon the city in some such capacity,’ explaining that his persistent questioning kept its citizens awake.",
+        source:"Plato, Apology 30e–31a, Harold North Fowler translation. A contextualized saying from Socrates' defense, not an independently witnessed anecdote.",
+        url:"https://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.01.0170:text=Apol.:section=30e",
+        passage:"For if you put me to death, you will not easily find another, who, to use a rather absurd figure, attaches himself to the city as a gadfly to a horse, which, though large and well bred, is sluggish on account of his size and needs to be aroused by stinging. I think the god fastened me upon the city in some such capacity, and I go about arousing, and urging and reproaching each one of you, constantly alighting upon you everywhere the whole day long. Such another is not likely to come to you, gentlemen; but if you take my advice, you will spare me.",
+        context:"In Plato's presentation of the trial, Socrates argues that Athens would injure itself by silencing him. His questioning is irritating but beneficial: it interrupts complacency and presses citizens to examine how they live. The gadfly image makes his unpopular activity a service to the city rather than an attack on it.",
+        laterReceptions:[{
+          author:"Martin Luther King Jr.",
+          source:"Martin Luther King Jr., Letter from Birmingham Jail (16 April 1963), argument for constructive nonviolent tension. Brief excerpt; rhetorical adaptation of the Socratic image.",
+          url:"https://crmvet.lib.duke.edu/docs/bhamlbj.html#:~:text=Just%20as%20Socrates",
+          context:"Answering clergymen who favor negotiation over demonstrations, King says direct action makes negotiation possible when a community refuses it. He compares Socrates' challenge to settled beliefs with peaceful protest's challenge to racism. The gadfly is an analogy for constructive disturbance, not an endorsement of violence. The linked paragraphs supply the full comparison and its conclusion.",
+          passage:"so must we see the need for nonviolent gadflies to create the kind of tension in society"
+        }]
+      },
+      {
+        speaker:"Dionysius I of Syracuse",
+        text:"When Damocles praised the ruler Dionysius as supremely happy, Dionysius asked, ‘Have you an inclination, Damocles, as this kind of life pleases you, to have a taste of it yourself, and to make a trial of the good fortune that attends me?’ During the luxurious banquet he had a sword suspended above Damocles by a single horsehair. Damocles could no longer enjoy the feast and begged to leave: wealth and power were no happiness under constant fear.",
+        source:"Cicero, Tusculan Disputations 5.61–62, C. D. Yonge translation. Cicero's moralizing account of Dionysius and Damocles.",
+        url:"https://www.attalus.org/cicero/tusc5A.html#61",
+        passage:'This tyrant, however, showed himself how happy he really was: for once, when Damocles, one of his flatterers, was dilating in conversation on his forces, his wealth, the greatness of his power, the plenty he enjoyed, the grandeur of his royal palaces, and maintaining that no one was ever happier - "Have you an inclination," said he, "Damocles, as this kind of life pleases you, to have a taste of it yourself, and to make a trial of the good fortune that attends me?" And when he said that he should like it extremely, Dionysius ordered him to be laid on a bed of gold with the most beautiful covering, embroidered and wrought with the most exquisite work, and he dressed out a great many sideboards with silver and embossed gold. He then ordered some youths, distinguished for their handsome persons, to wait at his table, and to observe his nod, in order to serve him with what he wanted. There were ointments and garlands; perfumes were burned; tables provided with the most exquisite meats. Damocles thought himself very happy. In the midst of this apparatus, Dionysius ordered a bright sword to be let down from the ceiling, suspended by a single horsehair, so as to hang over the head of that happy man. After which he neither cast his eye on those handsome waiters, nor on the well wrought plate; nor touched any of the provisions: presently the garlands fell to pieces. At last he entreated the tyrant to give him leave to go, for that now he had no desire to be happy.\n\nDoes not Dionysius, then, seem to have declared there can be no happiness for one who is under constant apprehensions?',
+        context:"Cicero uses the banquet to expose the insecurity concealed by a tyrant's magnificence. Damocles initially equates wealth with happiness; the sword makes him experience the ruler's fear. The story belongs to the argument that external advantages cannot provide a happy life when the mind is unfree.",
+        laterReceptions:[{
+          author:"John F. Kennedy",
+          source:"John F. Kennedy, Address to the United Nations General Assembly (25 September 1961), disarmament section. An allusion adapting the ancient anecdote to nuclear danger.",
+          url:"https://millercenter.org/the-presidency/presidential-speeches/september-25-1961-address-un-general-assembly#:~:text=Today%2C%20every%20inhabitant",
+          context:"Kennedy universalizes the peril of Damocles: nuclear weapons place every person, not just a ruler, beneath a precariously suspended threat. Accident and miscalculation are as dangerous as deliberate aggression. The image introduces his appeal for disarmament; it does not retell the entire ancient story.",
+          passage:"Today, every inhabitant of this planet must contemplate the day when this planet may no longer be habitable. Every man, woman and child lives under a nuclear sword of Damocles, hanging by the slenderest of threads, capable of being cut at any moment by accident or miscalculation or by madness. The weapons of war must be abolished before they abolish us."
+        }]
+      }
+    ];
+    const oratorMaxims = [
+      {
+        type:"maxim", speaker:"Aeschylus",
+        text:"But even as trouble, bringing memory of pain, drips over the mind in sleep, so wisdom comes to men, whether they want it or not.",
+        source:"Aeschylus, Agamemnon 176–183, chorus' hymn to Zeus; Herbert Weir Smyth translation as presented by Perseus.",
+        url:"https://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.01.0004:card=176",
+        passage:"Zeus, who sets mortals on the path to understanding, Zeus, who has established as a fixed law that “wisdom comes by suffering.” But even as trouble, bringing memory of pain, drips over the mind in sleep, so wisdom comes to men, whether they want it or not. Harsh, it seems to me, is the grace of gods enthroned upon their awful seats.",
+        context:"The chorus voices this difficult confidence in Zeus while recalling the expedition to Troy and approaching the account of Agamemnon's sacrifice of his daughter. Pain can compel understanding without anyone choosing it. The surrounding tragedy makes this a troubling divine education, not a reassuring claim that all suffering is good.",
+        laterReceptions:[{
+          author:"Robert F. Kennedy",
+          source:"Robert F. Kennedy, Statement on the Assassination of Martin Luther King Jr. (4 April 1968), Indianapolis. Brief quotation from his rendering of Aeschylus, not the Smyth wording on the reel.",
+          url:"https://www.jfklibrary.org/learn/about-jfk/the-kennedy-family/robert-f-kennedy/robert-f-kennedy-speeches/statement-on-assassination-of-martin-luther-king-jr-april-4-1968",
+          context:"Announcing King's assassination, Kennedy acknowledges the temptation to racial hatred and recalls the murder of his own brother. He invokes Aeschylus to turn shared grief toward understanding and compassion rather than retaliation. His spoken wording differs from the translation used for the ancient source here. The linked transcript contains the full quotation and his appeal for reconciliation.",
+          passage:"until, in our own despair, against our will, comes wisdom through the awful grace of God."
+        }]
+      },
+      {
+        type:"maxim", speaker:"Plutarch (attributed by Churchill; unverified)",
+        text:"Ingratitude towards their great men is the mark of strong peoples. [Churchill attributes this to Plutarch; the ancient source has not been verified.]",
+        source:"Winston Churchill, The Gathering Storm (1948), Book I, chapter 1, p. 12 in the linked edition. Quoted as Plutarch by Churchill; no ancient locus verified.",
+        url:"https://www.fadedpage.com/books/20190527/html.php#:~:text=Ingratitude%20towards%20their%20great%20men",
+        excerpt:true,
+        passage:"“Ingratitude towards their great men,” says Plutarch, “is the mark of strong peoples.”",
+        context:"Churchill invokes this attributed saying while criticizing France's abandonment of Clemenceau after the First World War. He argues that an exhausted nation could not afford to discard an experienced leader with international authority. This records Churchill's attribution; it does not establish that Plutarch wrote the maxim.",
+        laterReceptions:[{
+          author:"Winston Churchill",
+          source:"Winston Churchill, The Gathering Storm (1948), Book I, chapter 1, p. 12. Verified modern use; attribution to Plutarch remains unverified. Brief excerpt.",
+          url:"https://www.fadedpage.com/books/20190527/html.php#:~:text=Ingratitude%20towards%20their%20great%20men",
+          context:"After describing the failure of the promised Anglo-American guarantee of French security, Churchill discusses the removal of Clemenceau. He takes the attributed maxim to describe a luxury of strong nations, then argues that France's postwar weakness made such conduct dangerous. His criticism continues with the instability of French governments. Read the full surrounding paragraph at the source link; the ancient provenance is unresolved.",
+          passage:"It was imprudent for France to indulge this trait […]"
+        }]
+      }
+    ];
+    chreiai.push(...oratorChreiai);
+    chreiaContexts.push(...oratorChreiai.map(entry => entry.context));
+    maxims.push(...oratorMaxims);
+    maximContexts.push(...oratorMaxims.map(entry => entry.context));
+    Object.assign(figureProfiles, {
+      "Damocles":"A court flatterer in Cicero's story about Dionysius of Syracuse. His admiration for royal luxury disappears when a suspended sword reveals the ruler's insecurity. He is chiefly known through this moral anecdote, not through an independently documented biography.",
+      "Aeschylus":"Athenian tragic poet (c. 525–456 BCE), author of the Oresteia. His plays explore divine justice, inherited violence, and human responsibility. The suffering-and-wisdom passage is spoken by the chorus in Agamemnon, not offered as a detached personal slogan.",
+      "Plutarch":"Greek biographer and moral essayist (c. 46–after 119 CE), author of the Parallel Lives and Moralia. He examines character through actions and sayings. Churchill's attribution in this entry is recorded as a modern claim, not a verified passage from Plutarch."
+    });
+    figureAliases["Plutarch (attributed by Churchill; unverified)"] = "Plutarch";
     const allItems = [...chreiai, ...maxims];
     function querySlug(value) { return value.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 36); }
     function stableHash(value) { let hash = 2166136261; for (let index = 0; index < value.length; index++) hash = Math.imul(hash ^ value.charCodeAt(index), 16777619); return (hash >>> 0).toString(36); }
