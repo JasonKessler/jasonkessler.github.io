@@ -848,7 +848,7 @@
     Object.assign(greekPronunciations, {'Artemis':'AR-teh-miss', 'Darius':'dah-REH-yoss', 'Pythagoras':'pü-THAH-goh-rahss', 'Xenophanes':'kseh-NOH-fah-nehss', 'Hecataeus':'heh-kah-TAI-oss'});
     Object.assign(greekPronunciations, {'Aesop':'EE-sop', 'Apollo':'uh-POL-oh', 'Miltiades':'mil-TYE-uh-deez'});
     Object.assign(greekPronunciations, {'Pisistratus':'pee-SEE-strah-toss', 'Manes':'MAH-nehss', 'Demetrius':'deh-MEH-tree-oss'});
-    Object.assign(greekPronunciations, {Aeschylus:'eye-SKHOO-loss', Damocles:'dah-moh-KLEHSS', Plutarch:'PLOO-tar-khoss'});
+    Object.assign(greekPronunciations, {Aeschylus:'eye-SKHOO-loss', Damocles:'dah-moh-KLEHSS', Plutarch:'PLOO-tar-khoss', Archimedes:'ar-khee-MEH-dehss', Hiero:'hee-EH-rohn'});
     const greekNamePattern = new RegExp(`(?<![A-Za-zÆæ])(${Object.keys(greekPronunciations).sort((a, b) => b.length - a.length).join('|')})(?![A-Za-zÆæ])`, 'g');
     const figureProfiles = {
       "Tiberius":"Second Roman emperor (r. 14–37 CE), an experienced general and administrator whose guarded temperament made his relations with the senate tense. Tacitus portrays him as valuing aristocratic independence while simultaneously concentrating imperial power and encouraging the fear that destroyed it.",
@@ -1137,6 +1137,53 @@
       "Damocles":"A court flatterer in Cicero's story about Dionysius of Syracuse. His admiration for royal luxury disappears when a suspended sword reveals the ruler's insecurity. He is chiefly known through this moral anecdote, not through an independently documented biography.",
       "Aeschylus":"Athenian tragic poet (c. 525–456 BCE), author of the Oresteia. His plays explore divine justice, inherited violence, and human responsibility. The suffering-and-wisdom passage is spoken by the chorus in Agamemnon, not offered as a detached personal slogan."
     });
+    const archimedesWorld = {
+      speaker:"Archimedes",
+      text:"Archimedes told King Hiero that any given weight could be moved by a given force, and declared that, if he could stand on another world, he could move this one. Asked to demonstrate, he used compound pulleys to draw a loaded ship toward himself with little effort.",
+      source:"Plutarch, Life of Marcellus 14.7–9, Loeb Classical Library translation by Bernadotte Perrin.",
+      url:"https://penelope.uchicago.edu/Thayer/E/Roman/Texts/Plutarch/Lives/Marcellus*.html#14.7",
+      passage:"And yet even Archimedes, who was a kinsman and friend of King Hiero, wrote to him that with any given force it was possible to move any given weight; and emboldened, as we are told, by the strength of his demonstration, he declared that, if there were another world, and he could go to it, he could move this. Hiero was astonished, and begged him to put his proposition into execution, and show him some great weight moved by a slight force. Archimedes therefore fixed upon a three-masted merchantman of the royal fleet, which had been dragged ashore by the great labours of many men, and after putting on board many passengers and the customary freight, he seated himself at a distance from her, and without any great effort, but quietly setting in motion with his hand a system of compound pulleys, drew her towards him smoothly and evenly, as though she were gliding through the water. Amazed at this, then, and comprehending the power of his art, the king persuaded Archimedes to prepare for him offensive and defensive engines to be used in every kind of siege warfare. These he had never used himself, because he spent the greater part of his life in freedom from war and amid the festal rites of peace; but at the present time his apparatus stood the Syracusans in good stead, and, with the apparatus, its fabricator.",
+      context:"Plutarch introduces the demonstration while explaining the machines that defended Syracuse against Marcellus. Hiero asks Archimedes to make abstract geometry visible in practical action; moving the ship persuades him to commission military devices. Plutarch reports the world-moving boast indirectly, so the reel does not invent a verbatim ancient reply.",
+      laterReceptions:[{
+        author:"Robert F. Kennedy",
+        source:"Robert F. Kennedy, Day of Affirmation Address, University of Cape Town (6 June 1966), section on the danger of futility. Brief excerpt; metaphorical reuse of the world-moving saying, not a retelling of the ship demonstration.",
+        url:"https://www.jfklibrary.org/learn/about-jfk/the-kennedy-family/robert-f-kennedy/robert-f-kennedy-speeches/day-of-affirmation-address-university-of-capetown-june-6-1966#:~:text=Give%20me%20a%20place%20to%20stand",
+        context:"Addressing students in apartheid South Africa, Kennedy challenges the belief that a single person is powerless before entrenched injustice. After naming individuals who changed history, he invokes Archimedes' claim about moving the world. He then shifts from exceptional heroes to ordinary people: small contributions, combined across many lives, can transform society. This is a moral and political application of the mechanical image. Kennedy's familiar direct-quotation wording is not the wording of Plutarch's indirect report; the linked speech provides the surrounding examples and conclusion.",
+        passage:'"Give me a place to stand," said Archimedes, "and I will move the world."'
+      }]
+    };
+    chreiai.push(archimedesWorld);
+    chreiaContexts.push(archimedesWorld.context);
+    const periclesCivicGreatness = {
+      type:"maxim", speaker:"Pericles",
+      text:"At the public funeral for Athens' fallen soldiers, Pericles urged his listeners to look at their city's greatness and remember that ‘it was by courage, sense of duty, and a keen feeling of honour in action that men were enabled to win all this.’",
+      source:"Thucydides, History of the Peloponnesian War 2.43.1–2, Pericles' funeral oration, translated by Richard Crawley. The reel supplies the setting before a direct excerpt.",
+      url:"https://classics.mit.edu/Thucydides/pelopwar.2.second.html#:~:text=So%20died%20these%20men",
+      passage:"So died these men as became Athenians. You, their survivors, must determine to have as unfaltering a resolution in the field, though you may pray that it may have a happier issue. And not contented with ideas derived only from words of the advantages which are bound up with the defence of your country, though these would furnish a valuable text to a speaker even before an audience so alive to them as the present, you must yourselves realize the power of Athens, and feed your eyes upon her from day to day, till love of her fills your hearts; and then, when all her greatness shall break upon you, you must reflect that it was by courage, sense of duty, and a keen feeling of honour in action that men were enabled to win all this, and that no personal failure in an enterprise could make them consent to deprive their country of their valour, but they laid it at her feet as the most glorious contribution that they could offer. For this offering of their lives made in common by them all they each of them individually received that renown which never grows old, and for a sepulchre, not so much that in which their bones have been deposited, but that noblest of shrines wherein their glory is laid up to be eternally remembered upon every occasion on which deed or story shall call for its commemoration.",
+      context:"In Thucydides' account of the funeral for the first year's war dead, Pericles turns admiration for Athens into an obligation for the living. The city's achievements are not self-sustaining: they depend on people who accept danger and subordinate private disappointments to public duty. This is wartime praise of civic sacrifice, not a detached claim about personal success.",
+      laterReceptions:[{
+        author:"Robert F. Kennedy",
+        source:"Robert F. Kennedy, Day of Affirmation Address, University of Cape Town (6 June 1966), immediately after the ripple-of-hope passage. Brief excerpt from his application of Pericles.",
+        url:"https://www.jfklibrary.org/learn/about-jfk/the-kennedy-family/robert-f-kennedy/robert-f-kennedy-speeches/day-of-affirmation-address-university-of-capetown-june-6-1966#:~:text=If%20Athens%20shall%20appear%20great",
+        context:"Kennedy has just described how many small acts against injustice can reinforce one another. He then quotes Pericles on the courage and learned duty behind Athens' achievements and explicitly extends the lesson to every society. What was originally praise of wartime sacrifice becomes encouragement for individual civic action against oppression. The excerpt below is Kennedy's own conclusion, not Pericles' words; the linked paragraph contains the quotation it follows.",
+        passage:"That is the source of all greatness in all societies"
+      }]
+    };
+    maxims.push(periclesCivicGreatness);
+    maximContexts.push(periclesCivicGreatness.context);
+    Object.assign(figureProfiles, {
+      "Archimedes":"Greek mathematician and inventor of Syracuse (c. 287–212 BCE), associated with King Hiero II. Plutarch portrays him as devoted to abstract geometry yet capable of astonishing mechanical demonstrations. His siege engines helped defend Syracuse against the Roman commander Marcellus.",
+      "Hiero II of Syracuse":"King of Syracuse (r. c. 270–215 BCE), remembered by Plutarch as Archimedes' kinsman, friend, and patron. He urged the mathematician to demonstrate practical applications of geometry and commissioned defensive machinery after witnessing the ship-moving demonstration."
+    });
+    figureAliases.Hiero = "Hiero II of Syracuse";
+    const themistoclesCityEntry = chreiai.find(entry => entry.speaker === 'Themistocles' && entry.source.startsWith('Plutarch, Life of Cimon 9.1'));
+    themistoclesCityEntry.laterReceptions = [...(themistoclesCityEntry.laterReceptions || []), {
+      author:"John Quincy Adams",
+      source:"John Quincy Adams, Independence Day address (4 July 1821), delivered while Secretary of State. Retelling of the Themistocles tradition also preserved in Plutarch, Themistocles 2.3.",
+      url:"https://millercenter.org/the-presidency/presidential-speeches/july-4-1821-speech-us-house-representatives-foreign-policy#:~:text=When%20Themistocles",
+      context:"Adams responds to European claims of cultural superiority by changing the standard of achievement. Like Themistocles, America need not win every contest in elegant accomplishments: he presents its distinctive contribution as liberty and self-government. The omitted intervening sentences discuss inventions; the final paragraph contrasts liberty with imperial dominion. This is Adams' patriotic argument, not a neutral assessment of the United States' fulfillment of those ideals.",
+      passage:"When Themistocles was sarcastically asked by some great musical genius of his age, whether he knew how to play upon the lute, he answered, No! but he knew how to make a great city of a small one. We shall not contend with you for the prize of music, painting, or sculpture. We shall not disturb the extatic trances of your Chemists, nor call from the heavens the ardent gaze of your Astronomers. We will not ask you who was the last President of your Royal Academy.\n\n[…]\n\nNor even is her purpose the glory of Roman ambition; nor “Tu regere Imperio populos”—her memento to her sons. Her glory is not dominion, but liberty. Her march is the march of mind. She has a spear and a shield, but the motto upon her shield is, Freedom, Independence, Peace. This has been her Declaration: this has been, as far as her necessary intercourse with the rest of mankind would permit, her practice."
+    }];
     const allItems = [...chreiai, ...maxims];
     function querySlug(value) { return value.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 36); }
     function stableHash(value) { let hash = 2166136261; for (let index = 0; index < value.length; index++) hash = Math.imul(hash ^ value.charCodeAt(index), 16777619); return (hash >>> 0).toString(36); }
