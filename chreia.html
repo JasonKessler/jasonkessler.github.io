@@ -1127,22 +1127,6 @@
           context:"Announcing King's assassination, Kennedy acknowledges the temptation to racial hatred and recalls the murder of his own brother. He invokes Aeschylus to turn shared grief toward understanding and compassion rather than retaliation. His spoken wording differs from the translation used for the ancient source here. The linked transcript contains the full quotation and his appeal for reconciliation.",
           passage:"until, in our own despair, against our will, comes wisdom through the awful grace of God."
         }]
-      },
-      {
-        type:"maxim", speaker:"Plutarch (attributed by Churchill; unverified)",
-        text:"Ingratitude towards their great men is the mark of strong peoples. [Churchill attributes this to Plutarch; the ancient source has not been verified.]",
-        source:"Winston Churchill, The Gathering Storm (1948), Book I, chapter 1, p. 12 in the linked edition. Quoted as Plutarch by Churchill; no ancient locus verified.",
-        url:"https://www.fadedpage.com/books/20190527/html.php#:~:text=Ingratitude%20towards%20their%20great%20men",
-        excerpt:true,
-        passage:"“Ingratitude towards their great men,” says Plutarch, “is the mark of strong peoples.”",
-        context:"Churchill invokes this attributed saying while criticizing France's abandonment of Clemenceau after the First World War. He argues that an exhausted nation could not afford to discard an experienced leader with international authority. This records Churchill's attribution; it does not establish that Plutarch wrote the maxim.",
-        laterReceptions:[{
-          author:"Winston Churchill",
-          source:"Winston Churchill, The Gathering Storm (1948), Book I, chapter 1, p. 12. Verified modern use; attribution to Plutarch remains unverified. Brief excerpt.",
-          url:"https://www.fadedpage.com/books/20190527/html.php#:~:text=Ingratitude%20towards%20their%20great%20men",
-          context:"After describing the failure of the promised Anglo-American guarantee of French security, Churchill discusses the removal of Clemenceau. He takes the attributed maxim to describe a luxury of strong nations, then argues that France's postwar weakness made such conduct dangerous. His criticism continues with the instability of French governments. Read the full surrounding paragraph at the source link; the ancient provenance is unresolved.",
-          passage:"It was imprudent for France to indulge this trait […]"
-        }]
       }
     ];
     chreiai.push(...oratorChreiai);
@@ -1151,10 +1135,8 @@
     maximContexts.push(...oratorMaxims.map(entry => entry.context));
     Object.assign(figureProfiles, {
       "Damocles":"A court flatterer in Cicero's story about Dionysius of Syracuse. His admiration for royal luxury disappears when a suspended sword reveals the ruler's insecurity. He is chiefly known through this moral anecdote, not through an independently documented biography.",
-      "Aeschylus":"Athenian tragic poet (c. 525–456 BCE), author of the Oresteia. His plays explore divine justice, inherited violence, and human responsibility. The suffering-and-wisdom passage is spoken by the chorus in Agamemnon, not offered as a detached personal slogan.",
-      "Plutarch":"Greek biographer and moral essayist (c. 46–after 119 CE), author of the Parallel Lives and Moralia. He examines character through actions and sayings. Churchill's attribution in this entry is recorded as a modern claim, not a verified passage from Plutarch."
+      "Aeschylus":"Athenian tragic poet (c. 525–456 BCE), author of the Oresteia. His plays explore divine justice, inherited violence, and human responsibility. The suffering-and-wisdom passage is spoken by the chorus in Agamemnon, not offered as a detached personal slogan."
     });
-    figureAliases["Plutarch (attributed by Churchill; unverified)"] = "Plutarch";
     const allItems = [...chreiai, ...maxims];
     function querySlug(value) { return value.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 36); }
     function stableHash(value) { let hash = 2166136261; for (let index = 0; index < value.length; index++) hash = Math.imul(hash ^ value.charCodeAt(index), 16777619); return (hash >>> 0).toString(36); }
