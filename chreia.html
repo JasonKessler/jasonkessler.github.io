@@ -867,6 +867,7 @@
     Object.assign(greekPronunciations, {Aeschylus:'eye-SKHOO-loss', Damocles:'dah-moh-KLEHSS', Plutarch:'PLOO-tar-khoss', Archimedes:'ar-khee-MEH-dehss', Hiero:'hee-EH-rohn', Crito:'KREE-ton', Eurybiades:'eh-oo-rü-BEE-ah-dehss', Nicodromus:'nee-KOD-roh-moss'});
     Object.assign(greekPronunciations, {Posidonius:'poh-see-DOH-nee-oss', Parmenio:'par-MEH-nee-awn', Anaxarchus:'ah-NAK-sar-khoss', Nicocreon:'nee-koh-KREH-awn'});
     Object.assign(greekPronunciations, {Parmenides:'par-meh-NEE-dehss', Anaximander:'ah-nak-SEE-man-dross'});
+    Object.assign(greekPronunciations, {Neocles:'neh-oh-KLEHSS', Prodicus:'PROH-dee-koss'});
     const greekNamePattern = new RegExp(`(?<![A-Za-zÆæ])(${Object.keys(greekPronunciations).sort((a, b) => b.length - a.length).join('|')})(?![A-Za-zÆæ])`, 'g');
     const figureProfiles = {
       "Mucius Scaevola":"A legendary hero of Rome’s early Republic. During King Porsenna’s siege, Roman tradition says that his failed assassination, self-inflicted ordeal by fire, and warning about other Roman attackers helped turn the Etruscan king toward peace. His surname Scaevola means ‘Left-handed.’",
@@ -1871,7 +1872,117 @@
       'Tarquinius Superbus':'Rome’s traditionally last king, expelled in 509 BCE according to Roman chronology. Livy presents him as a ruler who secures power through fear and deception. His silent poppy-cutting gives his son a method for destroying Gabii’s independent leadership.',
       'Sextus Tarquinius':'Son of Tarquinius Superbus in Roman historical tradition. He wins Gabii’s trust by posing as an enemy of his father, then uses its command against it. His later assault on Lucretia precipitates the traditional story of the monarchy’s overthrow.',
       'Publius':'Shared pen name of Alexander Hamilton, James Madison, and John Jay in The Federalist, defending ratification of the US Constitution. No. 55 is usually attributed to Madison, although both Madison and Hamilton claimed it. Its Socrates comparison concerns the limits of collective deliberation.',
-      'Heracles':'Greek mythological hero, son of Zeus, famed for his labours and extraordinary strength; called Hercules in Latin. Socrates invokes his name as an exclamation of surprise in the reported complaint about Plato, not as a participant in the episode.'
+      'Heracles':'Greek mythological hero, son of Zeus, famed for his labours and extraordinary strength; called Hercules in Latin. Prodicus’s allegory places the young hero between Virtue’s demanding path and Vice’s easy pleasures. Socrates also invokes his name as an exclamation in the reported complaint about Plato.'
+    });
+
+    // Further founder receptions: distinguish reported history, moral allegory, and modern drama.
+    const furtherFoundersChreiai = [
+      {
+        speaker:'Neocles', relatedFigures:['Themistocles'],
+        text:'According to a tradition reported by Plutarch, Themistocles’ father Neocles tried to discourage his son’s political ambitions by showing him old warships lying wrecked and neglected on the shore. The people, he suggested, treated their leaders the same way once they were no longer useful.',
+        source:'Plutarch, Life of Themistocles 2.6, translated by Bernadotte Perrin (Loeb). A reported biographical tradition, not an independently verified incident.',
+        url:'https://lexundria.com/plut_them/2/prr#:~:text=What%20some%20story-makers',
+        passage:'What some story-makers add to this, however, to the effect that his father disinherited him, and his mother took her own life for very grief at her son’s ill-fame, this I think is false. And, in just the opposite vein, there are some who say that his father fondly tried to divert him from public life, pointing out to him old triremes on the sea-shore, all wrecked and neglected, and intimating that the people treated their leaders in like fashion when these were past service.',
+        context:'Plutarch has described the young Themistocles’s consuming political ambition and untrained energy. He rejects a different story about disinheritance and his mother’s suicide, then cautiously reports the father’s warning. The discarded ships make political ingratitude visible: a community may abandon even useful servants when their usefulness ends. Plutarch gives the warning in indirect speech, not as a direct quotation.',
+        laterReceptions:[{
+          author:'John Adams',
+          source:'John Adams, A Defence of the Constitutions of Government of the United States of America, volume III; Works, volume VI, p. 15 (1851). Two extracts from the same discussion; omission marked; footnote marker omitted.',
+          url:'https://oll-resources.s3.us-east-2.amazonaws.com/oll3/store/titles/2104/Adams_1431-06.html#:~:text=The%20father%20of%20Themistocles',
+          passage:'The glory of these Roman characters cannot be obscured, nor ought the admiration of their sublime virtues to be diminished; but such examples are as rare among statesmen, as Homers and Miltons are among poets. A free people of common sense will not depend upon finding a sufficient number of such characters at any one time, still less a succession of them for any long duration, for the support of their liberties. […] The father of Themistocles had more aversion to public life than Cincinnatus; and to moderate the propensity of his son, who ardently aspired to the highest offices of the state, pointed to the old galleys rolling in the docks. “There,” says he, “see the old statesmen, worn out in the service of their country, thus always neglected when no longer of use!” Yet the son’s ardor was not abated, though he was not one of those honest spirits that aimed only at the public good.',
+          context:'Adams disputes the constitutional hope that enough exceptionally selfless statesmen will always be available. Themistocles remains ambitious even after this warning about public ingratitude. Adams therefore uses the anecdote to argue for institutions that account for ambition rather than relying on universal virtue. His direct speech dramatizes the warning that Plutarch reports indirectly; it is Adams’s wording, not a verbatim ancient quotation.'
+        }]
+      },
+      {
+        speaker:'Heracles', relatedFigures:['Prodicus','Socrates'],
+        text:'In Prodicus’s moral allegory, retold by Socrates, the young Heracles sat wondering which path to take in life. Two women approached: Vice offered easy pleasure and the fruits of other people’s labor; Virtue refused to promise an effortless life, saying, “For of all things good and fair, the gods give nothing to man without toil and effort.”',
+        source:'Xenophon, Memorabilia 2.1.21–28, translated by E. C. Marchant (Loeb). Prodicus’s fictional moral allegory, recalled by Socrates; selected passages with omissions marked.',
+        url:'https://topostext.org/work/249#2.1.21', excerpt:true,
+        passage:`“Aye, and Prodicus the wise expresses himself to the like effect concerning Virtue in the essay 'On Heracles' that he recites to throngs of listeners. This, so far as I remember, is how he puts it:
+
+”When Heracles was passing from boyhood to youth's estate, wherein the young, now becoming their own masters, show whether they will approach life by the path of virtue or the path of vice, he went out into a quiet place, and sat pondering which road to take. And there appeared two women of great stature making towards him. The one was fair to see and of high bearing; and her limbs were adorned with purity, her eyes with modesty; sober was her figure, and her robe was white. The other was plump and soft, with high feeding. Her face was made up to heighten its natural white and pink, her figure to exaggerate her height. Open-eyed was she; and dressed so as to disclose all her charms. Now she eyed herself; anon looked whether any noticed her; and often stole a glance at her own shadow.
+
+[…] And should there arise misgiving that lack of means may stint your enjoyments, never fear that I may lead you into winning them by toil and anguish of body and soul. Nay; you shall have the fruits of others' toil, and refrain from nothing that can bring you gain. For to my companions I give authority to pluck advantage where they will.'
+
+”Now when Heracles heard this, he asked, 'Lady, pray what is your name?' "'My friends call me Happiness,' she said, 'but among those that hate me I am nicknamed Vice.'
+
+“Meantime the other had drawn near, and she said: 'I, too, am come to you, Heracles: I know your parents and I have taken note of your character during the time of your education. Therefore I hope that, if you take the road that leads to me, you will turn out a right good doer of high and noble deeds, and I shall be yet more highly honoured and more illustrious for the blessings I bestow. But I will not deceive you by a pleasant prelude: I will rather tell you truly the things that are, as the gods have ordained them. For of all things good and fair, the gods give nothing to man without toil and effort. If you want the favour of the gods, you must worship the gods: if you desire the love of friends, you must do good to your friends: if you covet honour from a city, you must aid that city: if you are fain to win the admiration of all Hellas for virtue, you must strive to do good to Hellas: if you want land to yield you fruits in abundance, you must cultivate that land: if you are resolved to get wealth from flocks, you must care for those flocks: if you essay to grow great through war and want power to liberate your friends and subdue your foes, you must learn the arts of war from those who know them and must practise their right use: and if you want your body to be strong, you must accustom your body to be the servant of your mind, and train it with toil and sweat.'`,
+        context:'Xenophon’s Socrates is discussing self-command and the training needed to govern with Aristippus. He recalls Prodicus’s story to challenge the hope of enjoying every good without the effort that produces it. Vice disguises herself as Happiness; Virtue connects rewards with specific duties, from cultivating land to serving friends and city. This is a literary moral allegory, not an event in a historical person’s life.',
+        laterReceptions:[{
+          author:'John Adams',
+          source:'John Adams to Abigail Adams, 14 August 1776, letter 128 in Familiar Letters of John Adams and His Wife Abigail Adams, During the Revolution, edited by Charles Francis Adams (1876). Complete paragraph.',
+          url:'https://www.gutenberg.org/files/34123/34123-h/34123-h.htm#:~:text=I%20proposed%20the%20choice%20of%20Hercules',
+          passage:"I proposed the choice of Hercules, as engraved by Gribelin, in some editions of Lord Shaftesbury's works. The hero resting on his club. Virtue pointing to her rugged mountain on one hand, and persuading him to ascend. Sloth, glancing at her flowery paths of pleasure, wantonly reclining on the ground, displaying the charms both of her eloquence and person, to seduce him into vice. But this is too complicated a group for a seal or medal, and it is not original.",
+          context:'Adams is describing the committee’s proposals for a great seal of the newly independent states. His suggestion borrows an engraving associated with Shaftesbury, adapting the ancient allegory into an image of political virtue. He calls the tempting figure Sloth, whereas Xenophon calls her Vice. This was a proposal, not the design ultimately adopted; Adams himself judges the group too complicated and unoriginal.'
+        }]
+      }
+    ];
+    chreiai.push(...furtherFoundersChreiai.map(({context, ...entry}) => entry));
+    chreiaContexts.push(...furtherFoundersChreiai.map(entry => entry.context));
+    const furtherFoundersMaxims = [{
+      speaker:'Joseph Addison', type:'maxim', relatedFigures:['Portius','Sempronius','Cato the Younger'],
+      text:"'Tis not in mortals to command success,\nBut we'll do more, Sempronius; we'll deserve it.",
+      source:'Joseph Addison, Cato (1713), Act I, scene II: Portius speaking to Sempronius. Modern dramatic verse, not a saying of the historical Cato. Complete Portius speech and beginning of Sempronius’s reply.',
+      url:'https://constitution.org/2-Authors/addison/cato_act1.htm#:~:text=Well%20dost%20thou%20seem', excerpt:true,
+      passage:`Portius.
+Well dost thou seem to check my ling'ring here
+On this important hour — I'll straight away,
+And while the fathers of the senate meet,
+In close debate to weigh th' events of war,
+I'll animate the soldiers' drooping courage,
+With love of freedom, and contempt of life:
+I'll thunder in their ears their country's cause,
+And try to rouse up all that's Roman in them.
+'Tis not in mortals to command success,
+But we'll do more, Sempronius; we'll deserve it.
+[Exit.
+
+Sempronius, solus.
+Curse on the stripling! how he apes his sire!
+Ambitiously sententious! — but I wonder
+Old Syphax comes not; his Numidian genius
+Is well dispos'd to mischief, were he prompt
+And eager on it; but he must be spurr'd,
+And every moment quickened to the course.
+— Cato has us'd me ill: he has refus'd
+His daughter Marcia to my ardent vows.
+Besides, his baffled arms, and ruin'd cause,
+Are bars to my ambition. Caesar's favour,
+That show'rs down greatness on his friends, will raise me
+To Rome's first honours. If I give up Cato,
+I claim in my reward his captive daughter.
+But Syphax comes! —`,
+      context:'In Addison’s tragedy, Cato’s surviving republican party faces Caesar at Utica. Cato’s son Portius leaves to encourage the soldiers: they cannot guarantee victory, but can act so as to merit it. The immediate irony is that his listener Sempronius is secretly plotting betrayal and mocks his virtue as soon as he leaves. The maxim belongs to Addison’s dramatic character, not to a documented ancient speaker.',
+      laterReceptions:[{
+        author:'George Washington',
+        source:'George Washington to the Comte de Grasse, Philadelphia, 15 May 1784; Library of Congress, George Washington Papers, Series 2, Letterbook 11, transcription. Two consecutive paragraphs; editorial footnote markers omitted.',
+        url:'https://tile.loc.gov/storage-services/service/mss/mgw/mgw2/011/011.pdf',
+        passage:`My dear Count: It was at this place I had the honor to receive your favor of the 15th. of March, from L'Orient. The confidence with which you have honored me is a pleasing testimony of your friendship. It shall not be abused; and the promise you have given me, of transmitting the determination of the Court Martial, I shall look for the fulfilment of with impatience; but under full persuasion that the enquiry will throw additional lustre on your character. “It was not in your power to command success; but you did more, you deserved it.”
+
+I thank you for the memorials you have had the goodness to send me; it is unhappy for me however that I am not sufficiently Master of the French language to read them without assistance; this, when fully obtained will, I have no doubt, enable my judgment to coincide with my wishes; which are as favorable as those of your warmest friend, and greatest admirer can be. With the most respectful attachment, I remain etc.`,
+        context:'Washington consoles the French admiral who helped secure Yorktown but was later defeated at the Saintes in 1782 and faced a court-martial inquiry. He adapts Addison’s distinction between deserving success and controlling it into personal reassurance. The surrounding paragraph matters: Washington admits that he still needs help reading the French memorials. This is support for a friend, not an independent adjudication of the admiral’s conduct.'
+      }]
+    }];
+    maxims.push(...furtherFoundersMaxims.map(({context, ...entry}) => entry));
+    maximContexts.push(...furtherFoundersMaxims.map(entry => entry.context));
+    const federalist38Passage = 'History informs us, likewise, of the difficulties with which these celebrated reformers had to contend, as well as the expedients which they were obliged to employ in order to carry their reforms into effect. Solon, who seems to have indulged a more temporizing policy, confessed that he had not given to his countrymen the government best suited to their happiness, but most tolerable to their prejudices.\n\nAnd Lycurgus, more true to his object, was under the necessity of mixing a portion of violence with the authority of superstition, and of securing his final success by a voluntary renunciation, first of his country, and then of his life.\n\nIf these lessons teach us, on one hand, to admire the improvement made by America on the ancient mode of preparing and establishing regular plans of government, they serve not less, on the other, to admonish us of the hazards and difficulties incident to such experiments, and of the great imprudence of unnecessarily multiplying them.';
+    for (const [matches, context] of [
+      [entry => entry.speaker === 'Solon' && entry.text.includes('The best they would receive'), 'Madison turns Solon’s answer into an example of the compromises required to make reform acceptable. He contrasts accommodation of prejudice with Lycurgus’s more coercive and extraordinary methods. The argument concerns the proposed American Constitution: imperfect agreement need not invalidate a settlement, and repeatedly reopening the work carries hazards. This is Madison’s evaluative use of the ancient tradition, not Plutarch’s wording.'],
+      [entry => entry.speaker.includes('Lycurgus') && entry.text.startsWith('Before leaving for Delphi'), 'Madison contrasts Lycurgus with the accommodating Solon. In his reading, Sparta’s lawgiver secured lasting obedience through coercion, religious authority, and renunciation of country and life. The comparison highlights the unusual expedients behind ancient foundations, before Madison commends America’s more regular process while warning how difficult constitution-making remains. His language about superstition is his own interpretation of the tradition.']
+    ]) {
+      const entry = chreiai.find(matches);
+      if (!entry) throw new Error('Missing ancient entry for Federalist no. 38 reception');
+      entry.laterReceptions = [...(entry.laterReceptions || []), {
+        author:'James Madison', source:'James Madison (Publius), The Federalist no. 38, New York Packet, 15 January 1788. Three consecutive paragraphs.',
+        url:'https://avalon.law.yale.edu/18th_century/fed38.asp#:~:text=History%20informs%20us',
+        passage:federalist38Passage, context
+      }];
+    }
+    Object.assign(figureProfiles, {
+      'Neocles':'Father of the Athenian statesman Themistocles, from the deme Phrearrhioi. Plutarch reports a tradition in which he tries to curb his son’s political ambition by pointing to discarded warships as an image of the people’s treatment of aging leaders.',
+      'Prodicus':'Fifth-century BCE Greek teacher and sophist from Ceos, associated with careful distinctions between words. Xenophon’s Socrates recalls his allegory of Heracles choosing between Virtue and Vice while discussing self-command with Aristippus.',
+      'Joseph Addison':'English essayist, poet, and playwright (1672–1719), co-founder of The Spectator with Richard Steele. His tragedy Cato made Roman republican virtue into a modern dramatic ideal; its language was quoted and adapted by American founders, including Washington.',
+      'Portius':'A character in Joseph Addison’s Cato, presented as Cato’s son and a calm defender of republican virtue. He speaks the maxim about deserving success while leaving to encourage the soldiers. The dramatic dialogue is not an authenticated ancient quotation.',
+      'Sempronius':'The treacherous senator in Addison’s Cato. He flatters Cato’s family in public but privately plans to betray the republican cause to Caesar. His mockery after Portius’s departure creates the scene’s contrast between proclaimed virtue and self-interested ambition.'
     });
     const allItems = [...chreiai, ...maxims];
     function querySlug(value) { return value.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 36); }
