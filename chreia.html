@@ -860,7 +860,7 @@
       "Apollonides":"ah-pol-loh-NEE-dehss", "Chabrias":"KHAH-bree-ass", "Dinocrates":"dye-NOK-rah-tehss", "François de La Rochefoucauld":"frahn-SWAH duh lah roh-shuh-FOO-koh", "Iphicrates":"ee-phee-KRAH-tehss", "Philopoemen":"fee-loh-POY-mehn", "Ptolemy":"PTOH-leh-my", "Pyrrhus":"PÜR-rhoss"
     });
     Object.assign(greekPronunciations, {'Martin Heidegger':'MAR-tin HIGH-deg-er'});
-    Object.assign(greekPronunciations, {'Thales':'THAH-lehss'});
+    Object.assign(greekPronunciations, {'Thales':'THAH-lehss', 'Heracles':'heh-rah-KLEHSS'});
     Object.assign(greekPronunciations, {'Artemis':'AR-teh-miss', 'Darius':'dah-REH-yoss', 'Pythagoras':'pü-THAH-goh-rahss', 'Xenophanes':'kseh-NOH-fah-nehss', 'Hecataeus':'heh-kah-TAI-oss'});
     Object.assign(greekPronunciations, {'Aesop':'EE-sop', 'Apollo':'uh-POL-oh', 'Miltiades':'mil-TYE-uh-deez'});
     Object.assign(greekPronunciations, {'Pisistratus':'pee-SEE-strah-toss', 'Manes':'MAH-nehss', 'Demetrius':'deh-MEH-tree-oss'});
@@ -1806,6 +1806,72 @@
     chreiaContexts.push(...revolutionaryActionAdditions.map(entry => entry.context));
     Object.assign(figureProfiles, {
       'The women of Carthage':'Unnamed participants in Carthage’s defence against Rome in 149 BCE. Appian describes women working alongside men to replace surrendered weapons and cutting their hair for artillery strings. Desmoulins later invokes their resourcefulness to warn that threats of destruction can unite an enemy.'
+    });
+    // Ancient anecdotes reused by American founders; keep their interpretations separate.
+    const foundersChreiai = [
+      {
+        speaker:'Tarquinius Superbus', relatedFigures:['Sextus Tarquinius'],
+        text:'When his son Sextus asked how to secure control of Gabii, King Tarquin gave the messenger no spoken answer. Instead, he walked through his garden, knocking the heads off the tallest poppies. Sextus understood the silent message: eliminate the city’s leading men. He killed or drove them away, leaving Gabii unable to resist Roman control.',
+        source:'Livy, History of Rome 1.54, translated by D. Spillan (1853). Early Roman historical tradition; selected consecutive sentences from the longer chapter paragraph.',
+        url:'https://www.gutenberg.org/files/19725/19725-h/19725-h.htm#:~:text=To%20this%20courier', excerpt:true,
+        passage:'To this courier no answer by word of mouth was given, because, I suppose, he appeared of questionable fidelity. The king going into a garden of the palace, as it were to consider of the matter, followed by his son\'s messenger; walking there for some time in silence, he is said to have struck off the heads of the tallest poppies with his staff. The messenger, wearied with demanding and waiting for an answer, returned to Gabii as if without having accomplished his object, and told what he had said himself, and what he had observed, adding, "that Tarquin, either through passion, aversion to him, or his innate pride, had not spoke a word." As soon as it became evident to Sextus what his father wished, and what conduct he recommended by those silent intimations, he put to death the most eminent men of the city, accusing some of them to the people, and others who were exposed by their own unpopularity. Many were executed publicly, and some, against whom an impeachment was likely to prove less specious, were secretly assassinated.',
+        context:'Sextus has gained the Gabians’ trust by pretending to oppose his father and serving as their commander. Tarquin’s gesture communicates an instruction without trusting it to a spoken message. Livy follows the executions with exile, confiscation, and distributions that buy public acquiescence. This is a cautionary example of cunning and tyranny, not an endorsement of the policy.',
+        laterReceptions:[{
+          author:'John Adams',
+          source:'John Adams, Review of the Propositions for Amending the Constitution Submitted by Mr. Hillhouse to the Senate of the United States, in 1808; Works, volume VI, pp. 546–47 (1851). Consecutive sentences within the longer paragraph; editorial page marker omitted.',
+          url:'https://oll-resources.s3.us-east-2.amazonaws.com/oll3/store/titles/2104/Adams_1431-06.html#Adams_1431-06_1553',
+          passage:'One would think that the ancient experiment of cutting off the heads of the tallest poppies, had been tried often enough. Go into your field, and strike off the heads of all the tallest, and when you have gone over the whole, turn round and survey the whole ground. You will find as many taller than others as ever; and you must cut off every plant but one, before you can say there is no poppy taller than another. One would think that the recent example of France could not be so soon forgotten. Mirabeau, Marat, Brissot, Danton, Robespierre, were all heads cut off in succession, and all succeeding heads were saved only by having recourse to one head and one arm, in the Emperor Napoleon.',
+          context:'Adams challenges Hillhouse’s hope of suppressing dangerous parties by removing their head. His poppy analogy says that leadership and inequality recur: eliminating today’s leaders merely makes others prominent. He connects this with France’s successive political deaths and eventual concentration of power under Napoleon. His phrase about heads cut off is rhetorical compression—Mirabeau, unlike several others in the list, was not executed. Adams argues for balancing parties through institutions instead of imagining that leaderless politics is possible.'
+        }]
+      },
+      {
+        speaker:'Socrates', relatedFigures:['Plato', 'Heracles'],
+        text:'According to a later ancient biographical tradition, Socrates heard Plato reading the Lysis and exclaimed: “By Heracles, what a number of lies this young man is telling about me!” The story dramatizes a difference between a teacher and the character a pupil makes him play; it is not a reliably established incident.',
+        source:'Diogenes Laertius, Lives of Eminent Philosophers 3.35, translated by R. D. Hicks, Loeb Classical Library. Reported biographical tradition, not verified contemporary testimony.',
+        url:'https://topostext.org/work/221#:~:text=what%20a%20number%20of%20lies',
+        passage:'They say that, on hearing Plato read the Lysis, Socrates exclaimed, “By Heracles, what a number of lies this young man is telling about me!” For he has included in the dialogue much that Socrates never said.',
+        context:'Diogenes Laertius collects stories about Plato’s relations with other Socratics. This anecdote questions whether the speeches of Plato’s Socrates reproduce the historical man. It is especially uncertain because the Lysis is commonly dated after Socrates’ death. Read it as an ancient literary tradition about representation, not proof that Socrates personally rejected the dialogue.',
+        laterReceptions:[{
+          author:'Thomas Jefferson',
+          source:'Thomas Jefferson to John Adams, 5 July 1814; Writings, volume VI, pp. 354–55, edited by H. A. Washington (1861). Selected consecutive sentences from a longer paragraph.',
+          url:'https://www.gutenberg.org/files/55075/55075-h/55075-h.htm#:~:text=Yet%20%22Plato',
+          passage:'Yet "Plato is a great philosopher," said La Fontaine. But, says Fontenelle, "do you find his ideas very clear?" "Oh no! he is of an obscurity impenetrable." "Do you not find him full of contradictions?" "Certainly," replied La Fontaine, "he is but a sophist." Yet immediately after, he exclaims again, "Oh, Plato was a great philosopher." Socrates had reason, indeed, to complain of the misrepresentations of Plato; for in truth, his dialogues are libels on Socrates.',
+          context:'After struggling through the Republic, Jefferson attacks Plato’s obscurity and the authority sustained by education and Christian theology. His intervening La Fontaine–Fontenelle story mocks admiration that survives acknowledged incomprehension. The complaint attributed to Socrates lets Jefferson defend the teacher while repudiating the pupil’s portrayal. This is Jefferson’s polemical judgment, not independent historical confirmation of the Lysis anecdote.'
+        }]
+      },
+      {
+        speaker:'Themistocles', relatedFigures:[],
+        text:'When an oracle promised Athens protection through a wooden wall, Themistocles argued that it meant their ships, not a wooden enclosure. The oracle called Salamis “Holy” rather than “Luckless,” he reasoned, so its threatened destruction concerned the invading enemy. He persuaded the Athenians to prepare for naval resistance rather than abandon Attica without fighting.',
+        source:'Herodotus, Histories 7.142–143, George Rawlinson translation. Section 7.143 is copied below; the contrast between the enclosure and ships is explained in 7.142.',
+        url:'https://www.free-bible.com/texts/herodotus/persian_wars_book7_polymnia.php#:~:text=%5B7.143%5D',
+        passage:'Now there was at Athens a man who had lately made his way into the first rank of citizens: his true name was Themistocles; but he was known more generally as the son of Neocles. This man came forward and said that the interpreters had not explained the oracle altogether aright - "for if," he argued, "the clause in question had really respected the Athenians, it would not have been expressed so mildly; the phrase used would have been \'Luckless Salamis,\' rather than \'Holy Salamis,\' had those to whom the island belonged been about to perish in its neighbourhood. Rightly taken, the response of the god threatened the enemy, much more than the Athenians." He therefore counselled his countrymen to make ready to fight on board their ships, since they were the wooden wall in which the god told them to trust. When Themistocles had thus cleared the matter, the Athenians embraced his view, preferring it to that of the interpreters. The advice of these last had been against engaging in a sea-fight; "all the Athenians could do," they said, "was, without lifting a hand in their defence, to quit Attica, and make a settlement in some other country."',
+        context:'Before Xerxes’ invasion, rival readings of the Delphic oracle support rival strategies. Some Athenians identify the wooden wall with an old enclosure on the Acropolis, others with ships. Themistocles turns a frightening prediction about Salamis into encouragement by attending to its favorable adjective. Herodotus follows this debate with the earlier naval construction that made his proposed resistance practicable.',
+        laterReceptions:[{
+          author:'Thomas Jefferson',
+          source:'Thomas Jefferson to John Adams, 1 November 1822; Writings, volume VII, pp. 264–65, edited by H. A. Washington (1861). Consecutive surrounding sentences from the longer opening paragraph.',
+          url:'https://www.gutenberg.org/files/56035/56035-h/56035-h.htm#:~:text=wooden%20walls%20of%20Themistocles',
+          passage:'Some vessels of war were accordingly built and sent into the Mediterranean. The additions to these in your time, I need not note to you, who are well known to have ever been an advocate for the wooden walls of Themistocles. Some of those you added, were sold under an act of Congress passed while you were in office.',
+          context:'Jefferson is reconstructing the early American navy for Adams, beginning with protection of Mediterranean commerce and captives threatened by the Barbary States. The wooden walls are an allusion to ships and to Adams’s naval advocacy, not a retelling of the ancient oracle. The rest of the letter weighs readiness against ships’ expense and decay, including Jefferson’s proposal for sheltered dry docks. The ancient reference supplies a shared shorthand within a practical disagreement over naval policy.'
+        }]
+      }
+    ];
+    chreiai.push(...foundersChreiai.map(({context, ...entry}) => entry));
+    chreiaContexts.push(...foundersChreiai.map(entry => entry.context));
+    const foundersMaxims = [{
+      speaker:'Publius', type:'maxim', relatedFigures:['Socrates'],
+      text:'Had every Athenian citizen been a Socrates, every Athenian assembly would still have been a mob.',
+      source:'Publius, The Federalist no. 55, first published 13 February 1788. Generally attributed to James Madison, but claimed by both Madison and Alexander Hamilton; Avalon labels it “Hamilton or Madison.”',
+      url:'https://avalon.law.yale.edu/18th_century/fed55.asp#:~:text=Another%20general%20remark',
+      passage:'Another general remark to be made is, that the ratio between the representatives and the people ought not to be the same where the latter are very numerous as where they are very few. Were the representatives in Virginia to be regulated by the standard in Rhode Island, they would, at this time, amount to between four and five hundred; and twenty or thirty years hence, to a thousand. On the other hand, the ratio of Pennsylvania, if applied to the State of Delaware, would reduce the representative assembly of the latter to seven or eight members. Nothing can be more fallacious than to found our political calculations on arithmetical principles. Sixty or seventy men may be more properly trusted with a given degree of power than six or seven. But it does not follow that six or seven hundred would be proportionably a better depositary. And if we carry on the supposition to six or seven thousand, the whole reasoning ought to be reversed. The truth is, that in all cases a certain number at least seems to be necessary to secure the benefits of free consultation and discussion, and to guard against too easy a combination for improper purposes; as, on the other hand, the number ought at most to be kept within a certain limit, in order to avoid the confusion and intemperance of a multitude. In all very numerous assemblies, of whatever character composed, passion never fails to wrest the sceptre from reason. Had every Athenian citizen been a Socrates, every Athenian assembly would still have been a mob.',
+      context:'The essay defends the initial size of the proposed House of Representatives. It rejects both a tiny body easily captured by a few people and the assumption that ever-larger assemblies deliberate better. Socrates supplies a hypothetical limit case: even individually wise citizens can become collectively impassioned. This is the founder’s own political maxim, not an ancient saying or an actual Athenian incident. The documentary edition notes that both Madison and Hamilton claimed authorship; Madison is the usual attribution.'
+    }];
+    maxims.push(...foundersMaxims.map(({context, ...entry}) => entry));
+    maximContexts.push(...foundersMaxims.map(entry => entry.context));
+    Object.assign(figureProfiles, {
+      'Tarquinius Superbus':'Rome’s traditionally last king, expelled in 509 BCE according to Roman chronology. Livy presents him as a ruler who secures power through fear and deception. His silent poppy-cutting gives his son a method for destroying Gabii’s independent leadership.',
+      'Sextus Tarquinius':'Son of Tarquinius Superbus in Roman historical tradition. He wins Gabii’s trust by posing as an enemy of his father, then uses its command against it. His later assault on Lucretia precipitates the traditional story of the monarchy’s overthrow.',
+      'Publius':'Shared pen name of Alexander Hamilton, James Madison, and John Jay in The Federalist, defending ratification of the US Constitution. No. 55 is usually attributed to Madison, although both Madison and Hamilton claimed it. Its Socrates comparison concerns the limits of collective deliberation.',
+      'Heracles':'Greek mythological hero, son of Zeus, famed for his labours and extraordinary strength; called Hercules in Latin. Socrates invokes his name as an exclamation of surprise in the reported complaint about Plato, not as a participant in the episode.'
     });
     const allItems = [...chreiai, ...maxims];
     function querySlug(value) { return value.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 36); }
