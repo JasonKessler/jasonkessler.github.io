@@ -85,6 +85,7 @@
     <p class="eyebrow">Chreia Slot Machine</p>
     <nav class="content-filter" aria-label="Content type"><span class="filter-label">Display</span><button type="button" data-filter="all" aria-pressed="true">All</button><button type="button" data-filter="chreia" aria-pressed="false">Chreiai</button><button type="button" data-filter="maxim" aria-pressed="false">Maxims</button><button type="button" data-filter="reception" aria-pressed="false">Later reception</button><span class="spin-divider" aria-hidden="true"></span><button type="button" id="another" class="spin-all">Spin all</button></nav>
     <details class="source-picker"><summary>Sources · <span id="source-selection-status" role="status">All selected</span></summary><fieldset id="source-picker-fields"><legend>Choose source authors, not the figures quoted. Combine any number.</legend><div class="source-picker-actions"><button type="button" id="sources-all">Select all</button><button type="button" id="sources-none">Clear all</button></div><div id="source-options" class="source-options"></div></fieldset></details>
+    <details class="source-picker"><summary>Later reception periods · <span id="period-selection-status" role="status">All periods</span></summary><fieldset id="period-picker-fields"><legend>Choose any number. Selecting specific periods limits the reel and later passages to those periods. Dates refer to the commentary, not its modern edition. Counts are entries and may overlap.</legend><div class="source-picker-actions"><button type="button" id="periods-all">All periods</button><button type="button" id="periods-none">Clear all</button></div><div id="period-options" class="source-options"></div></fieldset></details>
     <section class="timer" aria-label="Exercise timer"><div><p class="timer-label">Speaking time</p><time id="timer-display" datetime="PT2M">2:00</time></div><div class="timer-actions"><button type="button" id="timer-toggle">Start</button><button type="button" id="timer-reset">Reset</button></div></section>
     <section class="slot-window exercise" aria-labelledby="step-name">
       <div class="exercise-heading"><h2 id="step-name">Praise the speaker</h2><p id="greek-term" class="greek-term">ἐγκώμιον · enkomion</p></div><p id="instruction">Briefly praise the speaker or doer, then develop one quality that lends authority to the chreia.</p><div id="task-example" class="task-example" aria-label="Classical worked example"><div class="example-pane"><span class="example-label">Example chreia</span>Isocrates said: “The root of education is bitter, but its fruit is sweet.”</div><span class="example-arrow" aria-hidden="true">→</span><div class="example-pane"><span class="example-label">Praise the speaker</span>“Isocrates was wise,” followed by a short development of his wisdom.</div></div><a class="example-source" href="https://www.sbl-site.org/wp-content/uploads/2024/11/KennedyProgymnasmata.pdf" target="_blank" rel="noopener noreferrer">Classical worked example from Hermogenes / Kennedy ↗</a><div class="reel-actions"><button type="button" id="spin-task">Spin exercise</button></div>
@@ -1984,6 +1985,59 @@ I thank you for the memorials you have had the goodness to send me; it is unhapp
       'Portius':'A character in Joseph Addison’s Cato, presented as Cato’s son and a calm defender of republican virtue. He speaks the maxim about deserving success while leaving to encourage the soldiers. The dramatic dialogue is not an authenticated ancient quotation.',
       'Sempronius':'The treacherous senator in Addison’s Cato. He flatters Cato’s family in public but privately plans to betray the republican cause to Caesar. His mockery after Portius’s departure creates the scene’s contrast between proclaimed virtue and self-interested ambition.'
     });
+    const adamsAnecdoteAdditions = [
+      {
+        speaker:'Phocion', relatedFigures:[],
+        text:'While Phocion was addressing the Athenians, everyone seemed to approve his argument. Instead of enjoying their agreement, he turned to his friends and asked: “Can it possibly be that I am making a bad argument without knowing it?”',
+        source:'Plutarch, Life of Phocion 8.3, translated by Bernadotte Perrin (Loeb). Complete surrounding paragraphs; the website’s mismatched closing quotation mark is retained.',
+        url:'https://lexundria.com/plut_phoc/8/prr',
+        passage:'Indeed, when an oracle from Delphi was read out in the assembly, declaring that when the rest of the Athenians were of like mind, one man had a mind at variance with the city, Phocion came forward and bade them seek no further, since he himself was the man in question; for there was no one but he who disliked everything they did.\n\nAnd when, as he was once delivering an opinion to the people, he met with their approval, and saw that all alike accepted his argument, he turned to his friends and said: “Can it possibly be that I am making a bad argument without knowing it?’',
+        context:'Plutarch presents Phocion as a general whom Athenians repeatedly elected despite his opposition to their impulses. The joke turns that habitual disagreement back on himself: unanimous approval makes him check his reasoning rather than celebrate his popularity. It dramatizes his distrust of pleasing an audience, not a rule that agreement always proves an argument wrong.',
+        laterReceptions:[{
+          author:'John Adams', period:'19th-century',
+          source:'John Adams, Autobiography (written 1802–1807), recollection of the Staten Island peace conference of September 1776; Works, volume III, pp. 79–80 (1851). Consecutive surrounding sentences; editorial page marker omitted.',
+          url:'https://oll-resources.s3.us-east-2.amazonaws.com/oll3/store/titles/2101/Adams_1431-03.html#:~:text=clamorous%20applause',
+          passage:'Another circumstance, of no more importance than the former, was so much celebrated in Europe, that it has often reminded me of the question of Phocion to his fellow-citizens, when something he had said in public was received by the people of Athens with clamorous applause: “Have I said any foolish thing?” When his lordship observed to us, that he could not confer with us as members of Congress, or public characters, but only as private persons and British subjects, Mr. John Adams answered somewhat quickly, “Your lordship may consider me in what light you please, and, indeed, I should be willing to consider myself, for a few moments, in any character which would be agreeable to your lordship, except that of a British subject.” His lordship, at these words, turned to Dr. Franklin and Mr. Rutledge, and said, “Mr. Adams is a decided character,” with so much gravity and solemnity, that I now believe it meant more than either of my colleagues, or myself, understood, at the time.',
+          context:'Adams is recalling his refusal to negotiate with Lord Howe in the character of a British subject after American independence. His quip won European admiration, but he invokes Phocion to deflate that flattering reception. The ancient question is applied to his own celebrated performance. The reception period is that of the later autobiographical reflection, not the 1776 event or the 1851 edition.'
+        }]
+      },
+      {
+        speaker:'Aristides', relatedFigures:[],
+        text:'During Athens’ vote on whom to banish, an illiterate man approached Aristides without recognizing him and asked him to write “Aristides” on his voting potsherd. Aristides asked what wrong the man had suffered. “None whatever,” he answered, “I don’t even know the fellow, but I am tired of hearing him everywhere called ‘The Just.’” Aristides silently wrote his own name and returned the potsherd.',
+        source:'Plutarch, Life of Aristides 7.5–6, translated by Bernadotte Perrin (Loeb). Complete anecdote with its concluding prayer; reported biographical tradition. Section numbers and an editorial footnote marker omitted.',
+        url:'https://lexundria.com/plut_arist/7/prr',
+        passage:'Now at the time of which I was speaking, as the voters were inscribing their ostraka, it is said that an unlettered and utterly boorish fellow handed his ostrakon to Aristides, whom he took to be one of the ordinary crowd, and asked him to write Aristides on it. He, astonished, asked the man what possible wrong Aristides had done him. “None whatever,” was the answer, “I don’t even know the fellow, but I am tired of hearing him everywhere called ‘The Just.’ “ On hearing this, Aristides made no answer, but wrote his name on the ostrakon and handed it back. Finally, as he was departing the city, he lifted up his hands to heaven and prayed—a prayer the opposite, as it seems, of that which Achilles made—that no crisis might overtake the Athenians which should compel the people to remember Aristides.',
+        context:'Ostracism was a vote to send a prominent Athenian away for ten years, not a criminal conviction. Plutarch interprets Aristides’ removal as envy disguised as fear of tyranny. The unrecognized statesman helps cast a vote against himself rather than arguing for his reputation; the concluding prayer extends that restraint into a wish that Athens should not suffer merely to vindicate him.',
+        laterReceptions:[{
+          author:'John Adams', period:'19th-century',
+          source:'John Adams to Benjamin Rush, 12 September 1811, Founders Online. Opening discussion of integrity, envy, and Aristides; original spelling and editorial closing quotation mark retained.',
+          url:'https://founders.archives.gov/documents/Adams/99-02-02-5684',
+          passage:'Suum cuique decus Posteritas rependit, has some Truth in it and you have addressed several Examples of it: But it is by no means an universal Aphorism; nor do I believe it to be generally true. You seam to think that Integrity is less envied than Talents. This Question deserves consideration. Under the Roman Emperors nothing was envied so much as Integrity or even the Appearance or suspicion of Integrity. “Ob Vertutes certissimum Exitium.” The Vote to banish Aristides, because he was trumpeted for his Justice, I will not alledge in my favour; because I think with his Fellow Citizens that tho a just Man in the main, he was not celebrated for his real Integrity so much as for the most unjust Action of his Life, in destroying the ballance of the Constitution, and giving that Preponderance to the Poor over the rich which soon produced the ruin of the Athenian Commonwealth. Aristides destroyed the Ballance of Solon, and gave uncontroulable Power to the Plebians who immediately cryed out “Justice! Justice! Huzza for Aristides the Just.[”] You, Rush,! would not have borne this prostitution of the Word Justice, better than the Athenian did.',
+          context:'Rush’s reassurance about the ultimate recognition of integrity prompts Adams to consider whether virtue is protected from envy. Adams recalls the famous banishment but refuses to make himself another persecuted Aristides: in his constitutional reading, Aristides’ reputation masks reforms that gave the poorer citizens excessive power. This is Adams’s polemical reinterpretation, not an established explanation of the exile or a claim that the anonymous voter understood constitutional politics.'
+        }]
+      },
+      {
+        speaker:'Marcus Atilius Regulus', relatedFigures:[],
+        text:'While commanding Rome’s army in Africa, Regulus learned that his command had been extended. He asked for a replacement: the steward of his small farm had died, a hired worker had fled with its equipment, and his wife and children would go hungry if the land remained uncultivated. Rather than lose its commander, the Senate arranged support for the farm, replaced the missing equipment, and provided for his family.',
+        source:'Valerius Maximus, Memorable Deeds and Sayings 4.4.6, Attalus translation adapted from S. Speed (1678). Complete numbered example in the chapter “Of Poverty.”',
+        url:'https://www.attalus.org/translate/valerius4b.html#4.6',
+        passage:'Of the same name and blood, Atilius Regulus, the greatest glory and the greatest calamity of the Punic War, when in Africa he had destroyed the prosperity of the most insolent Carthaginians by the success of his many victories, learnt that his authority was continued for the next year, on account of his worthy deeds. He wrote to the consuls, that the steward of his little farm of seven iugera that he had in the territory of Pupinia was dead, and that a man whom he had hired had run away with the farm equipment, and therefore he desired that a successor might be sent him, because if his land remained untilled, his wife and children would be without food. When the consuls had reported this to the senate, they caused his farm to be let, and provided sustenance for his wife and children, and ordered those things that he had lost to be publicly redeemed. Such was the cost to our treasury of Atilius\'s virtue, that every age will boast of among the Romans.',
+        context:'Valerius places the story among examples of public distinction joined to modest private means. The commander’s victory does not feed his dependants: he needs either release from command or practical help at home. The Senate answers that material problem rather than replacing him. The source reports his letter indirectly, so the reel does not invent a speech. This is not the separate tradition about Regulus returning to Carthaginian captivity.',
+        laterReceptions:[{
+          author:'John Adams', period:'18th-century',
+          source:'John Adams, A Defence of the Constitutions of Government of the United States of America, volume III (1788); Works, volume VI, p. 83 (1851). Consecutive surrounding sentences; editorial page marker omitted.',
+          url:'https://oll-resources.s3.us-east-2.amazonaws.com/oll3/store/titles/2104/Adams_1431-06.html#:~:text=A%20thief%20had%20stolen',
+          passage:'Regulus had been in a course of victory, which the senate would not interrupt, and therefore continued him in the command of the army. He wrote to the senate to complain of it. The glory of it to himself, the advantage to the public, was not reward enough for him. He demanded a successor; and what was his reason? A thief had stolen his tools of husbandry, used in manuring; his tenant was dead, and his presence was absolutely necessary to prevent his wife and children from starving. Is it possible to read this without laughter and indignation; laughter at the folly of that government which made so poor a provision for its generals, and indignation at the sordid avarice of that senate and people, who could require a threat of resignation from the conqueror of Carthage to induce them to provide for his wife and children? The senate decreed that his field should be cultivated at the public expense, that his working tools should be replaced, and his wife and children provided for. Then, indeed, Regulus’s aversion to the service was removed; to such sordid condescensions to the prejudices and the meanness of the stingy and envious parts of the community are such exalted souls, as that of Regulus, obliged sometimes to submit; but the eternal panegyrics of republican writers, as they call themselves, will never reconcile mankind to any thing so ridiculous and contemptible. The laborer is worthy of his hire. He who labors for the public should live by the public, as much as he who preaches the gospel should live by the gospel; and these maxims of equity are approved by all the generous part of mankind.',
+          context:'Adams challenges the romantic celebration of unpaid republican service: the state should support those who work for it, not wait until their families face starvation. He turns an ancient example of virtue and poverty into a criticism of inadequate compensation and institutional design. His phrase “conqueror of Carthage” exaggerates the historical result: Regulus won victories in Africa but did not conquer Carthage.'
+        }]
+      }
+    ];
+    chreiai.push(...adamsAnecdoteAdditions.map(({context, ...entry}) => entry));
+    chreiaContexts.push(...adamsAnecdoteAdditions.map(entry => entry.context));
+    Object.assign(figureProfiles, {
+      'Aristides':'Athenian statesman and commander (c. 530–468 BCE), remembered as “the Just” and as a rival of Themistocles. After his ostracism he returned during the Persian invasion and helped organize the alliance that became the Delian League. Plutarch makes his fairness a contrast to political envy.',
+      'Marcus Atilius Regulus':'Roman consul and commander in the First Punic War. He won victories in Africa before defeat and capture in 255 BCE. Roman writers used his modest farm and, in a separate tradition, his return to captivity as examples of public duty outweighing private advantage.'
+    });
     const allItems = [...chreiai, ...maxims];
     function querySlug(value) { return value.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 36); }
     function stableHash(value) { let hash = 2166136261; for (let index = 0; index < value.length; index++) hash = Math.imul(hash ^ value.charCodeAt(index), 16777619); return (hash >>> 0).toString(36); }
@@ -2120,17 +2174,54 @@ I thank you for the memorials you have had the goodness to send me; it is unhapp
       }] : [];
       return [...legacy, ...(entry.laterReceptions || [])];
     }
+    // Periods describe the original commentary, never its translation/reprint date.
+    // Explicit passage metadata wins; the author defaults below cover the works currently included.
+    const receptionPeriodDefinitions = [
+      {id:'ancient', label:'Antiquity (before 500 CE)'},
+      {id:'medieval', label:'Medieval (500–1499)'},
+      {id:'early-modern', label:'Early modern (1500–1699)'},
+      {id:'18th-century', label:'18th century (1700–1799)'},
+      {id:'19th-century', label:'19th century (1800–1899)'},
+      {id:'20th-century', label:'20th century (1900–1999)'},
+      {id:'21st-century', label:'21st century (2000–present)'},
+      {id:'undated', label:'Period not yet established'}
+    ];
+    const receptionAuthorPeriods = {
+      'Marcus Tullius Cicero':'ancient', 'Seneca':'ancient', 'Epictetus':'ancient', 'Julian':'ancient', 'Emperor Julian':'ancient',
+      'Niccolò Machiavelli':'early-modern', 'Michel de Montaigne':'early-modern',
+      'George, Lord Lyttelton':'18th-century', 'Jean-Jacques Rousseau':'18th-century', 'Edmund Burke':'18th-century', 'Edward Gibbon':'18th-century', 'Samuel Johnson':'18th-century', 'Immanuel Kant':'18th-century', 'Maximilien Robespierre':'18th-century', 'Camille Desmoulins':'18th-century', 'Madame Roland':'18th-century', 'Louis Antoine de Saint-Just':'18th-century', 'James Madison':'18th-century', 'George Washington':'18th-century',
+      'G. W. F. Hegel':'19th-century', 'Friedrich Nietzsche':'19th-century', 'Arthur Schopenhauer':'19th-century', 'Søren Kierkegaard':'19th-century', 'Ralph Waldo Emerson':'19th-century', 'John Quincy Adams':'19th-century', 'Thomas Jefferson':'19th-century',
+      'Gilbert Murray':'20th-century', 'William James':'20th-century', 'Daniel Halévy':'20th-century', 'Michel Foucault':'20th-century', 'Martin Heidegger':'20th-century', 'Martin Luther King Jr.':'20th-century', 'John F. Kennedy':'20th-century', 'Robert F. Kennedy':'20th-century', 'Ronald Reagan':'20th-century', 'Lyndon B. Johnson':'20th-century', 'Jimmy Carter':'20th-century', 'Margaret Thatcher':'20th-century', 'Bill Clinton':'20th-century',
+      'Kieran Setiya':'21st-century', 'Costica Bradatan':'21st-century', 'Barack Obama':'21st-century'
+    };
+    function receptionPeriod(reception) {
+      if (reception.period && receptionPeriodDefinitions.some(period => period.id === reception.period)) return reception.period;
+      if (reception.author === 'John Adams') {
+        if (/Defence of the Constitutions|to Abigail Adams, 14 August 1776/.test(reception.source)) return '18th-century';
+        if (/Autobiography|Hillhouse|12 September 1811/.test(reception.source)) return '19th-century';
+        return 'undated';
+      }
+      return receptionAuthorPeriods[reception.author] || 'undated';
+    }
+    function receptionPeriodLabel(reception) { return receptionPeriodDefinitions.find(period => period.id === receptionPeriod(reception)).label; }
+    const receptionPeriods = receptionPeriodDefinitions.filter(period => allItems.some(entry => laterReceptionsFor(entry).some(reception => receptionPeriod(reception) === period.id)));
+    const requestedPeriods = new URLSearchParams(location.search).get('reception-periods');
+    let selectedReceptionPeriods = new Set(requestedPeriods === null ? receptionPeriods.map(period => period.id) : requestedPeriods.split(',').filter(id => receptionPeriods.some(period => period.id === id)));
+    function allReceptionPeriodsSelected() { return selectedReceptionPeriods.size === receptionPeriods.length; }
+    function visibleReceptionsFor(entry) { return laterReceptionsFor(entry).filter(reception => selectedReceptionPeriods.has(receptionPeriod(reception))); }
     function exerciseQueryId(step) { return querySlug(step.name); }
     function syncSelectionUrl() {
       const url = new URL(window.location.href);
       if (currentEntry) url.searchParams.set('entry', entryQueryId(currentEntry)); else url.searchParams.delete('entry');
       if (currentStep) url.searchParams.set('exercise', exerciseQueryId(currentStep)); else url.searchParams.delete('exercise');
+      if (allReceptionPeriodsSelected()) url.searchParams.delete('reception-periods');
+      else url.searchParams.set('reception-periods', receptionPeriods.filter(period => selectedReceptionPeriods.has(period.id)).map(period => period.id).join(','));
       window.history.replaceState(null, '', url.href);
     }
     function requestedSelection() {
       const params = new URLSearchParams(window.location.search);
       return {
-        entry: allItems.find(item => entryQueryId(item) === params.get('entry')) || null,
+        entry: activeItems().find(item => entryQueryId(item) === params.get('entry')) || null,
         step: steps.find(item => exerciseQueryId(item) === params.get('exercise')) || null
       };
     }
@@ -2138,8 +2229,12 @@ I thank you for the memorials you have had the goodness to send me; it is unhapp
     function sourceAuthor(entry) { return entry.source.split(',')[0].trim(); }
     const sourceAuthors = [...new Set(allItems.map(sourceAuthor))].sort((a, b) => a.localeCompare(b));
     let selectedSources = new Set(sourceAuthors);
-    function activeItems() { const items = currentFilter === 'chreia' ? chreiai : currentFilter === 'maxim' ? maxims : currentFilter === 'reception' ? allItems.filter(entry => laterReceptionsFor(entry).length) : allItems; return items.filter(entry => selectedSources.has(sourceAuthor(entry))); }
-    function updateSourceSelectionStatus() { document.querySelector('#source-selection-status').textContent = `${selectedSources.size === sourceAuthors.length ? 'All selected' : `${selectedSources.size} of ${sourceAuthors.length} selected`} · ${activeItems().length} entries`; }
+    function activeItems() { const items = currentFilter === 'chreia' ? chreiai : currentFilter === 'maxim' ? maxims : currentFilter === 'reception' ? allItems.filter(entry => laterReceptionsFor(entry).length) : allItems; return items.filter(entry => selectedSources.has(sourceAuthor(entry)) && (allReceptionPeriodsSelected() || visibleReceptionsFor(entry).length)); }
+    function updateSourceSelectionStatus() { document.querySelector('#source-selection-status').textContent = `${selectedSources.size === sourceAuthors.length ? 'All selected' : `${selectedSources.size} of ${sourceAuthors.length} selected`} · ${activeItems().length} entries`; updateReceptionPeriodStatus(); }
+    function updateReceptionPeriodStatus() {
+      const count = activeItems().filter(entry => visibleReceptionsFor(entry).length).length;
+      document.querySelector('#period-selection-status').textContent = `${allReceptionPeriodsSelected() ? 'All periods' : `${selectedReceptionPeriods.size} of ${receptionPeriods.length} selected`} · ${count} entries with reception`;
+    }
     function applyContentFilters() {
       lastChreia = -1; lastSpeaker = ''; speakerCycle = []; resetTimer(false);
       const items = activeItems();
@@ -2147,7 +2242,7 @@ I thank you for the memorials you have had the goodness to send me; it is unhapp
       else {
         currentEntry = null; syncSelectionUrl();
         document.querySelector('#speaker').textContent = 'No matching entries';
-        document.querySelector('#chreia').textContent = 'Select a source, choose Select all, or change the display filter.';
+        document.querySelector('#chreia').textContent = 'Select a source or reception period, choose All periods, or change the display filter.';
         document.querySelector('.chreia-slot').dataset.reelLabel = 'CHREIA / MAXIM REEL';
         document.querySelector('#figure-context').innerHTML = '';
         ['#source', '#entry-context-container', '#later-reception'].forEach(selector => document.querySelector(selector).hidden = true);
@@ -2176,6 +2271,27 @@ I thank you for the memorials you have had the goodness to send me; it is unhapp
       document.querySelector('#sources-none').addEventListener('click', () => selectSources(false));
       updateSourceSelectionStatus();
     }
+    function initializeReceptionPeriodPicker() {
+      document.querySelector('#period-options').innerHTML = receptionPeriods.map(period => {
+        const count = allItems.filter(entry => laterReceptionsFor(entry).some(reception => receptionPeriod(reception) === period.id)).length;
+        return `<label><input type="checkbox" data-period-id="${period.id}" ${selectedReceptionPeriods.has(period.id) ? 'checked' : ''}><span>${escapeHtml(period.label)}<small class="source-count">${count} ${count === 1 ? 'entry' : 'entries'}</small></span></label>`;
+      }).join('');
+      document.querySelector('#period-options').addEventListener('change', event => {
+        const id = event.target.dataset.periodId;
+        if (!id || spinning) return;
+        if (event.target.checked) selectedReceptionPeriods.add(id); else selectedReceptionPeriods.delete(id);
+        applyContentFilters();
+      });
+      function selectPeriods(all) {
+        if (spinning) return;
+        selectedReceptionPeriods = new Set(all ? receptionPeriods.map(period => period.id) : []);
+        document.querySelectorAll('[data-period-id]').forEach(input => input.checked = all);
+        applyContentFilters();
+      }
+      document.querySelector('#periods-all').addEventListener('click', () => selectPeriods(true));
+      document.querySelector('#periods-none').addEventListener('click', () => selectPeriods(false));
+      updateReceptionPeriodStatus();
+    }
     function shuffle(values) { const shuffled = [...values]; for (let index = shuffled.length - 1; index > 0; index--) { const swapIndex = randomIndex(index + 1, -1); [shuffled[index], shuffled[swapIndex]] = [shuffled[swapIndex], shuffled[index]]; } return shuffled; }
     function nextReelItem(items = activeItems()) { const speakers = [...new Set(items.map(item => item.speaker))]; if (!speakerCycle.length || speakerCycle.some(speaker => !speakers.includes(speaker))) { speakerCycle = shuffle(speakers); if (speakers.length > 1 && speakerCycle[speakerCycle.length - 1] === lastSpeaker) [speakerCycle[speakerCycle.length - 1], speakerCycle[0]] = [speakerCycle[0], speakerCycle[speakerCycle.length - 1]]; } const speaker = speakerCycle.pop(); lastSpeaker = speaker; const choices = items.filter(item => item.speaker === speaker); return choices[randomIndex(choices.length, -1)]; }
     function sourceUrl(c) { if (c.url) return c.url; if (c.source.startsWith('Epictetus')) return 'https://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.01.0235:text=enc:chapter=5'; if (c.source.startsWith('Aelian')) return 'https://books.google.com/books?id=rn1esdEw5p0C'; if (c.source.includes('Sayings of Spartans')) return 'https://penelope.uchicago.edu/Thayer/E/Roman/Texts/Plutarch/Moralia/Sayings_of_Spartans*/main.html'; if (c.source.startsWith('Julius')) return 'https://internetshakespeare.uvic.ca/doc/Plutarch_Caesar/section/50/'; if (c.source.startsWith('Cato')) return 'https://penelope.uchicago.edu/Thayer/E/Roman/Texts/Plutarch/Lives/Cato_Minor*.html'; return 'https://www.perseus.tufts.edu/hopper/'; }
@@ -2194,15 +2310,15 @@ I thank you for the memorials you have had the goodness to send me; it is unhapp
     function figureCard(heading, name) { return `<div><h2>${escapeHtml(heading)}</h2><p><strong>${escapeHtml(name)}</strong> — ${escapeHtml(figureProfiles[name] || 'A figure identified in the source tradition for this entry.')}</p></div>`; }
     function paintFigureContext(c) { const isMaxim = c.type === 'maxim', primary = canonicalFigureName(c.speaker), related = namedFigures(c); document.querySelector('#figure-context').innerHTML = [figureCard(`About ${isMaxim ? 'the author' : 'the figure'}`, primary), ...related.map(name => figureCard(isMaxim ? 'Also mentioned' : 'Also in this chreia', name))].join(''); document.querySelector('#entry-context-label').textContent = `${c.hintLabel || 'AI Generated Hint/Context'}:`; document.querySelector('#entry-context').innerHTML = `${escapeHtml(entryContext(c))}${c.hintUrl ? ` <a href="${c.hintUrl}" target="_blank" rel="noopener noreferrer">Read Nietzsche’s passage online ↗</a>` : ''}`; }
     function paintChreia(c, seen = new Set()) { document.querySelector('#speaker').innerHTML = annotateGreekNames(c.speaker, seen); document.querySelector('#chreia').innerHTML = annotateGreekNames(c.text, seen); const isMaxim = c.type === 'maxim'; document.querySelector('.chreia-slot').dataset.reelLabel = isMaxim ? 'MAXIM REEL' : 'CHREIA REEL'; document.querySelector('#spin-chreia').textContent = isMaxim ? 'Spin maxim' : 'Spin chreia'; }
-    function receptionButtonLabel(c, action = 'Show') { const receptions = laterReceptionsFor(c); if (receptions.length > 1) return `${action} ${receptions.length} later passages`; const surname = receptions[0]?.author?.split(/\s+/).at(-1) || 'later'; return `${action} ${surname} passage`; }
+    function receptionButtonLabel(c, action = 'Show') { const receptions = visibleReceptionsFor(c); if (receptions.length > 1) return `${action} ${receptions.length} later passages`; const surname = receptions[0]?.author?.split(/\s+/).at(-1) || 'later'; return `${action} ${surname} passage`; }
     function updateLaterReception(c) {
-      const panel = document.querySelector('#later-reception'), button = document.querySelector('#show-reception'), receptions = laterReceptionsFor(c);
+      const panel = document.querySelector('#later-reception'), button = document.querySelector('#show-reception'), receptions = visibleReceptionsFor(c);
       panel.hidden = true;
       button.setAttribute('aria-expanded', 'false');
       if (!receptions.length) { button.hidden = true; return; }
       document.querySelector('#later-reception-list').innerHTML = receptions.map(reception => {
         const surname = reception.author.split(/\s+/).at(-1);
-        return `<article class="later-reception-item"><h2>${escapeHtml(reception.author)} on this ${c.type === 'maxim' ? 'maxim' : 'chreia'}</h2><p class="later-reception-source">${escapeHtml(reception.source)}</p>${reception.context ? `<p class="later-reception-context"><strong>Context (AI-generated summary):</strong> ${escapeHtml(reception.context)}</p>` : ''}<blockquote class="later-reception-passage">${escapeHtml(reception.passage)}</blockquote><a href="${escapeHtml(reception.url)}" target="_blank" rel="noopener noreferrer">Read ${escapeHtml(surname)}’s passage online ↗</a></article>`;
+        return `<article class="later-reception-item"><h2>${escapeHtml(reception.author)} on this ${c.type === 'maxim' ? 'maxim' : 'chreia'}</h2><p class="later-reception-source"><strong>${escapeHtml(receptionPeriodLabel(reception))}</strong><br>${escapeHtml(reception.source)}</p>${reception.context ? `<p class="later-reception-context"><strong>Context (AI-generated summary):</strong> ${escapeHtml(reception.context)}</p>` : ''}<blockquote class="later-reception-passage">${escapeHtml(reception.passage)}</blockquote><a href="${escapeHtml(reception.url)}" target="_blank" rel="noopener noreferrer">Read ${escapeHtml(surname)}’s passage online ↗</a></article>`;
       }).join('');
       button.hidden = false;
       button.textContent = receptionButtonLabel(c);
@@ -2210,7 +2326,7 @@ I thank you for the memorials you have had the goodness to send me; it is unhapp
     function updateSource(c, hideSource = true, seen = new Set()) { const source = document.querySelector('#source'); const context = document.querySelector('#entry-context-container'); const sourceToggle = document.querySelector('#show-source'); const hintToggle = document.querySelector('#show-hint'); source.innerHTML = `<strong>Source:</strong> ${annotateGreekNames(c.source, seen)}<br><br><strong>${c.excerpt ? 'Source excerpt:' : 'Source passage:'}</strong> ${annotateGreekNames(c.passage, seen)}<br><span class="source-note">${c.excerpt ? 'A brief quotation from the linked work. Read the surrounding passage online; Show hint explains its context.' : 'The text above gives the full relevant source unit: the complete paragraph where the edition groups the anecdote as a paragraph, or the complete numbered aphorism where it stands alone.'}</span><br><br><a href="${sourceUrl(c)}" target="_blank" rel="noopener noreferrer">Read the source context online ↗</a>`; if (hideSource) { source.hidden = true; context.hidden = true; sourceToggle.textContent = 'Show source'; sourceToggle.setAttribute('aria-expanded', 'false'); hintToggle.textContent = 'Show hint'; hintToggle.setAttribute('aria-expanded', 'false'); } }
     function renderChreia(c, hideSource = true, syncUrl = false) { const seen = new Set(); paintChreia(c, seen); paintFigureContext(c); updateSource(c, hideSource, seen); updateLaterReception(c); currentEntry = c; if (syncUrl) syncSelectionUrl(); }
     function render(c, s, hideSource = true) { renderChreia(c, hideSource); renderTask(s); syncSelectionUrl(); }
-    function setSpinControlsDisabled(disabled) { ['#another', '#spin-chreia'].forEach(selector => { document.querySelector(selector).disabled = disabled || !activeItems().length; }); document.querySelector('#spin-task').disabled = disabled; document.querySelector('#source-picker-fields').disabled = disabled; document.querySelectorAll('[data-filter]').forEach(button => button.disabled = disabled); }
+    function setSpinControlsDisabled(disabled) { ['#another', '#spin-chreia'].forEach(selector => { document.querySelector(selector).disabled = disabled || !activeItems().length; }); document.querySelector('#spin-task').disabled = disabled; document.querySelector('#source-picker-fields').disabled = disabled; document.querySelector('#period-picker-fields').disabled = disabled; document.querySelectorAll('[data-filter]').forEach(button => button.disabled = disabled); }
     function spinReel(slots, preview, settle, duration, done) { slots.forEach(el => el.classList.add('spinning')); preview(); const fastSpin = setInterval(preview, 95); setTimeout(() => { clearInterval(fastSpin); preview(); setTimeout(preview, 55); setTimeout(preview, 130); setTimeout(() => { settle(); slots.forEach(el => el.classList.remove('spinning')); done(); }, 250); }, duration - 250); }
     function spinTask(done, duration = 2250) { const slots = [document.querySelector('#step-name'), document.querySelector('#greek-term'), document.querySelector('#instruction'), document.querySelector('#task-example')]; spinReel(slots, () => paintTask(steps[Math.floor(Math.random() * steps.length)]), () => { lastStep = randomIndex(steps.length, lastStep); renderTask(steps[lastStep], true); }, duration, done); }
     function spinChreia(done, duration = 2250) { const slots = [document.querySelector('#speaker'), document.querySelector('#chreia')], items = activeItems(); spinReel(slots, () => paintChreia(items[Math.floor(Math.random() * items.length)]), () => { const entry = nextReelItem(items); lastChreia = items.indexOf(entry); renderChreia(entry, true, true); }, duration, done); }
@@ -2218,7 +2334,7 @@ I thank you for the memorials you have had the goodness to send me; it is unhapp
     function spinTaskAgain() { if (spinning) return; resetTimer(false); spinning = true; setSpinControlsDisabled(true); spinTask(finishSpin); }
     function spinChreiaAgain() { if (spinning || !activeItems().length) return; resetTimer(false); spinning = true; setSpinControlsDisabled(true); spinChreia(finishSpin); }
     function newExercise() { if (spinning || !activeItems().length) return; resetTimer(false); spinning = true; setSpinControlsDisabled(true); spinTask(() => {}, 1750); spinChreia(finishSpin, 2250); }
-    function initialExercise() { const items = activeItems(), requested = requestedSelection(), entry = requested.entry || nextReelItem(items), step = requested.step || steps[randomIndex(steps.length, lastStep)]; lastChreia = items.indexOf(entry); lastStep = steps.indexOf(step); if (requested.entry) lastSpeaker = entry.speaker; render(entry, step); }
+    function initialExercise() { const items = activeItems(), requested = requestedSelection(), step = requested.step || steps[randomIndex(steps.length, lastStep)]; lastStep = steps.indexOf(step); if (!items.length) { renderTask(step); applyContentFilters(); return; } const entry = requested.entry || nextReelItem(items); lastChreia = items.indexOf(entry); if (requested.entry) lastSpeaker = entry.speaker; render(entry, step); }
     document.querySelector('#another').addEventListener('click', newExercise);
     document.querySelector('#spin-task').addEventListener('click', spinTaskAgain);
     document.querySelector('#spin-chreia').addEventListener('click', spinChreiaAgain);
@@ -2228,7 +2344,7 @@ I thank you for the memorials you have had the goodness to send me; it is unhapp
     document.querySelector('#show-source').addEventListener('click', event => { const source = document.querySelector('#source'); source.hidden = !source.hidden; event.currentTarget.textContent = source.hidden ? 'Show source' : 'Hide source'; event.currentTarget.setAttribute('aria-expanded', String(!source.hidden)); });
     document.querySelector('#show-hint').addEventListener('click', event => { const context = document.querySelector('#entry-context-container'); context.hidden = !context.hidden; event.currentTarget.textContent = context.hidden ? 'Show hint' : 'Hide hint'; event.currentTarget.setAttribute('aria-expanded', String(!context.hidden)); });
     document.querySelector('#show-reception').addEventListener('click', event => { const panel = document.querySelector('#later-reception'); panel.hidden = !panel.hidden; event.currentTarget.textContent = receptionButtonLabel(currentEntry, panel.hidden ? 'Show' : 'Hide'); event.currentTarget.setAttribute('aria-expanded', String(!panel.hidden)); });
-    initializeSourcePicker(); initialExercise(); resetTimer(false);
+    initializeSourcePicker(); initializeReceptionPeriodPicker(); initialExercise(); resetTimer(false);
   </script>
 </body>
 </html>
