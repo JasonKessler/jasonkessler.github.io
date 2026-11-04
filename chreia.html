@@ -59,6 +59,7 @@
     .later-reception-source { margin:0 0 12px; font:.86rem/1.4 system-ui,sans-serif; }
     .later-reception-context { margin:0 0 14px; font:.91rem/1.5 system-ui,sans-serif; }
     .later-reception-passage { margin:0 0 14px; font:italic .96rem/1.55 Georgia,"Times New Roman",serif; white-space:pre-line; }
+    .later-reception-paraphrase { font-style:normal; }
     .later-reception-label { margin:12px 0 6px; font:700 .85rem/1.4 system-ui,sans-serif; color:var(--ink); }
     .source-note { display:block; margin-top:10px; color:var(--muted); font:italic .85rem/1.45 system-ui, sans-serif; }
     .pronunciation { color:var(--accent); font:600 .78em/1.2 system-ui, sans-serif; white-space:nowrap; }
@@ -2205,6 +2206,159 @@ I thank you for the memorials you have had the goodness to send me; it is unhapp
       const additions = diogenesReceptionAdditions[entryQueryId(entry)];
       if (additions) entry.laterReceptions = [...(entry.laterReceptions || []), ...additions];
     }
+    // Recovered source discussions: paraphrases are explicitly distinguished from verbatim source text.
+    const recoveredReceptionPassages = [
+  {
+    "entryId": "chreia-diogenes-of-sinope-m6wgiq",
+    "reception": {
+      "author": "Michel Foucault",
+      "url": "https://foucault.info/parrhesia/foucault.DT4.praticeParrhesia.en/",
+      "source": "Foucault, Discourse and Truth / Fearless Speech, “Cynic Parrhesia,” discussion of Dio Chrysostom’s Fourth Discourse: the sunlight encounter and the closing two paragraphs before “Parrhesia and Personal Relationships.”",
+      "passage": "Foucault follows Dio’s portrayal of Alexander approaching Diogenes in the sunlight and being told to move aside. Alexander’s armies and wealth cannot give him the independence that Diogenes already has. Their conversation tests the ruler’s pride rather than simply correcting something he does not know. Diogenes risks the king’s anger by exposing the gap between royal rank and the conduct of a true ruler. Foucault interprets the encounter as truth confronting political authority: its purpose is to make Alexander continue that confrontation within himself, resisting his own faults.",
+      "passageKind": "paraphrase",
+      "period": "20th-century"
+    }
+  },
+  {
+    "entryId": "chreia-socrates-wbhj5g",
+    "reception": {
+      "author": "Martin Luther King Jr.",
+      "url": "https://crmvet.lib.duke.edu/docs/bhamlbj.html#:~:text=Just%20as%20Socrates",
+      "source": "Martin Luther King Jr., Letter from Birmingham Jail, 16 April 1963. Paragraph beginning “Just as Socrates felt,” between the distinction of constructive and violent tension and the explanation of negotiation.",
+      "passage": "King compares the intellectual disturbance created by Socrates with the social disturbance produced by nonviolent protest. Socrates challenged comforting false beliefs so that people could think and judge more freely. In the same way, protest must disturb a community’s acceptance of prejudice and racism. King distinguishes that constructive pressure from violence: it is meant to make injustice impossible to ignore and bring a resistant community into negotiation. The ancient gadfly thus becomes a model for disciplined civic intervention.",
+      "passageKind": "paraphrase",
+      "period": "20th-century"
+    }
+  },
+  {
+    "entryId": "chreia-archimedes-91pjz1",
+    "reception": {
+      "author": "Robert F. Kennedy",
+      "url": "https://www.jfklibrary.org/learn/about-jfk/the-kennedy-family/robert-f-kennedy/robert-f-kennedy-speeches/day-of-affirmation-address-university-of-capetown-june-6-1966#:~:text=Give%20me%20a%20place%20to%20stand",
+      "source": "Robert F. Kennedy, Day of Affirmation Address, University of Cape Town, 6 June 1966. The “danger of futility” section, especially the paragraph containing Archimedes and the following examples of collective action.",
+      "passage": "Kennedy counters the belief that an individual cannot change entrenched injustice. After recalling people whose actions changed history, he invokes Archimedes’ claim that a secure position would let him move the world. He then applies the image beyond exceptional heroes: each person can alter a small part of events, and many such contributions together can reshape a generation.",
+      "passageKind": "paraphrase",
+      "period": "20th-century"
+    }
+  },
+  {
+    "entryId": "maxim-aeschylus-1rj5mrq",
+    "reception": {
+      "author": "Robert F. Kennedy",
+      "url": "https://www.jfklibrary.org/learn/about-jfk/the-kennedy-family/robert-f-kennedy/robert-f-kennedy-speeches/statement-on-assassination-of-martin-luther-king-jr-april-4-1968",
+      "source": "Robert F. Kennedy, Statement on the Assassination of Martin Luther King Jr., 4 April 1968. The sequence from his recollection of his brother’s killing through Aeschylus and the ensuing appeal for love, wisdom, and justice.",
+      "passage": "Kennedy recognizes the anger caused by King’s murder and recalls his own experience of a brother’s violent death. He names Aeschylus and quotes the ancient poet’s account of painful memory bringing wisdom even against the sufferer’s will. He immediately turns that thought into a public appeal: grief should lead to compassion and justice across racial divisions, rather than hatred, retaliation, or lawlessness.",
+      "passageKind": "paraphrase",
+      "period": "20th-century"
+    }
+  },
+  {
+    "entryId": "maxim-pericles-cajmv4",
+    "reception": {
+      "author": "Robert F. Kennedy",
+      "url": "https://www.jfklibrary.org/learn/about-jfk/the-kennedy-family/robert-f-kennedy/robert-f-kennedy-speeches/day-of-affirmation-address-university-of-capetown-june-6-1966#:~:text=If%20Athens%20shall%20appear%20great",
+      "source": "Robert F. Kennedy, Day of Affirmation Address, University of Cape Town, 6 June 1966. The Pericles paragraph immediately following the “ripple of hope” paragraph.",
+      "passage": "After explaining how separate acts of courage can combine against oppression, Kennedy quotes Pericles on the bravery and learned duty behind Athens’ greatness. He extends that explanation to all societies and to present-day progress. The ancient praise of citizens’ sacrifice becomes a lesson that a society’s achievements depend on people accepting and acting upon civic responsibilities.",
+      "passageKind": "paraphrase",
+      "period": "20th-century"
+    }
+  },
+  {
+    "entryId": "maxim-pericles-1rpys86",
+    "reception": {
+      "author": "Margaret Thatcher",
+      "url": "https://www.margaretthatcher.org/document/102664",
+      "source": "Margaret Thatcher, Speech to the Institute of Practitioners in Advertising, 25 March 1975. Closing paragraphs, manuscript pages 24–25 and the concluding question about Britain.",
+      "passage": "Thatcher introduces a description of the tolerant Britain she hopes might emerge. She quotes Pericles’ praise of equal justice, recognition of merit rather than faction, and restraint toward neighbours whose private pleasures differ from one’s own. Only after setting out these qualities does she identify the description as ancient Athenian democracy. Her final question asks whether Britain could eventually meet that standard. The ancient passage supplies a practical political aspiration, not merely a decorative quotation.",
+      "passageKind": "paraphrase",
+      "period": "20th-century"
+    }
+  },
+  {
+    "entryId": "maxim-heraclitus-1crbzvz",
+    "reception": {
+      "author": "Martin Heidegger",
+      "url": "https://libraryofagartha.com/Philosophy/Martin%20Heidegger/Early%20Greek%20Thinking/Heidegger%2C%20Martin%20-%20Early%20Greek%20Thinking%20%28Harper%20%26%20Row%2C%201975%29.pdf#page=1",
+      "source": "Martin Heidegger, “Logos (Heraclitus, Fragment B50),” Early Greek Thinking, translated by David Farrell Krell and Frank A. Capuzzi, pp. 59–60, opening discussion of hearing, speaking, and logos.",
+      "passage": "Heidegger quotes Heraclitus’ instruction to hear the logos rather than the speaker and acknowledge unity. He questions its apparent obviousness, asking how hearing and saying belong together and why inherited renderings of logos as reason or word require examination.",
+      "passageKind": "paraphrase",
+      "period": "20th-century"
+    }
+  },
+  {
+    "entryId": "maxim-heraclitus-1hu65mz",
+    "reception": {
+      "author": "Martin Heidegger",
+      "url": "https://libraryofagartha.com/Philosophy/Martin%20Heidegger/Early%20Greek%20Thinking/Heidegger%2C%20Martin%20-%20Early%20Greek%20Thinking%20%28Harper%20%26%20Row%2C%201975%29.pdf#page=1",
+      "source": "Martin Heidegger, “Aletheia (Heraclitus, Fragment B16),” Early Greek Thinking, translated by David Farrell Krell and Frank A. Capuzzi, pp. 104–105 and 119–120.",
+      "passage": "Heidegger asks how anyone could hide from Heraclitus’ never-setting. He distinguishes Clement’s interpretation through an all-seeing God from a question about the openness in which beings appear. He connects humans to that openness while acknowledging uncertainty about Heraclitus’ own intentions.",
+      "passageKind": "paraphrase",
+      "period": "20th-century"
+    }
+  },
+  {
+    "entryId": "maxim-parmenides-13vhfrh",
+    "reception": {
+      "author": "Martin Heidegger",
+      "url": "https://static1.squarespace.com/static/5657eb54e4b022a250fc2de4/t/566f9dfa1c12100c11456ac3/1450155514846/1969_Heidegger_Identity%2Band%2BDifference.pdf#page=28",
+      "source": "Martin Heidegger, “The Principle of Identity,” Identity and Difference, translated by Joan Stambaugh, printed pp. 26–30 (PDF pages 29–33). Discussion beginning with Parmenides’ fragment and continuing into the belonging of humanity and Being.",
+      "passage": "Heidegger explicitly returns to Parmenides’ claim about thinking and Being. He argues that it should not simply be read as a later logical assertion that every thing is identical with itself. Instead, he investigates how thinking and Being belong together. That belonging is not fully explained by placing two independently defined things into a system. Human openness lets Being become present, while thinking is itself responsive to Being. Heidegger treats the fragment as an unresolved guide to this relationship, rather than as proof that a human mind invents reality.",
+      "passageKind": "paraphrase",
+      "period": "20th-century"
+    }
+  },
+  {
+    "entryId": "maxim-anaximander-1hkvbif",
+    "reception": {
+      "author": "Martin Heidegger",
+      "url": "https://libraryofagartha.com/Philosophy/Martin%20Heidegger/Early%20Greek%20Thinking/Heidegger%2C%20Martin%20-%20Early%20Greek%20Thinking%20%28Harper%20%26%20Row%2C%201975%29.pdf#page=1",
+      "source": "Martin Heidegger, “The Anaximander Fragment,” Early Greek Thinking, translated by David Farrell Krell and Frank A. Capuzzi, pp. 40–43, discussion of injustice, lingering, and order.",
+      "passage": "Heidegger reconsiders Anaximander’s supposed punishment of things for injustice. He understands disorder as their insistence on enduring permanently, against their temporary presence between arrival and departure. Giving order means allowing that transition, rather than paying a moral penalty.",
+      "passageKind": "paraphrase",
+      "period": "20th-century"
+    }
+  },
+  {
+    "entryId": "maxim-sophocles-xp01xx",
+    "reception": {
+      "author": "Martin Heidegger",
+      "url": "https://libraryofagartha.com/Philosophy/Martin%20Heidegger/Introduction%20to%20Metaphysics/Heidegger%2C%20Martin%20-%20Introduction%20to%20Metaphysics%20%28Yale%2C%202000%29.pdf#page=1",
+      "source": "Martin Heidegger, Introduction to Metaphysics, translated by Gregory Fried and Richard Polt (2000), pp. 156–161. Translation of Antigone 332–375 and the first phase of its interpretation.",
+      "passage": "Heidegger reads the opening of Sophocles’ ode through the double meaning of deinon: overwhelming power and humanity’s forceful engagement with it. Human beings are exposed to what exceeds them, yet also make paths through it by their practices and creations. Their unsettling character lies in both conditions together. The opening therefore frames the entire ode’s account of being human; it is not simply an assertion that human achievements are wonderful.",
+      "passageKind": "paraphrase",
+      "period": "20th-century"
+    }
+  },
+  {
+    "entryId": "maxim-heraclitus-70v7fo",
+    "reception": {
+      "author": "Martin Heidegger",
+      "url": "https://libraryofagartha.com/Philosophy/Martin%20Heidegger/Early%20Greek%20Thinking/Heidegger%2C%20Martin%20-%20Early%20Greek%20Thinking%20%28Harper%20%26%20Row%2C%201975%29.pdf#page=1",
+      "source": "Martin Heidegger, “Aletheia (Heraclitus, Fragment B16),” discussion of B123, Early Greek Thinking, translated by David Farrell Krell and Frank A. Capuzzi, pp. 112–114.",
+      "passage": "Heidegger rejects reading Heraclitus’ hidden nature as a commonplace about elusive properties. He understands emergence and concealment as mutually sustaining: concealment shelters the possibility of appearing. The maxim concerns their intimate dependence, rather than an alternation between two unrelated states.",
+      "passageKind": "paraphrase",
+      "period": "20th-century"
+    }
+  },
+  {
+    "entryId": "chreia-diogenes-of-sinope-zt2l8o",
+    "reception": {
+      "author": "Søren Kierkegaard",
+      "period": "19th-century",
+      "source": "Søren Kierkegaard (Constantin Constantius), Gjentagelsen (Repetition), first edition (1843), opening, printed p. 1 (PDF page 6), selected consecutive sentences through the proposed Berlin experiment. Danish spelling normalized from the scan; new English translation supplied here, not the Hong translation.",
+      "url": "https://www.kb.dk/e-mat/dod/11140801460F-bw.pdf#page=6",
+      "passage": "Da Eleaterne negtede Bevægelsen, optraadte, hvad Enhver veed, Diogenes som Opponent; han optraadte virkelig; thi han sagde ikke et Ord; men gik blot nogle Gange frem og tilbage, hvorved han meente tilstrækkeligen at have modbeviist hine. Da jeg i længere Tid havde beskæftiget mig, leilighedsviis idetmindste, med det Problem, om en Gjentagelse er mulig og hvilken Betydning den har, om en Ting vinder eller taber ved at gjentages, faldt det mig pludselig ind: Du kan jo reise til Berlin, der har Du engang før været, og nu overbevise Dig om en Gjentagelse er mulig og hvad den har at betyde.",
+      "originalLanguage": "Danish",
+      "originalLanguageCode": "da",
+      "translation": "When the Eleatics denied motion, Diogenes, as everyone knows, came forward as their opponent; he really did come forward, for he said not a word but merely walked back and forth a few times, believing that he had thereby sufficiently refuted them. After I had spent some time, at least occasionally, considering whether repetition is possible and what significance it has, whether a thing gains or loses by being repeated, the thought suddenly occurred to me: you could travel to Berlin, where you have been once before, and now establish for yourself whether repetition is possible and what it means."
+    }
+  }
+];
+    for (const {entryId, reception} of recoveredReceptionPassages) {
+      const entry = allItems.find(item => entryQueryId(item) === entryId);
+      if (!entry) throw new Error(`Missing entry for recovered reception: ${entryId}`);
+      entry.laterReceptions = [...(entry.laterReceptions || []), reception];
+    }
     // English translations and glosses supplied for the original passages; source text remains intact.
     const receptionEnglishTranslations = {
   "Maximilien Robespierre|ojj3ir": {
@@ -2420,7 +2574,7 @@ I thank you for the memorials you have had the goodness to send me; it is unhapp
       if (!receptions.length) { button.hidden = true; return; }
       document.querySelector('#later-reception-list').innerHTML = receptions.map(reception => {
         const surname = reception.author.split(/\s+/).at(-1);
-        return `<article class="later-reception-item"><h2>${escapeHtml(reception.author)} on this ${c.type === 'maxim' ? 'maxim' : 'chreia'}</h2><p class="later-reception-source"><strong>${escapeHtml(receptionPeriodLabel(reception))}</strong><br>${escapeHtml(reception.source)}</p>${reception.context ? `<p class="later-reception-context"><strong>Context (AI-generated summary):</strong> ${escapeHtml(reception.context)}</p>` : ''}${reception.translation ? `<p class="later-reception-label">Original (${escapeHtml(reception.originalLanguage)}):</p>` : ''}<blockquote class="later-reception-passage"${reception.originalLanguageCode ? ` lang="${escapeHtml(reception.originalLanguageCode)}"` : ''}>${escapeHtml(reception.passage)}</blockquote>${reception.translation ? `<p class="later-reception-label">English translation (AI-generated):</p><blockquote class="later-reception-passage later-reception-translation" lang="en">${escapeHtml(reception.translation)}</blockquote>` : ''}${reception.translationNotes ? `<p class="later-reception-context" lang="en"><strong>English glosses (AI-generated):</strong> ${escapeHtml(reception.translationNotes)}</p>` : ''}<a href="${escapeHtml(reception.url)}" target="_blank" rel="noopener noreferrer">Read ${escapeHtml(surname)}’s passage online ↗</a></article>`;
+        return `<article class="later-reception-item"><h2>${escapeHtml(reception.author)} on this ${c.type === 'maxim' ? 'maxim' : 'chreia'}</h2><p class="later-reception-source"><strong>${escapeHtml(receptionPeriodLabel(reception))}</strong><br>${escapeHtml(reception.source)}</p>${reception.context ? `<p class="later-reception-context"><strong>Context (AI-generated summary):</strong> ${escapeHtml(reception.context)}</p>` : ''}${reception.translation ? `<p class="later-reception-label">Original (${escapeHtml(reception.originalLanguage)}):</p>` : ''}${reception.passageKind === 'paraphrase' ? `<p class="later-reception-label">Source discussion (AI-generated paraphrase):</p><div class="later-reception-passage later-reception-paraphrase" lang="en">${escapeHtml(reception.passage)}</div>` : `<blockquote class="later-reception-passage"${reception.originalLanguageCode ? ` lang="${escapeHtml(reception.originalLanguageCode)}"` : ''}>${escapeHtml(reception.passage)}</blockquote>`}${reception.translation ? `<p class="later-reception-label">English translation (AI-generated):</p><blockquote class="later-reception-passage later-reception-translation" lang="en">${escapeHtml(reception.translation)}</blockquote>` : ''}${reception.translationNotes ? `<p class="later-reception-context" lang="en"><strong>English glosses (AI-generated):</strong> ${escapeHtml(reception.translationNotes)}</p>` : ''}<a href="${escapeHtml(reception.url)}" target="_blank" rel="noopener noreferrer">Read ${escapeHtml(surname)}’s passage online ↗</a></article>`;
       }).join('');
       button.hidden = false;
       button.textContent = receptionButtonLabel(c);
