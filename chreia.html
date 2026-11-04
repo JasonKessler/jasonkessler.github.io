@@ -59,6 +59,7 @@
     .later-reception-source { margin:0 0 12px; font:.86rem/1.4 system-ui,sans-serif; }
     .later-reception-context { margin:0 0 14px; font:.91rem/1.5 system-ui,sans-serif; }
     .later-reception-passage { margin:0 0 14px; font:italic .96rem/1.55 Georgia,"Times New Roman",serif; white-space:pre-line; }
+    .later-reception-label { margin:12px 0 6px; font:700 .85rem/1.4 system-ui,sans-serif; color:var(--ink); }
     .source-note { display:block; margin-top:10px; color:var(--muted); font:italic .85rem/1.45 system-ui, sans-serif; }
     .pronunciation { color:var(--accent); font:600 .78em/1.2 system-ui, sans-serif; white-space:nowrap; }
     .figure-context { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:14px; margin-top:20px; }
@@ -2255,6 +2256,68 @@ I thank you for the memorials you have had the goodness to send me; it is unhapp
       const additions = diogenesReceptionAdditions[entryQueryId(entry)];
       if (additions) entry.laterReceptions = [...(entry.laterReceptions || []), ...additions];
     }
+    // English translations and glosses supplied for the original passages; source text remains intact.
+    const receptionEnglishTranslations = {
+  "Maximilien Robespierre|ojj3ir": {
+    "translation": "Let us raise our souls to the height of republican virtues and the examples of antiquity. Themistocles had more genius than the Spartan general commanding the Greek fleet. Yet when that general, in answer to necessary advice that would save their country, raised his staff to strike him, Themistocles merely replied: “Strike, but listen,” and Greece triumphed over the tyrant of Asia.\n\nScipio was surely the equal of any other Roman general. After defeating Hannibal and Carthage, Scipio took pride in serving under the orders of his enemy.\n\nO virtue of great hearts! What are all the turmoil and pretensions of petty souls before you? O virtue, are you less necessary to found a republic than to govern it in peace? O country, have you fewer claims upon the representatives of the French people than Greece and Rome had upon their generals? What am I saying? If among us the duties of revolutionary administration have ceased to be arduous obligations and have become objects of ambition, the Republic is already lost.",
+    "originalLanguage": "French",
+    "originalLanguageCode": "fr"
+  },
+  "Camille Desmoulins|75g3sr": {
+    "translation": "How many reflections this epigraph suggests! It is Cicero who, by accommodating the vices of his age, believes he is delaying the fall of the republic, while Cato’s austerity hastens the return of monarchy. Solon had said the same thing in other words: “The legislator who works with resistant material must give his country, not the best laws in theory, but the best whose enforcement it can bear.” And J. J. Rousseau later said: “I have not come to treat incurable diseases.”",
+    "originalLanguage": "French",
+    "originalLanguageCode": "fr"
+  },
+  "Camille Desmoulins|199ipuk": {
+    "translation": "Solon had said the same thing in other words: “The legislator who works with resistant material must give his country, not the best laws in theory, but the best whose enforcement it can bear.”",
+    "originalLanguage": "French",
+    "originalLanguageCode": "fr"
+  },
+  "Maximilien Robespierre|ruqa2x": {
+    "translation": "At Thermopylae, Leonidas, dining with his comrades-in-arms just before carrying out the most heroic design that human virtue has ever conceived, invites them to another banquet on the following day, in a new life. There is a great distance between Socrates and Chaumette, and between Leonidas and Père Duchesne. A great man, a true hero, esteems himself too highly to take pleasure in the thought of his own annihilation.",
+    "originalLanguage": "French",
+    "originalLanguageCode": "fr"
+  },
+  "Camille Desmoulins|jhp0w1": {
+    "translation": "Once spoken remarks had become crimes against the state, it was only a step to making crimes of mere looks, sadness, compassion, sighs, even silence itself.\n\n[…]\n\nA crime of counter-revolution charged against the journalist Cremutius Cordus: having called Brutus and Cassius the last of the Romans.",
+    "originalLanguage": "French",
+    "originalLanguageCode": "fr"
+  },
+  "Madame Roland|p968lc": {
+    "translation": "Louvet, whom I came to know during Roland’s first ministry, and whose agreeable company I shall always seek, might sometimes, like Philopoemen, pay the price of his unprepossessing appearance. Small and slight, short-sighted and carelessly dressed, he seems of no account to ordinary people, who fail to notice the nobility of his brow and the fire that animates his eyes and face when he expresses a great truth, a fine sentiment, an ingenious sally, or a subtle joke.\n\nPeople of letters and people of taste know his charming novels, in which the graces of imagination are joined to lightness of style, a philosophical tone, and the spice of criticism.",
+    "originalLanguage": "French",
+    "originalLanguageCode": "fr"
+  },
+  "Louis Antoine de Saint-Just|c7jch7": {
+    "translation": "Lycurgus knew well that his laws would be difficult to establish, but that once they took hold, their roots would be deep; all this is well known. He returned the sceptre of Sparta to his brother’s son, and when, through the respect he inspired, he had assured himself that his laws would be followed until his return from Delphi, he went into exile, never returned, and ordered that his bones be thrown into the sea. Sparta kept his laws and flourished for a long time.\n\nFrom all this we may infer that when a legislator has wisely accommodated himself to a nation’s vices and has bent the virtues of which the people are capable to his own purpose, he has done everything. Lycurgus secured chastity by violating modesty, and directed the public spirit toward war because it was fierce.\n\nThe legislators of France have not abolished luxury, which people loved, but the ostentatiously wealthy men whom people did not love; they have seemed not to attack evil, but to seek good.",
+    "originalLanguage": "French",
+    "originalLanguageCode": "fr"
+  },
+  "Camille Desmoulins|1p0svnn": {
+    "translation": "Who cannot see that the reception of that famous speech by Barère must have delighted Pitt more than the news from Pondicherry, and that the English would not have failed to say to themselves: since London is Carthage, let us have the courage of the Carthaginians; rather, let us make ropes and bows from our hair as they did, give Pitt our very last shilling, and rise en masse ourselves. But would you dare tell Barère these truths? Would you dare say that this Hébert, for example, this Momoro… Camille Desmoulins.",
+    "originalLanguage": "French",
+    "originalLanguageCode": "fr"
+  },
+  "Camille Desmoulins|fo47kf": {
+    "translation": "Brave Parisians,\n\nWhat thanks do I not owe you? You have made me forever famous and blessed among all lanterns. What is Sosia’s lantern, or Diogenes’ lantern, compared with me? He was looking for a man, and I have found two hundred thousand. In a great dispute with that Louis XIII, my neighbour, I made him acknowledge that I deserved the surname “the Just” better than he did.\n\nEvery day I enjoy the rapture of a few English, Dutch, or Netherlandish travellers, who gaze at me in admiration. I see that they cannot get over their astonishment that a lantern has done more in two days than all their heroes in a hundred years. Then I am beside myself with delight, and wonder that they do not hear me cry out: Yes, I am the queen of lanterns.",
+    "originalLanguage": "French",
+    "originalLanguageCode": "fr"
+  },
+  "Edward Gibbon|bu35j3": {
+    "translation": "But their brave hands trembled, moved by the place’s awe-inspiring majesty; if they struck the sacred trunks, they believed the axes would return upon their own limbs.\n\n(Lucan. iii. 429.) ‘Is it true,’ (said Augustus to a veteran of Italy, at whose house he supped) ‘that the man who gave the first blow to the golden statue of Anaitis, was instantly deprived of his eyes, and of his life?’—‘I was that man, (replied the clear-sighted veteran,) and you now sup on one of the legs of the goddess.’ (Plin. Hist. Natur. xxxiii. 24)\n\nThe history of the reformation affords frequent examples of the sudden change from superstition to contempt.",
+    "originalLanguage": "Latin verse with English commentary",
+    "originalLanguageCode": "mul"
+  },
+  "Arthur Schopenhauer|1aw7r4e": {
+    "translationNotes": "The Greek “τελος το ευδαι μονειν” means “the end is to be happy”; the accompanying Latin “virtutes omnes finem habere beatitudinem” means “all the virtues have happiness as their end.” “αταραξια” means “freedom from disturbance” or “tranquillity.” “Δει κτασθαι νουν, η βροχον” means “One must acquire understanding, or a noose”; the Latin “aut mentem parandam, aut laqueum” repeats that choice."
+  },
+  "Edmund Burke|iu3f7b": {
+    "translationNotes": "The Greek “ἔσσεται ἦμαρ” means “The day will come.” It is the opening of the Homeric prediction of Troy’s fall, recalled here through Scipio’s response to the destruction of Carthage."
+  },
+  "John Adams|1bc8a2b": {
+    "translationNotes": "“Suum cuique decus Posteritas rependit” means “Posterity gives each person their due honour.” “Ob Vertutes certissimum Exitium” means “Because of their virtues, destruction was most certain.” Adams invokes the latter phrase to describe the danger of integrity under the Roman emperors."
+  }
+};
     function laterReceptionsFor(entry) {
       const legacy = entry.laterPassage ? [{
         author:entry.laterAuthor,
@@ -2262,7 +2325,7 @@ I thank you for the memorials you have had the goodness to send me; it is unhapp
         passage:entry.laterPassage,
         url:entry.laterUrl
       }] : [];
-      return [...legacy, ...(entry.laterReceptions || [])];
+      return [...legacy, ...(entry.laterReceptions || [])].map(reception => ({...reception, ...(receptionEnglishTranslations[`${reception.author}|${stableHash(reception.passage)}`] || {})}));
     }
     // Periods describe the original commentary, never its translation/reprint date.
     // Explicit passage metadata wins; the author defaults below cover the works currently included.
@@ -2408,7 +2471,7 @@ I thank you for the memorials you have had the goodness to send me; it is unhapp
       if (!receptions.length) { button.hidden = true; return; }
       document.querySelector('#later-reception-list').innerHTML = receptions.map(reception => {
         const surname = reception.author.split(/\s+/).at(-1);
-        return `<article class="later-reception-item"><h2>${escapeHtml(reception.author)} on this ${c.type === 'maxim' ? 'maxim' : 'chreia'}</h2><p class="later-reception-source"><strong>${escapeHtml(receptionPeriodLabel(reception))}</strong><br>${escapeHtml(reception.source)}</p>${reception.context ? `<p class="later-reception-context"><strong>Context (AI-generated summary):</strong> ${escapeHtml(reception.context)}</p>` : ''}<blockquote class="later-reception-passage">${escapeHtml(reception.passage)}</blockquote><a href="${escapeHtml(reception.url)}" target="_blank" rel="noopener noreferrer">Read ${escapeHtml(surname)}’s passage online ↗</a></article>`;
+        return `<article class="later-reception-item"><h2>${escapeHtml(reception.author)} on this ${c.type === 'maxim' ? 'maxim' : 'chreia'}</h2><p class="later-reception-source"><strong>${escapeHtml(receptionPeriodLabel(reception))}</strong><br>${escapeHtml(reception.source)}</p>${reception.context ? `<p class="later-reception-context"><strong>Context (AI-generated summary):</strong> ${escapeHtml(reception.context)}</p>` : ''}${reception.translation ? `<p class="later-reception-label">Original (${escapeHtml(reception.originalLanguage)}):</p>` : ''}<blockquote class="later-reception-passage"${reception.originalLanguageCode ? ` lang="${escapeHtml(reception.originalLanguageCode)}"` : ''}>${escapeHtml(reception.passage)}</blockquote>${reception.translation ? `<p class="later-reception-label">English translation (AI-generated):</p><blockquote class="later-reception-passage later-reception-translation" lang="en">${escapeHtml(reception.translation)}</blockquote>` : ''}${reception.translationNotes ? `<p class="later-reception-context" lang="en"><strong>English glosses (AI-generated):</strong> ${escapeHtml(reception.translationNotes)}</p>` : ''}<a href="${escapeHtml(reception.url)}" target="_blank" rel="noopener noreferrer">Read ${escapeHtml(surname)}’s passage online ↗</a></article>`;
       }).join('');
       button.hidden = false;
       button.textContent = receptionButtonLabel(c);
