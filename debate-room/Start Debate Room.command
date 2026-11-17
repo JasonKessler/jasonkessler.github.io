@@ -31,5 +31,23 @@ if ! "$RUNTIME/bin/python" -c 'import mlx_whisper' >/dev/null 2>&1; then
     "$RUNTIME/bin/python" -m pip install -r requirements.txt
   fi
 fi
-(sleep 2; open http://127.0.0.1:8766/) &
+URL=http://127.0.0.1:18766/
+if curl --noproxy '*' --silent --fail --max-time 2 "${URL}api/health" | "$RUNTIME/bin/python" -c 'import json,sys; d=json.load(sys.stdin); sys.exit(not (d.get("local") is True and "whisper_model" in d))' 2>/dev/null; then
+  echo "Debate Room is already running at $URL"
+  if [[ "${1:-}" != --no-open ]]; then open "$URL"; fi
+  exit 0
+fi
+if lsof -nP -iTCP:18766 -sTCP:LISTEN >/dev/null 2>&1; then
+  echo 'Port 18766 is in use by another process. Close that server, or run local_service.py with a different --port and open its printed URL directly.'
+  exit 1
+fi
+if [[ "${1:-}" != --no-open ]]; then
+  (for attempt in {1..20}; do
+    if curl --noproxy '*' --silent --fail --max-time 1 "$URL" >/dev/null; then
+      open "$URL"
+      break
+    fi
+    sleep 0.25
+  done) &
+fi
 exec "$RUNTIME/bin/python" local_service.py

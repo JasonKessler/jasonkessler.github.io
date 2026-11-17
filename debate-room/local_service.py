@@ -150,7 +150,7 @@ class Handler(BaseHTTPRequestHandler):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--port', type=int, default=8766)
+    parser.add_argument('--port', type=int, default=18766)
     args = parser.parse_args()
     server = ThreadingHTTPServer(('127.0.0.1', args.port), Handler)
     print(f'\nThe Debate Room — local AI\nOpen http://127.0.0.1:{args.port}/\nNo paid APIs. Press Control-C to stop.\n', flush=True)

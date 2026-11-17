@@ -70,4 +70,4 @@ $('setup-form').onsubmit=e=>{e.preventDefault();const c=getConfig();if(validate(
 try{const saved=JSON.parse(localStorage.getItem(KEY));if(saved?.config)applyConfig(saved.config);if(typeof saved?.sound==='boolean')$('sound').checked=saved.sound;const r=saved?.round;if(r&&Array.isArray(r.stages)&&r.stages.length&&r.index>=0&&r.index<r.stages.length&&r.roles&&r.config&&Number.isFinite(r.remaining)){round=r;remaining=r.remaining;deadline=Number.isFinite(r.deadline)?r.deadline:null;touched=!!r.touched;if(deadline!==null&&deadline<=Date.now()){remaining=0;deadline=null;}showRound();}}catch{round=null;$('session').hidden=true;$('setup').hidden=false;}
 estimate();setInterval(syncTime,200);document.addEventListener('visibilitychange',syncTime);window.addEventListener('pagehide',snapshot);
 </script>
-<script src="local-ai.js"></script></body></html>
+<script src="local-ai.js?v=2"></script></body></html>

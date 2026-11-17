@@ -5,11 +5,11 @@ Local mode adds speaker-attributed recording, Whisper transcription, and an Olla
 
 ## Start on an Apple Silicon Mac
 
-1. Install and open [Ollama](https://ollama.com/download). Install a **local** text model that fits your Mac, for example `ollama pull llama3.2:3b`. Existing installed local models are detected automatically; the smallest is selected initially. Cloud models are excluded.
+1. If `ollama list` already works, skip installation. Otherwise install and open [Ollama](https://ollama.com/download). Install a **local** text model that fits your Mac, for example `ollama pull llama3.2:3b`. Existing installed local models are detected automatically; the smallest is selected initially. Cloud models are excluded.
 2. With [Homebrew](https://brew.sh), install the free dependencies: `brew install uv ffmpeg`.
 3. Download [the local setup ZIP](https://jasonkessler.github.io/debate-room/debate-room-local.zip) and unzip it.
 4. In Terminal, type `bash `, drag `Start Debate Room.command` into the window to insert its full path, then press Return. You can also run `bash "/full/path/to/Start Debate Room.command"`.
-5. Keep the launcher window and Ollama open. The launcher opens **http://127.0.0.1:8766/**. Leave port 8766 at its default when transferring a round from the public page.
+5. Keep the launcher window and Ollama open. The launcher opens **http://127.0.0.1:18766/**. Use port 18766 when transferring a round from the public page. If you used an earlier version at port 8766, that address has separate browser storage; export its old notes before moving.
 6. Set up a debate and draw roles. In **Debate notebook**, enable **local recording & notes**. Tell participants you are recording, then grant microphone access when prompted.
 
 The launcher creates a Python 3.12 environment at `~/.local/share/debate-room/venv`. First use downloads free software and Whisper weights (`mlx-community/whisper-large-v3-turbo`, approximately 1.6 GB). Existing cached weights are reused. Model downloads require internet access; the recordings and transcripts are never sent to a paid or hosted AI service. Local inference uses memory, storage, electricity, and time.
@@ -39,7 +39,7 @@ The Python service binds only to `127.0.0.1`, accepts only its own local browser
 
 ## Troubleshooting
 
-- **Could not connect:** launch the companion, open `http://127.0.0.1:8766/`, and click **Reconnect local AI**. The public HTTPS page intentionally does not call a localhost API directly.
+- **Could not connect:** launch the companion, open `http://127.0.0.1:18766/`, and click **Reconnect local AI**. The public HTTPS page intentionally does not call a localhost API directly.
 - **Ollama missing/no models:** open Ollama and install a local model; reconnect. Avoid a model larger than your available memory. Select a smaller installed model in the notebook if needed.
 - **Transcription failure:** check FFmpeg and the launcher window. Try uploading WAV/MP3/M4A/WebM under 40 MB. Recordings are limited to one hour. Retry from the saved entry.
 - **No microphone/permission denied:** allow microphone access in the browser's site settings. You can upload audio or type a transcript instead.
