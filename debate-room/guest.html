@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; connect-src wss://*.trycloudflare.com; media-src blob:; form-action 'none'; base-uri 'none'">
+<title>Join a debate · The Debate Room</title>
+<link rel="stylesheet" href="guest.css">
+<script defer src="call-media.js"></script>
+<script defer src="guest-channel.js"></script>
+<script defer src="guest.js"></script>
+</head>
+<body>
+<main>
+  <header>
+    <a href="./">The Debate Room</a>
+    <span id="connection" role="status" aria-live="polite"></span>
+  </header>
+  <section id="welcome">
+    <h1>Join a debate</h1>
+    <p id="instruction">Enter the name the host used in the debate setup.</p>
+    <form id="join-room" hidden>
+      <label for="name">Debate name</label>
+      <div class="controls">
+        <input id="name" name="name" autocomplete="name" maxlength="80" required>
+        <button class="primary" type="submit">Request to join</button>
+      </div>
+    </form>
+  </section>
+  <div id="room" hidden>
+    <section class="panel" aria-labelledby="call-heading">
+      <h2 id="call-heading">Call</h2>
+      <p id="call-wait">Waiting for the host to open the call.</p>
+      <div id="call" hidden>
+        <p id="status" role="status">Choose what to share, then join the call.</p>
+        <div id="controls" class="controls">
+          <label id="cameraOption"><input id="camera" type="checkbox"> Camera</label>
+          <label id="micOption"><input id="mic" type="checkbox" checked> Microphone</label>
+          <button id="join" class="primary" type="button">Join call</button>
+          <button id="mute" type="button" hidden>Mute mic</button>
+          <button id="pauseVideo" type="button" hidden>Pause camera</button>
+          <button id="enableAudio" type="button" hidden>Enable playback</button>
+          <button id="leave" type="button" hidden>Leave call</button>
+        </div>
+        <details id="relay">
+          <summary>TURN relay settings</summary>
+          <div class="settings">
+            <label>TURN URL <input id="turnURL" placeholder="turns:relay.example.org:443"></label>
+            <label>Username <input id="turnUser" autocomplete="off"></label>
+            <label>Password <input id="turnPassword" type="password" autocomplete="off"></label>
+          </div>
+        </details>
+        <p class="hint">The host can record speaking turns for the notebook. Clear Camera and Microphone to listen only.</p>
+        <div id="participants" aria-label="Call participants"></div>
+      </div>
+      <button id="leave-room" type="button">Leave debate</button>
+    </section>
+    <section class="panel notebook" aria-labelledby="notebook-heading">
+      <h2 id="notebook-heading">Debate notebook</h2>
+      <p id="turn" role="status"></p>
+      <div id="notes" tabindex="0" aria-label="Published notebook">
+        <p>Waiting for the host to publish notes.</p>
+      </div>
+    </section>
+  </div>
+</main>
+</body>
+</html>
