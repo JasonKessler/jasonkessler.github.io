@@ -19,10 +19,11 @@
   const status = text => { $('connection').textContent = text; };
 
   function setCall(enabled) {
+    if (enabled && !available) $('status').textContent = 'Choose what to share, then join the call.';
+    if (!enabled && available) window.debateCallReceive({kind:'availability', enabled:false});
     available = enabled;
     $('call').hidden = !enabled;
     $('call-wait').hidden = enabled;
-    window.debateCallReceive({kind:'availability', enabled});
   }
 
   window.debateCallSend = signal => {
@@ -43,6 +44,7 @@
           retries = 0;
           $('welcome').hidden = true;
           $('room').hidden = false;
+          $('call-wait').textContent = 'Waiting for the host to open the call.';
           status('Connected');
           break;
         case 'snapshot':
