@@ -95,14 +95,12 @@
     tile.className = 'tile';
     const stage = document.createElement('div');
     stage.className = 'stage';
-    const placeholder = document.createElement('span');
-    placeholder.textContent = 'Camera off';
     const video = document.createElement('video');
     video.autoplay = true;
     video.playsInline = true;
     video.muted = local;
     video.hidden = true;
-    stage.append(placeholder, video);
+    stage.append(video);
     const caption = document.createElement('div');
     caption.className = 'caption';
     const title = document.createElement('span');

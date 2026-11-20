@@ -121,10 +121,11 @@
   function displayNotebook(notebook) {
     const notes = $('notes');
     const top = notes.getBoundingClientRect().top;
+    const inPanel = getComputedStyle(notes).overflowY === 'auto';
     const sameRound = roundID === notebook.roundID;
-    const anchor = sameRound && [...notes.querySelectorAll('article')]
-      .find(article => article.getBoundingClientRect().bottom > top);
-    const offset = anchor ? anchor.getBoundingClientRect().top - top : 0;
+    const anchor = sameRound && (inPanel ? notes.scrollTop > 0 : top < 0)
+      && [...notes.querySelectorAll('article')].find(article => article.getBoundingClientRect().bottom > (inPanel ? top : 0));
+    const offset = anchor ? anchor.getBoundingClientRect().top : 0;
     const oldScroll = sameRound ? notes.scrollTop : 0;
     const open = sameRound ? new Set([...notes.querySelectorAll('details[open]')].map(node => node.dataset.entry)) : new Set();
     const sections = new Map();
@@ -163,8 +164,12 @@
     $('turn').textContent = notebook.currentTurn;
     notes.replaceChildren(fragment);
     const current = anchor && sections.get(anchor.dataset.turn);
-    notes.scrollTop = oldScroll;
-    if (current) notes.scrollTop += current.getBoundingClientRect().top - top - offset;
+    if (inPanel) notes.scrollTop = oldScroll;
+    if (current) {
+      const shift = current.getBoundingClientRect().top - offset;
+      if (inPanel) notes.scrollTop += shift;
+      else if (shift) window.scrollBy(0, shift);
+    }
     roundID = notebook.roundID;
   }
 })();

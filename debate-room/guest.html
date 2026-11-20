@@ -6,15 +6,15 @@
 <meta name="referrer" content="no-referrer">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; connect-src wss://*.trycloudflare.com; media-src blob:; form-action 'none'; base-uri 'none'">
 <title>Join a debate · The Debate Room</title>
-<link rel="stylesheet" href="guest.css">
-<script defer src="call-media.js"></script>
+<link rel="stylesheet" href="guest.css?v=3">
+<script defer src="call-media.js?v=3"></script>
 <script defer src="guest-channel.js"></script>
-<script defer src="guest.js"></script>
+<script defer src="guest.js?v=3"></script>
 </head>
 <body>
 <main>
   <header>
-    <a href="./">The Debate Room</a>
+    <a href="./">Debate Room</a>
     <span id="connection" role="status" aria-live="polite"></span>
   </header>
   <section id="welcome">
@@ -30,7 +30,7 @@
   </section>
   <div id="room" hidden>
     <section class="panel" aria-labelledby="call-heading">
-      <h2 id="call-heading">Call</h2>
+      <div class="panel-heading"><h2 id="call-heading">Call</h2><button id="leave-room" type="button">Leave debate</button></div>
       <p id="call-wait">Waiting for the host to open the call.</p>
       <div id="call" hidden>
         <p id="status" role="status">Choose what to share, then join the call.</p>
@@ -51,10 +51,9 @@
             <label>Password <input id="turnPassword" type="password" autocomplete="off"></label>
           </div>
         </details>
-        <p class="hint">The host can record speaking turns for the notebook. Clear Camera and Microphone to listen only.</p>
+        <p class="hint">The host can record speaking turns. Turn off both inputs to listen only.</p>
         <div id="participants" aria-label="Call participants"></div>
       </div>
-      <button id="leave-room" type="button">Leave debate</button>
     </section>
     <section class="panel notebook" aria-labelledby="notebook-heading">
       <h2 id="notebook-heading">Debate notebook</h2>
