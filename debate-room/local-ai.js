@@ -10,7 +10,7 @@
     const saved = JSON.parse(localStorage.getItem(captureKey));
     if (saved && typeof saved === 'object' && !Array.isArray(saved)) captureSettings = saved;
   } catch {}
-  let connected = false, enabled = local && captureSettings.enabled === true, recorder = null, starting = false;
+  let connected = false, enabled = captureSettings.enabled === true, recorder = null, starting = false;
 
   function saveCaptureSettings() {
     captureSettings.enabled = enabled;
@@ -66,7 +66,7 @@
         </label>` : ''}
     </div>
     <p class="hint" id="capture-target"></p>
-    <p class="ai-status" id="notes-status" role="status" aria-live="polite">${local?'Checking local AI…':'Open local AI to record or transcribe.'}</p>`;
+    <p class="ai-status" id="notes-status" role="status" aria-live="polite">${local?'Checking local AI…':'Audio stays in this browser. Local AI mode can transcribe its own recordings.'}</p>`;
   $('speaker').after(audioControls);
   $('link-timer').checked = captureSettings.linkTimer !== false;
   $('link-timer').onchange = saveCaptureSettings;
@@ -111,6 +111,11 @@
   async function summarize(target,entry) { if(!entry.text.trim()){entry.notes={summary:'No clear speech detected.',points:[]};return;}entry.status='extracting points';if(target===round)render();entry.notes=await request('/api/summarize',{text:entry.text,proposition:target.config.proposition,speaker:entry.speaker,stage:entry.stage,context:contextFor(target).filter(x=>!(x.speaker===entry.speaker&&x.transcript===entry.text.slice(0,2200))),model:$('notes-model').value}); }
   async function processAudio(target,entry,blob) { entry.status='transcribing';if(target===round)render();const result=await request('/api/transcribe',blob,true);entry.text=result.text;entry.segments=result.segments;entry.transcriptionModel=result.model;if(target===round){save();render();}await summarize(target,entry); }
   async function connect() { if(!local)return;try{const response=await fetch('/api/health');if(!response.ok)throw new Error('Start the local launcher to use AI.');const health=await response.json();if(!health.local)throw new Error('Start the local launcher to use AI.');connected=health.whisper&&health.ffmpeg&&health.models?.length>0;$('notes-model').innerHTML=(health.models||[]).map(m=>`<option value="${e(m)}">${e(m)}</option>`).join('');let message=connected?(enabled?'Audio capture enabled. Ready for the next turn.':'Local Whisper and Ollama are ready.'):health.error||(!health.whisper?'Whisper is missing. Run the launcher to install it.':'FFmpeg is missing. Install it, then reconnect.');$('local-connection').textContent=message;$('local-connection').className='hint'+(connected?' ai-connected':'');status(message,!connected);updateControls();}catch(error){connected=false;$('local-connection').textContent='Start the local launcher, then reconnect.';status(error.message,true);updateControls();} }
+  function canCapture() {
+    if (callAudio && $('record-call').checked) return true;
+    return typeof MediaRecorder !== 'undefined' && typeof navigator.mediaDevices?.getUserMedia === 'function';
+  }
+
   function updateControls() {
     if (callAudio) {
       $('record-call').disabled = Boolean(recorder || starting);
@@ -118,8 +123,9 @@
       $('call-local-speaker').disabled = Boolean(recorder || starting);
     }
     const stage = round?.stages[round.index];
-    const canRecord = connected && enabled && stage && !recorder && !starting && stage.kind !== 'deliberation';
-    $('enable-notes').disabled = !connected;
+    const available = canCapture();
+    const canRecord = available && enabled && stage && !recorder && !starting && stage.kind !== 'deliberation';
+    $('enable-notes').disabled = !available && !enabled;
     $('enable-notes').setAttribute('aria-pressed', String(enabled));
     $('enable-notes').textContent = enabled ? 'Disable audio capture' : 'Enable audio capture';
     $('capture-settings').hidden = !enabled && !callAudio;
@@ -127,7 +133,7 @@
     $('record-question').hidden = stage?.kind !== 'question';
     $('record-question').disabled = !canRecord || Boolean(window.debateRoomIsAI?.(stage?.asker));
     $('stop-recording').disabled = !recorder;
-    $('upload-audio').disabled = !canRecord;
+    $('upload-audio').disabled = !connected || !enabled || !!recorder || starting || stage?.kind === 'deliberation';
     $('capture-target').textContent = stage?.kind === 'question'
       ? `Question by ${stage.asker} · Answer by ${stage.speaker}` : '';
     $('notes-model').disabled = !connected || jobs > 0 || !!recorder;
@@ -149,7 +155,11 @@
         .filter(Boolean).join(' ');
     }
     urls.set(entry.id, URL.createObjectURL(blob));
-    enqueue(target, entry, () => processAudio(target, entry, blob));
+    if (connected) enqueue(target, entry, () => processAudio(target, entry, blob));
+    else {
+      entry.status = 'recorded';
+      status('Audio saved. Open the turn in the notebook to listen.');
+    }
     if (target === round) { save(); render(); }
   }
 
@@ -176,7 +186,11 @@
   }
 
   async function record(kind='speech') {
-    if (!connected || !enabled || !round || recorder || starting) return false;
+    if (!enabled || !round || recorder || starting) return false;
+    if (!canCapture()) {
+      status('Audio capture is unavailable in this browser. Check microphone support and permissions.', true);
+      return false;
+    }
     const target = round, stage = target.stages[target.index];
     const speaker = kind === 'question' ? stage.asker : stage.speaker;
     if (stage.kind === 'deliberation' || window.debateRoomIsAI?.(speaker)) return false;
