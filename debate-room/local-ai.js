@@ -4,7 +4,20 @@
   const macApp = window.debateRoomMacApp === true;
   const callAudio = macApp && window.webkit?.messageHandlers?.debateAudio;
   const local = ['127.0.0.1', 'localhost'].includes(location.hostname);
-  let connected = false, enabled = false, recorder = null, starting = false;
+  const captureKey = 'debate-room-capture-v1';
+  let captureSettings = {};
+  try {
+    const saved = JSON.parse(localStorage.getItem(captureKey));
+    if (saved && typeof saved === 'object' && !Array.isArray(saved)) captureSettings = saved;
+  } catch {}
+  let connected = false, enabled = local && captureSettings.enabled === true, recorder = null, starting = false;
+
+  function saveCaptureSettings() {
+    captureSettings.enabled = enabled;
+    captureSettings.linkTimer = $('link-timer').checked;
+    if (callAudio) captureSettings.videoCall = $('record-call').checked;
+    try { localStorage.setItem(captureKey, JSON.stringify(captureSettings)); } catch {}
+  }
   let capturing = null, queue = Promise.resolve(), jobs = 0, dbPromise;
   const urls = new Map(), busy = new Set();
   const e = esc;
@@ -20,20 +33,9 @@
       <button id="session-local" ${local?'hidden':''}>Open local AI</button>
       <button id="reconnect-notes" ${local?'':'hidden'}>Reconnect local AI</button>
     </div>
-    <div class="rec-panel">
-      <div class="rec-options">
-        <label class="check"><input id="enable-notes" type="checkbox" disabled> Record and transcribe</label>
-        <label class="check"><input id="link-timer" type="checkbox" checked> Record with timer</label>
-        <label for="notes-model">Model <select id="notes-model" aria-label="Local summarization model"></select></label>
-      </div>
-      <p class="hint" id="capture-target"></p>
-      <div class="rec-actions">
-        <button id="record-turn" disabled>Record speaker</button>
-        <button id="record-question" disabled>Record question</button>
-        <button id="stop-recording" class="accent" disabled>Stop recording</button>
-        <label class="upload-label">Upload audio<input id="upload-audio" type="file" accept="audio/*,video/webm" disabled></label>
-      </div>
-      <p class="ai-status" id="notes-status" role="status" aria-live="polite">${local?'Checking local AI…':'Open local AI to record or transcribe.'}</p>
+    <div class="rec-panel" id="notebook-capture-options">
+      <label for="notes-model">Model <select id="notes-model" aria-label="Local summarization model"></select></label>
+      <label class="upload-label">Upload audio<input id="upload-audio" type="file" accept="audio/*,video/webm" disabled></label>
     </div>
     <details id="manual-details">
       <summary>Add transcript</summary>
@@ -46,16 +48,36 @@
     </details>
     <p class="hint" id="notebook-storage" role="status"></p><div id="note-entries"></div>`;
   $('session').append(notebook);
+  const audioControls = document.createElement('section');
+  audioControls.className = 'rec-panel';
+  audioControls.setAttribute('aria-label', 'Audio capture');
+  audioControls.innerHTML = `
+    <div class="rec-actions">
+      <button id="enable-notes" type="button" aria-pressed="false" disabled>Enable audio capture</button>
+      <button id="record-turn" type="button" disabled>Record speaker</button>
+      <button id="record-question" type="button" hidden disabled>Record question</button>
+      <button id="stop-recording" type="button" class="accent" disabled>Stop recording</button>
+    </div>
+    <div class="rec-options" id="capture-settings">
+      <label class="check"><input id="link-timer" type="checkbox" checked> Record with timer</label>
+      ${callAudio ? `<label class="check"><input id="record-call" type="checkbox"> Record from video call</label>
+        <label for="call-local-speaker" id="call-local-label" hidden>Speaker on this Mac
+          <select id="call-local-speaker"></select>
+        </label>` : ''}
+    </div>
+    <p class="hint" id="capture-target"></p>
+    <p class="ai-status" id="notes-status" role="status" aria-live="polite">${local?'Checking local AI…':'Open local AI to record or transcribe.'}</p>`;
+  $('speaker').after(audioControls);
+  $('link-timer').checked = captureSettings.linkTimer !== false;
+  $('link-timer').onchange = saveCaptureSettings;
   if (callAudio) {
-    $('capture-target').insertAdjacentHTML('beforebegin', `<div class="rec-options">
-      <label class="check"><input id="record-call" type="checkbox"> Record audio from the video call</label>
-      <label for="call-local-speaker" id="call-local-label" hidden>Who speaks on this Mac?
-        <select id="call-local-speaker"></select>
-      </label>
-    </div>`);
-    $('record-call').onchange = updateControls;
+    $('record-call').checked = captureSettings.videoCall === true;
+    $('record-call').onchange = () => { saveCaptureSettings(); updateControls(); };
+    $('call-local-speaker').onchange = () => {
+      captureSettings.localSpeaker = $('call-local-speaker').value;
+      saveCaptureSettings();
+    };
   }
-  const indicator=document.createElement('p');indicator.className='record-indicator';indicator.id='record-indicator';indicator.setAttribute('role','status');indicator.hidden=true;$('timer-card').insertBefore(indicator,$('clock'));
   $('reconnect-notes').onclick=connect;
   function status(text, error = false) { $('notes-status').textContent = recorder&&capturing&&!stopping ? `Recording ${capturing.entry.speaker} · ${capturing.entry.stage}` : text; $('notes-status').className = 'ai-status' + (recorder&&!stopping?' recording-light':error?' entry-error':''); }
   function save() { if (!round) return; window.debateRoomRefreshDeliberation?.(); try { localStorage.setItem(KEY, JSON.stringify({config: getConfig(), round, sound: $('sound').checked})); } catch { $('notebook-storage').textContent = 'Local storage is unavailable. Changes may not survive a refresh.'; } }
@@ -88,14 +110,29 @@
   function enqueue(target,entry,task) { jobs++;busy.add(entry.id);status('Processing locally. The debate can continue while notes are prepared.');queue=queue.catch(()=>{}).then(async()=>{try{await task();entry.error='';entry.status='done';}catch(error){entry.status='error';entry.error=error.message;}finally{jobs--;busy.delete(entry.id);if(target===round){save();render();status(jobs?`${jobs} turn${jobs===1?'':'s'} waiting for local processing.`:entry.error?'Local processing failed. Open the entry to retry; your transcript and recording are kept.':'Notes updated. Review the transcript and supporting quotes.');}}});return queue; }
   async function summarize(target,entry) { if(!entry.text.trim()){entry.notes={summary:'No clear speech detected.',points:[]};return;}entry.status='extracting points';if(target===round)render();entry.notes=await request('/api/summarize',{text:entry.text,proposition:target.config.proposition,speaker:entry.speaker,stage:entry.stage,context:contextFor(target).filter(x=>!(x.speaker===entry.speaker&&x.transcript===entry.text.slice(0,2200))),model:$('notes-model').value}); }
   async function processAudio(target,entry,blob) { entry.status='transcribing';if(target===round)render();const result=await request('/api/transcribe',blob,true);entry.text=result.text;entry.segments=result.segments;entry.transcriptionModel=result.model;if(target===round){save();render();}await summarize(target,entry); }
-  async function connect() { if(!local)return;try{const response=await fetch('/api/health');if(!response.ok)throw new Error('Start the local launcher to use AI.');const health=await response.json();if(!health.local)throw new Error('Start the local launcher to use AI.');connected=health.whisper&&health.ffmpeg&&health.models?.length>0;$('notes-model').innerHTML=(health.models||[]).map(m=>`<option value="${e(m)}">${e(m)}</option>`).join('');let message=connected?'Local Whisper + Ollama are ready. No paid APIs.':health.error||(!health.whisper?'Whisper is missing. Run the launcher to install it.':'FFmpeg is missing. Install it, then reconnect.');$('local-connection').textContent=message;$('local-connection').className='hint'+(connected?' ai-connected':'');$('enable-notes').disabled=!connected;status(message,!connected);updateControls();}catch(error){connected=false;$('enable-notes').disabled=true;$('local-connection').textContent='Start the local launcher, then reconnect.';status(error.message,true);updateControls();} }
+  async function connect() { if(!local)return;try{const response=await fetch('/api/health');if(!response.ok)throw new Error('Start the local launcher to use AI.');const health=await response.json();if(!health.local)throw new Error('Start the local launcher to use AI.');connected=health.whisper&&health.ffmpeg&&health.models?.length>0;$('notes-model').innerHTML=(health.models||[]).map(m=>`<option value="${e(m)}">${e(m)}</option>`).join('');let message=connected?(enabled?'Audio capture enabled. Ready for the next turn.':'Local Whisper and Ollama are ready.'):health.error||(!health.whisper?'Whisper is missing. Run the launcher to install it.':'FFmpeg is missing. Install it, then reconnect.');$('local-connection').textContent=message;$('local-connection').className='hint'+(connected?' ai-connected':'');status(message,!connected);updateControls();}catch(error){connected=false;$('local-connection').textContent='Start the local launcher, then reconnect.';status(error.message,true);updateControls();} }
   function updateControls() {
     if (callAudio) {
       $('record-call').disabled = Boolean(recorder || starting);
       $('call-local-label').hidden = !$('record-call').checked;
       $('call-local-speaker').disabled = Boolean(recorder || starting);
     }
-    const s=round?.stages[round.index];indicator.hidden=!recorder;indicator.textContent=recorder&&capturing?`● Recording ${capturing.entry.speaker}`:'';$('record-turn').disabled=!connected||!enabled||!!recorder||starting||s?.kind==='deliberation'||Boolean(window.debateRoomIsAI?.(s?.speaker));$('record-question').hidden=s?.kind!=='question';$('record-question').disabled=!connected||!enabled||!!recorder||starting||Boolean(window.debateRoomIsAI?.(s?.asker));$('stop-recording').disabled=!recorder;$('upload-audio').disabled=!connected||!enabled||!!recorder||starting||s?.kind==='deliberation';$('capture-target').textContent=s?s.kind==='deliberation'?'Deliberation is not automatically recorded.':s.kind==='question'?`Question: ${s.asker} · Answer: ${s.speaker}. Record the question first; the answer timer records the debater.`:`Current speaker: ${s.speaker} · ${s.title}`:'';$('enable-notes').checked=enabled;$('notes-model').disabled=!connected||jobs>0||!!recorder;$('link-timer').disabled=!!recorder; }
+    const stage = round?.stages[round.index];
+    const canRecord = connected && enabled && stage && !recorder && !starting && stage.kind !== 'deliberation';
+    $('enable-notes').disabled = !connected;
+    $('enable-notes').setAttribute('aria-pressed', String(enabled));
+    $('enable-notes').textContent = enabled ? 'Disable audio capture' : 'Enable audio capture';
+    $('capture-settings').hidden = !enabled && !callAudio;
+    $('record-turn').disabled = !canRecord || Boolean(window.debateRoomIsAI?.(stage?.speaker));
+    $('record-question').hidden = stage?.kind !== 'question';
+    $('record-question').disabled = !canRecord || Boolean(window.debateRoomIsAI?.(stage?.asker));
+    $('stop-recording').disabled = !recorder;
+    $('upload-audio').disabled = !canRecord;
+    $('capture-target').textContent = stage?.kind === 'question'
+      ? `Question by ${stage.asker} · Answer by ${stage.speaker}` : '';
+    $('notes-model').disabled = !connected || jobs > 0 || !!recorder;
+    $('link-timer').disabled = !!recorder;
+  }
   async function saveRecording({target, entry, started}, {blob, warning, duration}) {
     entry.duration = duration ?? (Date.now() - started) / 1000;
     if (!blob.size || entry.duration <= .3) {
@@ -218,7 +255,7 @@
     }
     const people = round.config.names;
     if (callAudio) {
-      const ownSpeaker = $('call-local-speaker').value;
+      const ownSpeaker = captureSettings.localSpeaker;
       $('call-local-speaker').innerHTML = '<option value="">Nobody (listen-only)</option>' +
         people.map(name => `<option>${e(name)}</option>`).join('');
       $('call-local-speaker').value = people.includes(ownSpeaker) ? ownSpeaker : '';
@@ -257,7 +294,21 @@
   function attachAudio(id,url) { const article=$('note-entries').querySelector(`[data-entry="${id}"]`);if(!article)return;const slot=article.querySelector('[data-audio]');if(!slot.firstChild){const audio=document.createElement('audio');audio.controls=true;audio.setAttribute('controlslist','nodownload');audio.preload='none';audio.src=url;slot.append(audio);} }
   $('note-entries').addEventListener('change',event=>{if(event.target.dataset.action==='speaker'){const entry=entryList().find(x=>x.id===event.target.closest('[data-entry]').dataset.entry);entry.speaker=event.target.value;entry.notes=null;entry.status='edited';save();status('Speaker corrected. Extract points again to update the notes.');}});
   $('note-entries').addEventListener('click',async event=>{const button=event.target.closest('button[data-action]');if(!button)return;const article=button.closest('[data-entry]'),entry=entryList().find(x=>x.id===article.dataset.entry),target=round;if(!entry)return;const action=button.dataset.action;if(busy.has(entry.id))return;entry.text=article.querySelector('textarea').value.trim();entry.notes=null;entry.status='edited';save();if(action==='save'){render();status('Transcript saved. Extract points again to update the notes.');}else if(entry.text)enqueue(target,entry,()=>summarize(target,entry));else {const blob=await audioGet(entry.id).catch(()=>null);if(blob)enqueue(target,entry,()=>processAudio(target,entry,blob));else status('No saved recording. Paste a transcript or upload the audio again.',true);}render();});
-  $('enable-notes').onchange=async()=>{enabled=$('enable-notes').checked&&connected;if(recorder)await stop();updateControls();status(enabled?'Local recording enabled. Let participants know before recording. Start the timer or use the recording buttons.':'Recording disabled.');};
+  $('enable-notes').onclick = async () => {
+    enabled = !enabled;
+    saveCaptureSettings();
+    if (!enabled) {
+      await stop();
+      status('Audio capture disabled.');
+    } else {
+      const stage = round?.stages[round.index];
+      const kind = stage?.kind === 'question' && deadline === null && !window.debateRoomIsAI?.(stage.asker)
+        ? 'question' : 'speech';
+      status('Audio capture enabled for this and later rounds.');
+      if (remaining > 0) await record(kind);
+    }
+    updateControls();
+  };
   $('record-turn').onclick=()=>record();$('record-question').onclick=()=>record('question');$('stop-recording').onclick=stop;
   $('upload-audio').onchange=async event=>{const file=event.target.files[0];event.target.value='';if(!file||!round||!enabled)return;if(file.size>40*1024*1024)return status('Choose audio under 40 MB.',true);const target=round,s=round.stages[round.index],entry=newEntry(target,'speech',s.speaker,s.title);entry.audioType=file.type;entryList().push(entry);markUsed();try{await audioPut(entry.id,file);}catch{entry.audioWarning='Recording could not be saved in browser storage.';}urls.set(entry.id,URL.createObjectURL(file));save();enqueue(target,entry,()=>processAudio(target,entry,file));render();};
   $('add-transcript').onclick=()=>{if(!round)return;const text=$('manual-text').value.trim();if(!text)return status('Enter a transcript first.',true);const target=round,stage=round.stages[round.index],speaker=$('manual-speaker').value;const kind=stage.kind==='question'&&speaker===stage.asker?'question':'typed';const title=kind==='question'?`Question to ${stage.speaker}`:stage.title;const entry=newEntry(target,kind,speaker,$('manual-stage').value.trim()||title);entry.text=text;entry.status='saved';entryList().push(entry);markUsed();$('manual-text').value='';$('manual-stage').value='';save();if(connected)enqueue(target,entry,()=>summarize(target,entry));render();};
@@ -267,7 +318,7 @@
   const originalStart=$('start').onclick;
   let transition=false;
   const stopButton=$('stop-recording').onclick;$('stop-recording').onclick=async()=>{if(transition||starting)return;transition=true;try{await stopButton();}finally{transition=false;}};
-  $('start').onclick=async()=>{if(transition||starting)return;transition=true;try{const pausing=deadline!==null;if(recorder&&(pausing||capturing?.entry.kind==='question'))await stop();if(!recorder&&!pausing&&enabled&&$('link-timer').checked&&round.stages[round.index].kind!=='deliberation'&&!window.debateRoomIsAI?.(round.stages[round.index].speaker)){if(!await record())return;}originalStart();}finally{transition=false;}};
+  $('start').onclick=async()=>{if(transition||starting)return;transition=true;try{const pausing=deadline!==null;if(recorder&&(pausing||capturing?.entry.kind==='question'))await stop();if(!recorder&&!pausing&&enabled&&$('link-timer').checked&&round.stages[round.index].kind!=='deliberation'&&!window.debateRoomIsAI?.(round.stages[round.index].speaker)){await record();}originalStart();}finally{transition=false;}};
   for(const id of ['next','previous','reset','edit','finish','reshuffle']){const original=$(id).onclick;$(id).onclick=async()=>{if(transition||starting)return;transition=true;try{await stop();original();render();}finally{transition=false;}};}
   const originalSubmit=$('setup-form').onsubmit;$('setup-form').onsubmit=event=>{originalSubmit(event);render();};
   const originalRender=renderStage;renderStage=function(){originalRender();if(notebook.isConnected&&round){updateControls();if(remaining===0&&recorder)stop();}};

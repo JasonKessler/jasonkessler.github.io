@@ -89,7 +89,7 @@ details.section[open]>summary{margin-bottom:8px}
 <h1 class="hero">Set up a debate</h1>
 <form id="setup-form" novalidate>
 <div class="form-grid">
-<section class="section"><label for="proposition">Proposition</label><textarea id="proposition" rows="2" maxlength="1000" required>Board games are better than video games.</textarea></section>
+<section class="section"><label for="proposition">Proposition</label><textarea id="proposition" rows="2" maxlength="1000" required>There should be a ban on new data centers.</textarea></section>
 <section class="section"><label for="names">Participants · one name per line</label><textarea class="names" id="names" rows="3" maxlength="10000" required></textarea>
 <p class="hint" id="people-hint"></p>
 <div id="role-preferences" hidden></div>
@@ -260,5 +260,5 @@ $('setup-form').onsubmit=e=>{e.preventDefault();const c=getConfig();if(validate(
 try{const saved=JSON.parse(localStorage.getItem(KEY));if(saved?.config)applyConfig(saved.config);if(typeof saved?.sound==='boolean')$('sound').checked=saved.sound;const r=saved?.round;if(r&&Array.isArray(r.stages)&&r.stages.length&&r.index>=0&&r.index<r.stages.length&&r.roles&&r.config&&Number.isFinite(r.remaining)){round=r;remaining=r.remaining;deadline=Number.isFinite(r.deadline)?r.deadline:null;touched=!!r.touched;if(deadline!==null&&deadline<=Date.now()){remaining=0;deadline=null;}showRound();}}catch{round=null;$('session').hidden=true;$('setup').hidden=false;}
 renderRolePreferences();estimate();setInterval(syncTime,200);document.addEventListener('visibilitychange',syncTime);window.addEventListener('pagehide',snapshot);
 </script>
-<script src="local-ai.js?v=3"></script>
+<script src="local-ai.js?v=4"></script>
 <script src="ai-participants.js"></script></body></html>
