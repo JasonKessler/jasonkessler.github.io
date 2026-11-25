@@ -3,13 +3,8 @@
 (() => {
   if (window.debateRoomMacApp !== true) return;
 
-  const profileKey = 'debate-room-ai-profiles-v1';
-  let preferences;
-  try {
-    preferences = JSON.parse(localStorage.getItem(profileKey));
-  } catch {}
-  const profiles = new Map(preferences?.profiles ?? []);
-  let model = preferences?.model ?? '';
+  const profiles = new Map();
+  let model = '';
   let inFlight = false;
   let draft = null;
   let currentStage = null;
@@ -63,12 +58,6 @@
   let judging = null;
   let deliberationMessage = '';
 
-  function saveProfiles() {
-    try {
-      localStorage.setItem(profileKey, JSON.stringify({profiles: [...profiles], model}));
-    } catch {}
-  }
-
   const originalConfig = getConfig;
   getConfig = function () {
     const config = originalConfig();
@@ -101,12 +90,9 @@
         if (toggle.checked) profiles.set(name, persona.value);
         else profiles.delete(name);
         persona.hidden = !toggle.checked;
-        saveProfiles();
-        persist();
       });
       persona.addEventListener('input', () => {
         profiles.set(name, persona.value);
-        saveProfiles();
       });
       row.append(label, persona);
       list.append(row);
@@ -124,8 +110,6 @@
       if (!health.models.includes(model)) model = health.models[0];
       select.value = model;
       $('debate-model-status').textContent = '';
-      saveProfiles();
-      persist();
     } catch (error) {
       $('debate-model-status').textContent = error.message;
     }
@@ -134,8 +118,6 @@
   $('refresh-debate-models').onclick = loadModels;
   $('debate-model').onchange = event => {
     model = event.target.value;
-    saveProfiles();
-    persist();
   };
   $('names').addEventListener('input', setupProfiles);
   setupProfiles();
@@ -370,7 +352,6 @@
         }
         if (!response.ok) throw new Error(`${judge.name}: ${ballot.error || 'Could not return a ballot.'}`);
         ballots.push({...ballot, judge: judge.name});
-        persist();
       }
       deliberationMessage = '';
     } catch (error) {

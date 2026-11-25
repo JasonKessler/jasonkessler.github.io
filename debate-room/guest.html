@@ -9,12 +9,12 @@
 <link rel="stylesheet" href="guest.css?v=3">
 <script defer src="call-media.js?v=3"></script>
 <script defer src="guest-channel.js"></script>
-<script defer src="guest.js?v=3"></script>
+<script defer src="guest.js?v=4"></script>
 </head>
 <body>
 <main>
   <header>
-    <div><a href="./">Debate Room</a> <small id="release-version">v2.3.9</small></div>
+    <div><a href="./">Debate Room</a> <small id="release-version">v2.4.0</small></div>
     <span id="connection" role="status" aria-live="polite"></span>
   </header>
   <section id="welcome">
@@ -23,7 +23,7 @@
     <form id="join-room" hidden>
       <label for="name">Debate name</label>
       <div class="controls">
-        <input id="name" name="name" autocomplete="name" maxlength="80" required>
+        <input id="name" name="name" autocomplete="off" maxlength="80" required>
         <button class="primary" type="submit">Request to join</button>
       </div>
     </form>

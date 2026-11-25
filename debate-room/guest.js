@@ -106,6 +106,7 @@
     connect();
   };
   $('leave-room').onclick = () => end('You left the debate. You can still read the notebook.');
+  window.addEventListener('pageshow', event => { if (event.persisted) location.reload(); });
   window.addEventListener('pagehide', () => {
     clearTimeout(retryTimer);
     window.debateCallClose();

@@ -6,9 +6,18 @@
   const local = ['127.0.0.1', 'localhost'].includes(location.hostname);
   const captureKey = 'debate-room-capture-v1';
   let captureSettings = {};
+  // Older releases kept debates, participant profiles and audio in this origin.
+  try {
+    localStorage.removeItem('debate-room-v1');
+    localStorage.removeItem('debate-room-ai-profiles-v1');
+  } catch {}
+  try { indexedDB.deleteDatabase('debate-room-audio-v1'); } catch {}
   try {
     const saved = JSON.parse(localStorage.getItem(captureKey));
-    if (saved && typeof saved === 'object' && !Array.isArray(saved)) captureSettings = saved;
+    if (saved && typeof saved === 'object' && !Array.isArray(saved)) {
+      captureSettings = {enabled: saved.enabled, linkTimer: saved.linkTimer, videoCall: saved.videoCall};
+      if ('localSpeaker' in saved) localStorage.setItem(captureKey, JSON.stringify(captureSettings));
+    }
   } catch {}
   let connected = false, enabled = captureSettings.enabled === true, recorder = null, starting = false;
 
@@ -18,8 +27,8 @@
     if (callAudio) captureSettings.videoCall = $('record-call').checked;
     try { localStorage.setItem(captureKey, JSON.stringify(captureSettings)); } catch {}
   }
-  let capturing = null, queue = Promise.resolve(), jobs = 0, dbPromise;
-  const urls = new Map(), busy = new Set();
+  let capturing = null, queue = Promise.resolve(), jobs = 0, localSpeaker = '';
+  const clips = new Map(), busy = new Set();
   const e = esc;
   const banner = document.createElement('section');
   banner.className = 'local-banner';
@@ -46,7 +55,7 @@
       <label for="manual-text">Transcript</label><textarea id="manual-text" maxlength="30000"></textarea>
       <button id="add-transcript">Save transcript</button>
     </details>
-    <p class="hint" id="notebook-storage" role="status"></p><div id="note-entries"></div>`;
+    <p class="hint">Debate notes and recordings are cleared when this page closes or reloads.</p><div id="note-entries"></div>`;
   $('session').append(notebook);
   const audioControls = document.createElement('section');
   audioControls.className = 'rec-panel';
@@ -66,21 +75,18 @@
         </label>` : ''}
     </div>
     <p class="hint" id="capture-target"></p>
-    <p class="ai-status" id="notes-status" role="status" aria-live="polite">${local?'Checking local AI…':'Audio stays in this browser. Local AI mode can transcribe its own recordings.'}</p>`;
+    <p class="ai-status" id="notes-status" role="status" aria-live="polite">${local?'Checking local AI…':'Audio stays in this tab until it closes or reloads. Local AI mode can transcribe its own recordings.'}</p>`;
   $('speaker').after(audioControls);
   $('link-timer').checked = captureSettings.linkTimer !== false;
   $('link-timer').onchange = saveCaptureSettings;
   if (callAudio) {
     $('record-call').checked = captureSettings.videoCall === true;
     $('record-call').onchange = () => { saveCaptureSettings(); updateControls(); };
-    $('call-local-speaker').onchange = () => {
-      captureSettings.localSpeaker = $('call-local-speaker').value;
-      saveCaptureSettings();
-    };
+    $('call-local-speaker').onchange = () => { localSpeaker = $('call-local-speaker').value; };
   }
   $('reconnect-notes').onclick=connect;
   function status(text, error = false) { $('notes-status').textContent = recorder&&capturing&&!stopping ? `Recording ${capturing.entry.speaker} · ${capturing.entry.stage}` : text; $('notes-status').className = 'ai-status' + (recorder&&!stopping?' recording-light':error?' entry-error':''); }
-  function save() { if (!round) return; window.debateRoomRefreshDeliberation?.(); try { localStorage.setItem(KEY, JSON.stringify({config: getConfig(), round, sound: $('sound').checked})); } catch { $('notebook-storage').textContent = 'Local storage is unavailable. Changes may not survive a refresh.'; } }
+  function updateDeliberation() { if (round) window.debateRoomRefreshDeliberation?.(); }
   function markUsed() { if(round){touched=true;round.touched=true;$('reshuffle').hidden=true;} }
   function entryList() { return round ? (round.entries ??= []) : []; }
   function notebookTurns() {
@@ -102,14 +108,19 @@
   }
 
   function newEntry(target, kind, speaker, context) { return {id:crypto.randomUUID(),kind,speaker,stage:context,turn:target.index,created:new Date().toISOString(),text:'',segments:[],notes:null,status:'queued',error:''}; }
-  function openDB() { return dbPromise ??= new Promise((resolve,reject)=>{const request=indexedDB.open('debate-room-audio-v1',1);request.onupgradeneeded=()=>request.result.createObjectStore('audio');request.onsuccess=()=>resolve(request.result);request.onerror=()=>reject(request.error);}); }
-  async function audioPut(id,blob) { const db=await openDB();return new Promise((resolve,reject)=>{const tx=db.transaction('audio','readwrite');tx.objectStore('audio').put(blob,id);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error);}); }
-  async function audioGet(id) { const db=await openDB();return new Promise((resolve,reject)=>{const request=db.transaction('audio').objectStore('audio').get(id);request.onsuccess=()=>resolve(request.result);request.onerror=()=>reject(request.error);}); }
+  function storeClip(id, blob) {
+    clips.set(id, {blob, url: URL.createObjectURL(blob)});
+  }
+
+  function discardRoundClips() {
+    for (const {url} of clips.values()) URL.revokeObjectURL(url);
+    clips.clear();
+  }
   async function request(path,body,binary=false) { const response=await fetch(path,{method:'POST',headers:{'Content-Type':binary?'application/octet-stream':'application/json'},body:binary?body:JSON.stringify(body)});const data=await response.json();if(!response.ok)throw new Error(data.error||'Local processing failed.');return data; }
   function contextFor(target) { return (target.entries||[]).filter(x=>x.text).slice(-10).map(x=>({speaker:x.speaker,stage:x.stage,transcript:x.text.slice(0,2200)})); }
-  function enqueue(target,entry,task) { jobs++;busy.add(entry.id);status('Processing locally. The debate can continue while notes are prepared.');queue=queue.catch(()=>{}).then(async()=>{try{await task();entry.error='';entry.status='done';}catch(error){entry.status='error';entry.error=error.message;}finally{jobs--;busy.delete(entry.id);if(target===round){save();render();status(jobs?`${jobs} turn${jobs===1?'':'s'} waiting for local processing.`:entry.error?'Local processing failed. Open the entry to retry; your transcript and recording are kept.':'Notes updated. Review the transcript and supporting quotes.');}}});return queue; }
+  function enqueue(target,entry,task) { jobs++;busy.add(entry.id);status('Processing locally. The debate can continue while notes are prepared.');queue=queue.catch(()=>{}).then(async()=>{try{await task();entry.error='';entry.status='done';}catch(error){entry.status='error';entry.error=error.message;}finally{jobs--;busy.delete(entry.id);if(target===round){updateDeliberation();render();status(jobs?`${jobs} turn${jobs===1?'':'s'} waiting for local processing.`:entry.error?'Local processing failed. Open the entry to retry; your transcript and recording are kept.':'Notes updated. Review the transcript and supporting quotes.');}}});return queue; }
   async function summarize(target,entry) { if(!entry.text.trim()){entry.notes={summary:'No clear speech detected.',points:[]};return;}entry.status='extracting points';if(target===round)render();entry.notes=await request('/api/summarize',{text:entry.text,proposition:target.config.proposition,speaker:entry.speaker,stage:entry.stage,context:contextFor(target).filter(x=>!(x.speaker===entry.speaker&&x.transcript===entry.text.slice(0,2200))),model:$('notes-model').value}); }
-  async function processAudio(target,entry,blob) { entry.status='transcribing';if(target===round)render();const result=await request('/api/transcribe',blob,true);entry.text=result.text;entry.segments=result.segments;entry.transcriptionModel=result.model;if(target===round){save();render();}await summarize(target,entry); }
+  async function processAudio(target,entry,blob) { entry.status='transcribing';if(target===round)render();const result=await request('/api/transcribe',blob,true);entry.text=result.text;entry.segments=result.segments;entry.transcriptionModel=result.model;if(target===round){updateDeliberation();render();}await summarize(target,entry); }
   async function connect() { if(!local)return;try{const response=await fetch('/api/health');if(!response.ok)throw new Error('Start the local launcher to use AI.');const health=await response.json();if(!health.local)throw new Error('Start the local launcher to use AI.');connected=health.whisper&&health.ffmpeg&&health.models?.length>0;$('notes-model').innerHTML=(health.models||[]).map(m=>`<option value="${e(m)}">${e(m)}</option>`).join('');let message=connected?(enabled?'Audio capture enabled. Ready for the next turn.':'Local Whisper and Ollama are ready.'):health.error||(!health.whisper?'Whisper is missing. Run the launcher to install it.':'FFmpeg is missing. Install it, then reconnect.');$('local-connection').textContent=message;$('local-connection').className='hint'+(connected?' ai-connected':'');status(message,!connected);updateControls();}catch(error){connected=false;$('local-connection').textContent='Start the local launcher, then reconnect.';status(error.message,true);updateControls();} }
   function canCapture() {
     if (callAudio && $('record-call').checked) return true;
@@ -148,19 +159,13 @@
     entry.audioType = blob.type;
     entry.audioWarning = warning;
     (target.entries ??= []).push(entry);
-    try {
-      await audioPut(entry.id, blob);
-    } catch {
-      entry.audioWarning = [warning, 'Audio could not be saved in browser storage.']
-        .filter(Boolean).join(' ');
-    }
-    urls.set(entry.id, URL.createObjectURL(blob));
+    storeClip(entry.id, blob);
     if (connected) enqueue(target, entry, () => processAudio(target, entry, blob));
     else {
       entry.status = 'recorded';
       status('Audio saved. Open the turn in the notebook to listen.');
     }
-    if (target === round) { save(); render(); }
+    if (target === round) { updateDeliberation(); render(); }
   }
 
   function micCapture(media) {
@@ -265,14 +270,13 @@
     updateControls();
     if ((round.notebookThrough ?? -1) < round.index) {
       round.notebookThrough = round.index;
-      save();
+      updateDeliberation();
     }
     const people = round.config.names;
     if (callAudio) {
-      const ownSpeaker = captureSettings.localSpeaker;
       $('call-local-speaker').innerHTML = '<option value="">Nobody (listen-only)</option>' +
         people.map(name => `<option>${e(name)}</option>`).join('');
-      $('call-local-speaker').value = people.includes(ownSpeaker) ? ownSpeaker : '';
+      $('call-local-speaker').value = people.includes(localSpeaker) ? localSpeaker : '';
     }
     const selectedSpeaker = $('manual-speaker').value;
     $('manual-speaker').innerHTML = people.map(name => `<option>${e(name)}</option>`).join('');
@@ -292,22 +296,13 @@
       </article>`).join('');
 
     for (const entry of entryList()) {
-      if (urls.has(entry.id)) {
-        attachAudio(entry.id, urls.get(entry.id));
-      } else {
-        audioGet(entry.id).then(blob => {
-          if (blob && round?.entries?.some(item => item.id === entry.id)) {
-            const url = urls.get(entry.id) || URL.createObjectURL(blob);
-            urls.set(entry.id, url);
-            attachAudio(entry.id, url);
-          }
-        }).catch(() => {});
-      }
+      const clip = clips.get(entry.id);
+      if (clip) attachAudio(entry.id, clip.url);
     }
   }
   function attachAudio(id,url) { const article=$('note-entries').querySelector(`[data-entry="${id}"]`);if(!article)return;const slot=article.querySelector('[data-audio]');if(!slot.firstChild){const audio=document.createElement('audio');audio.controls=true;audio.setAttribute('controlslist','nodownload');audio.preload='none';audio.src=url;slot.append(audio);} }
-  $('note-entries').addEventListener('change',event=>{if(event.target.dataset.action==='speaker'){const entry=entryList().find(x=>x.id===event.target.closest('[data-entry]').dataset.entry);entry.speaker=event.target.value;entry.notes=null;entry.status='edited';save();status('Speaker corrected. Extract points again to update the notes.');}});
-  $('note-entries').addEventListener('click',async event=>{const button=event.target.closest('button[data-action]');if(!button)return;const article=button.closest('[data-entry]'),entry=entryList().find(x=>x.id===article.dataset.entry),target=round;if(!entry)return;const action=button.dataset.action;if(busy.has(entry.id))return;entry.text=article.querySelector('textarea').value.trim();entry.notes=null;entry.status='edited';save();if(action==='save'){render();status('Transcript saved. Extract points again to update the notes.');}else if(entry.text)enqueue(target,entry,()=>summarize(target,entry));else {const blob=await audioGet(entry.id).catch(()=>null);if(blob)enqueue(target,entry,()=>processAudio(target,entry,blob));else status('No saved recording. Paste a transcript or upload the audio again.',true);}render();});
+  $('note-entries').addEventListener('change',event=>{if(event.target.dataset.action==='speaker'){const entry=entryList().find(x=>x.id===event.target.closest('[data-entry]').dataset.entry);entry.speaker=event.target.value;entry.notes=null;entry.status='edited';updateDeliberation();status('Speaker corrected. Extract points again to update the notes.');}});
+  $('note-entries').addEventListener('click',async event=>{const button=event.target.closest('button[data-action]');if(!button)return;const article=button.closest('[data-entry]'),entry=entryList().find(x=>x.id===article.dataset.entry),target=round;if(!entry)return;const action=button.dataset.action;if(busy.has(entry.id))return;entry.text=article.querySelector('textarea').value.trim();entry.notes=null;entry.status='edited';updateDeliberation();if(action==='save'){render();status('Transcript saved. Extract points again to update the notes.');}else if(entry.text)enqueue(target,entry,()=>summarize(target,entry));else {const blob=clips.get(entry.id)?.blob;if(blob)enqueue(target,entry,()=>processAudio(target,entry,blob));else status('No saved recording. Paste a transcript or upload the audio again.',true);}render();});
   $('enable-notes').onclick = async () => {
     enabled = !enabled;
     saveCaptureSettings();
@@ -324,8 +319,8 @@
     updateControls();
   };
   $('record-turn').onclick=()=>record();$('record-question').onclick=()=>record('question');$('stop-recording').onclick=stop;
-  $('upload-audio').onchange=async event=>{const file=event.target.files[0];event.target.value='';if(!file||!round||!enabled)return;if(file.size>40*1024*1024)return status('Choose audio under 40 MB.',true);const target=round,s=round.stages[round.index],entry=newEntry(target,'speech',s.speaker,s.title);entry.audioType=file.type;entryList().push(entry);markUsed();try{await audioPut(entry.id,file);}catch{entry.audioWarning='Recording could not be saved in browser storage.';}urls.set(entry.id,URL.createObjectURL(file));save();enqueue(target,entry,()=>processAudio(target,entry,file));render();};
-  $('add-transcript').onclick=()=>{if(!round)return;const text=$('manual-text').value.trim();if(!text)return status('Enter a transcript first.',true);const target=round,stage=round.stages[round.index],speaker=$('manual-speaker').value;const kind=stage.kind==='question'&&speaker===stage.asker?'question':'typed';const title=kind==='question'?`Question to ${stage.speaker}`:stage.title;const entry=newEntry(target,kind,speaker,$('manual-stage').value.trim()||title);entry.text=text;entry.status='saved';entryList().push(entry);markUsed();$('manual-text').value='';$('manual-stage').value='';save();if(connected)enqueue(target,entry,()=>summarize(target,entry));render();};
+  $('upload-audio').onchange=async event=>{const file=event.target.files[0];event.target.value='';if(!file||!round||!enabled)return;if(file.size>40*1024*1024)return status('Choose audio under 40 MB.',true);const target=round,s=round.stages[round.index],entry=newEntry(target,'speech',s.speaker,s.title);entry.audioType=file.type;entryList().push(entry);markUsed();storeClip(entry.id,file);updateDeliberation();enqueue(target,entry,()=>processAudio(target,entry,file));render();};
+  $('add-transcript').onclick=()=>{if(!round)return;const text=$('manual-text').value.trim();if(!text)return status('Enter a transcript first.',true);const target=round,stage=round.stages[round.index],speaker=$('manual-speaker').value;const kind=stage.kind==='question'&&speaker===stage.asker?'question':'typed';const title=kind==='question'?`Question to ${stage.speaker}`:stage.title;const entry=newEntry(target,kind,speaker,$('manual-stage').value.trim()||title);entry.text=text;entry.status='saved';entryList().push(entry);markUsed();$('manual-text').value='';$('manual-stage').value='';updateDeliberation();if(connected)enqueue(target,entry,()=>summarize(target,entry));render();};
   function openLocal(){if(local){connect();return;}const transferred=round?structuredClone(round):null;if(transferred&&deadline!==null){transferred.remaining=Math.max(0,Math.ceil((deadline-Date.now())/1000));transferred.deadline=null;}const payload={config:getConfig(),round:transferred,sound:$('sound').checked};const destination=new URL('http://127.0.0.1:18766/');destination.hash=encodeURIComponent(JSON.stringify(payload));location.href=destination.href;}
   $('open-local').onclick=openLocal;$('session-local').onclick=openLocal;
   // Timer hooks finalize audio before changing speaker; processing runs in a queue.
@@ -333,7 +328,7 @@
   let transition=false;
   const stopButton=$('stop-recording').onclick;$('stop-recording').onclick=async()=>{if(transition||starting)return;transition=true;try{await stopButton();}finally{transition=false;}};
   $('start').onclick=async()=>{if(transition||starting)return;transition=true;try{const pausing=deadline!==null;if(recorder&&(pausing||capturing?.entry.kind==='question'))await stop();if(!recorder&&!pausing&&enabled&&$('link-timer').checked&&round.stages[round.index].kind!=='deliberation'&&!window.debateRoomIsAI?.(round.stages[round.index].speaker)){await record();}originalStart();}finally{transition=false;}};
-  for(const id of ['next','previous','reset','edit','finish','reshuffle']){const original=$(id).onclick;$(id).onclick=async()=>{if(transition||starting)return;transition=true;try{await stop();original();render();}finally{transition=false;}};}
+  for(const id of ['next','previous','reset','edit','finish','reshuffle']){const original=$(id).onclick;$(id).onclick=async()=>{if(transition||starting)return;transition=true;try{await stop();const previous=round;original();if(round!==previous)discardRoundClips();render();}finally{transition=false;}};}
   const originalSubmit=$('setup-form').onsubmit;$('setup-form').onsubmit=event=>{originalSubmit(event);render();};
   const originalRender=renderStage;renderStage=function(){originalRender();if(notebook.isConnected&&round){updateControls();if(remaining===0&&recorder)stop();}};
   if (macApp) {
@@ -355,7 +350,7 @@
       entry.status = 'done';
       entryList().push(entry);
       markUsed();
-      save();
+      updateDeliberation();
       render();
       return entry;
     };
@@ -392,7 +387,7 @@
   }
   if (macApp) window.debateRoomIsBusy = () => !!recorder || jobs > 0 || starting;
   window.addEventListener('beforeunload',event=>{if(recorder||jobs||starting){event.preventDefault();event.returnValue='Recording or local processing is still in progress.';}});
-  if(local&&location.hash){try{const imported=JSON.parse(decodeURIComponent(location.hash.slice(1)));if(imported.config&&Array.isArray(imported.config.names)){applyConfig(imported.config);$('sound').checked=imported.sound!==false;if(imported.round&&Array.isArray(imported.round.stages)&&imported.round.stages[imported.round.index]){round=imported.round;remaining=round.remaining;deadline=null;touched=!!round.touched;round.deadline=null;showRound();}else{round=null;$('session').hidden=true;$('setup').hidden=false;persist();}save();estimate();}history.replaceState(null,'',location.pathname);}catch{status('Could not transfer setup. Enter it on the local page.',true);}}
+  if(local&&location.hash){try{const imported=JSON.parse(decodeURIComponent(location.hash.slice(1)));if(imported.config&&Array.isArray(imported.config.names)){applyConfig(imported.config);$('sound').checked=imported.sound!==false;if(imported.round&&Array.isArray(imported.round.stages)&&imported.round.stages[imported.round.index]){round=imported.round;remaining=round.remaining;deadline=null;touched=!!round.touched;round.deadline=null;showRound();}else{round=null;$('session').hidden=true;$('setup').hidden=false;}updateDeliberation();estimate();}history.replaceState(null,'',location.pathname);}catch{status('Could not transfer setup. Enter it on the local page.',true);}}
   if(round){render();for(const entry of entryList())if(['queued','transcribing','extracting points'].includes(entry.status))entry.status='interrupted';}
   if(local)connect();
 })();

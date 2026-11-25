@@ -83,11 +83,11 @@ details.section[open]>summary{margin-bottom:8px}
 <link rel="stylesheet" href="local-ai.css?v=3">
 </head>
 <body><div class="wrap">
-<header><div><strong>Debate Room</strong> <small id="release-version">v2.3.9</small></div><a href="https://jasonkessler.github.io/debate-room/guest.html">Join with an invite</a></header>
+<header><div><strong>Debate Room</strong> <small id="release-version">v2.4.0</small></div><a href="https://jasonkessler.github.io/debate-room/guest.html">Join with an invite</a></header>
 <main>
 <div id="setup">
 <h1 class="hero">Set up a debate</h1>
-<form id="setup-form" novalidate>
+<form id="setup-form" autocomplete="off" novalidate>
 <div class="form-grid">
 <section class="section"><label for="proposition">Proposition</label><textarea id="proposition" rows="2" maxlength="1000" required>America should abolish the Electoral College.</textarea></section>
 <section class="section"><label for="names">Participants · one name per line</label><textarea class="names" id="names" rows="4" maxlength="10000" required>Participant 1
@@ -157,11 +157,10 @@ function renderRolePreferences() {
 $('role-preferences').addEventListener('change', event => {
   if (event.target.value === 'random') rolePreferences.delete(event.target.dataset.name);
   else rolePreferences.set(event.target.dataset.name, event.target.value);
-  persist();
 });
 $('names').addEventListener('input', renderRolePreferences);
 const timeDefs=[['opening','Opening constructive','2:00'],['rebuttal','Rebuttal','1:30'],['closing','Closing statement','2:00'],['answer','Answer to each question','1:00'],['deliberation','Judges’ deliberation','3:00']];
-const KEY='debate-room-v1';let round=null,deadline=null,remaining=0,touched=false,audioContext=null,lastDisplayed=null;
+let round=null,deadline=null,remaining=0,touched=false,audioContext=null,lastDisplayed=null;
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmt=seconds=>Math.floor(seconds/60)+':'+String(seconds%60).padStart(2,'0');
 function parseTime(value){const m=/^(\d{1,3}):([0-5]\d)$/.exec(value.trim());if(!m)return null;const s=Number(m[1])*60+Number(m[2]);return s>=1&&s<=3600?s:null;}
@@ -178,7 +177,6 @@ function getConfig() {
   };
 }
 function applyConfig(c){rolePreferences.clear();for(const [name,role] of selectedRoles(c))rolePreferences.set(name,role);$('proposition').value=c.proposition||'';$('names').value=(c.names||[]).join('\n');timeDefs.forEach(([id,,defaultValue])=>$(id).value=c.times?.[id]?fmt(c.times[id]):defaultValue);$('mod-questions').value=c.modQuestions??2;$('audience-questions').value=c.audienceQuestions??1;renderRolePreferences();}
-function persist(){try{localStorage.setItem(KEY,JSON.stringify({config:getConfig(),round,sound:$('sound').checked}));}catch{}}
 function estimate() {
   const {names, times, modQuestions, audienceQuestions} = getConfig();
   const questions = 2 * (modQuestions + Math.max(0, names.length - 3) * audienceQuestions);
@@ -233,7 +231,7 @@ function drawRoles(config) {
   const questioners = config.names.filter(name => pinned.get(name) === 'questioner');
   return {affirmative, negative, moderator, questioners: [...questioners, ...unassigned]};
 }
-function createRound(c){const roles=drawRoles(c);round={config:c,roles,stages:makeStages(c,roles),index:0,remaining:c.times.opening,deadline:null,touched:false,winner:null};deadline=null;remaining=round.remaining;touched=false;showRound();persist();}
+function createRound(c){const roles=drawRoles(c);round={config:c,roles,stages:makeStages(c,roles),index:0,remaining:c.times.opening,deadline:null,touched:false,winner:null};deadline=null;remaining=round.remaining;touched=false;showRound();}
 function showRound() {
   const roles = round.roles;
   $('setup').hidden = true;
@@ -245,7 +243,7 @@ function showRound() {
 }
 function renderStage(){const s=round.stages[round.index];$('stage-kicker').textContent=`Turn ${round.index+1} of ${round.stages.length}`;$('stage-title').textContent=s.title;$('speaker').textContent=s.kind==='question'?`${s.asker} asks → ${s.speaker} answers`:s.speaker;$('previous').disabled=round.index===0;$('next').disabled=round.index===round.stages.length-1;$('reshuffle').hidden=touched;$('verdict').hidden=s.kind!=='deliberation';$('progress').textContent=`${round.index+1} / ${round.stages.length}`;$('agenda').innerHTML=round.stages.map((x,i)=>`<li class="${i===round.index?'current':i<round.index?'past':''}" ${i===round.index?'aria-current="step"':''}><span>${i<round.index?'✓':i+1}</span><div><b>${esc(x.title)}</b>${x.kind==='question'?esc(x.asker)+' → ':''}${esc(x.speaker)}</div><time>${fmt(x.seconds)}</time></li>`).join('');$('winner').textContent=round.winner?round.winner==='draw'?'The panel declares a draw.':`${round.roles[round.winner]} wins for the ${round.winner==='affirmative'?'Affirmative':'Negative'}.`:'';$('finish').hidden=!round.winner;for(const id of ['win-affirmative','win-negative','win-tie'])$(id).disabled=remaining>0||deadline!==null;lastDisplayed=null;paintClock();}
 function paintClock(){if(!round)return;const seconds=deadline===null?remaining:Math.max(0,Math.ceil((deadline-Date.now())/1000));if(seconds!==lastDisplayed){$('clock').textContent=fmt(seconds);$('clock').className='clock'+(seconds===0?' expired':seconds<=30?' warning':'');lastDisplayed=seconds;}$('start').disabled=seconds===0||!!round.winner;$('start').textContent=deadline!==null?'Pause':remaining<round.stages[round.index].seconds?'Resume':round.stages[round.index].kind==='question'?'Start answer timer':'Start timer';$('timer-status').textContent=round.winner?'Decision recorded.':seconds===0?'Time is up.':deadline!==null?'':remaining<round.stages[round.index].seconds?'Paused.':round.stages[round.index].kind==='question'?'Ask the question, then start the answer timer.':'';}
-function snapshot(){if(!round)return;round.remaining=remaining;round.deadline=deadline;round.touched=touched;persist();}
+function snapshot(){if(!round)return;round.remaining=remaining;round.deadline=deadline;round.touched=touched;}
 function syncTime(){if(deadline!==null){remaining=Math.max(0,Math.ceil((deadline-Date.now())/1000));if(remaining===0){deadline=null;snapshot();chime();renderStage();}}paintClock();}
 function unlockAudio(){if(!$('sound').checked)return;try{audioContext??=new (window.AudioContext||window.webkitAudioContext)();audioContext.resume().catch(()=>{});}catch{}}
 function chime(){if(!$('sound').checked||!audioContext)return;try{for(const offset of [0,.3,.6]){const osc=audioContext.createOscillator(),gain=audioContext.createGain(),at=audioContext.currentTime+offset;osc.frequency.value=660;gain.gain.setValueAtTime(0,at);gain.gain.linearRampToValueAtTime(.14,at+.02);gain.gain.exponentialRampToValueAtTime(.001,at+.22);osc.connect(gain);gain.connect(audioContext.destination);osc.start(at);osc.stop(at+.25);}}catch{}}
@@ -253,7 +251,7 @@ $('start').onclick=()=>{if(!round||remaining===0)return;unlockAudio();if(deadlin
 $('reset').onclick=()=>{deadline=null;remaining=round.stages[round.index].seconds;round.winner=null;snapshot();renderStage();};
 function move(delta){const i=round.index+delta;if(i<0||i>=round.stages.length)return;deadline=null;round.index=i;remaining=round.stages[i].seconds;round.winner=null;touched=true;snapshot();renderStage();}
 $('previous').onclick=()=>move(-1);$('next').onclick=()=>move(1);
-function backToSetup(){deadline=null;round=null;touched=false;$('session').hidden=true;$('setup').hidden=false;persist();estimate();window.scrollTo({top:0});$('proposition').focus();}
+function backToSetup(){deadline=null;round=null;touched=false;$('session').hidden=true;$('setup').hidden=false;estimate();window.scrollTo({top:0});$('proposition').focus();}
 $('edit').onclick=()=>{if(touched&&!confirm('Return to setup and reset this round? Your proposition, names, and settings will be kept.'))return;backToSetup();};
 $('finish').onclick=backToSetup;
 $('reshuffle').onclick=()=>{if(!touched)createRound(round.config);};
@@ -261,8 +259,7 @@ for(const [id,winner] of [['win-affirmative','affirmative'],['win-negative','neg
 $('fullscreen').onclick=async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else await $('timer-card').requestFullscreen();}catch{$('timer-status').textContent='Full screen is unavailable in this browser.';}};
 if(!document.fullscreenEnabled)$('fullscreen').hidden=true;
 document.addEventListener('fullscreenchange',()=>{$('fullscreen').textContent=document.fullscreenElement?'Exit full screen':'Full screen';});
-$('sound').onchange=persist;
-$('setup-form').oninput=()=>{estimate();persist();};
+$('setup-form').oninput=estimate;
 $('setup-defaults').onclick = () => {
   const proposition = $('proposition');
   const names = $('names');
@@ -275,8 +272,7 @@ $('setup-defaults').onclick = () => {
   names.dispatchEvent(new Event('input', {bubbles:true}));
 };
 $('setup-form').onsubmit=e=>{e.preventDefault();const c=getConfig();if(validate(c)){createRound(c);window.scrollTo({top:0});$('start').focus();}};
-try{const saved=JSON.parse(localStorage.getItem(KEY));if(saved?.config)applyConfig(saved.config);if(typeof saved?.sound==='boolean')$('sound').checked=saved.sound;const r=saved?.round;if(r&&Array.isArray(r.stages)&&r.stages.length&&r.index>=0&&r.index<r.stages.length&&r.roles&&r.config&&Number.isFinite(r.remaining)){round=r;remaining=r.remaining;deadline=Number.isFinite(r.deadline)?r.deadline:null;touched=!!r.touched;if(deadline!==null&&deadline<=Date.now()){remaining=0;deadline=null;}showRound();}}catch{round=null;$('session').hidden=true;$('setup').hidden=false;}
-renderRolePreferences();estimate();setInterval(syncTime,200);document.addEventListener('visibilitychange',syncTime);window.addEventListener('pagehide',snapshot);
+renderRolePreferences();estimate();setInterval(syncTime,200);document.addEventListener('visibilitychange',syncTime);window.addEventListener('pageshow', event => { if (event.persisted) location.reload(); });
 </script>
-<script src="local-ai.js?v=5"></script>
-<script src="ai-participants.js"></script></body></html>
+<script src="local-ai.js?v=6"></script>
+<script src="ai-participants.js?v=6"></script></body></html>

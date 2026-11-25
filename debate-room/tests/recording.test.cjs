@@ -7,7 +7,12 @@ const {webcrypto} = require('node:crypto');
 const root = path.resolve(__dirname, '..');
 async function exercise({native = false, publicPage = false} = {}) {
   const elements = new Map();
-  const saved = new Map();
+  const saved = new Map([
+    ['debate-room-v1', JSON.stringify({config:{proposition:'Old proposition', names:['Old name']}})],
+    ['debate-room-ai-profiles-v1', JSON.stringify({profiles:[['Old name','Old persona']]})],
+    ['debate-room-capture-v1', JSON.stringify({enabled:false, localSpeaker:'Old name'})]
+  ]);
+  const deletedDatabases = [];
   const el = () => ({value:'',checked:false,hidden:false,disabled:false,textContent:'',innerHTML:'',isConnected:true,dataset:{},append(){},insertAdjacentHTML(){},remove(){},after(){},before(){},insertBefore(){},querySelector(){return null;},addEventListener(){},setAttribute(){},removeAttribute(){},focus(){}});
   const get = id => {if (!elements.has(id)) elements.set(id, el()); return elements.get(id);};
   for (const [id,value] of Object.entries({opening:'2:00',rebuttal:'1:30',closing:'2:00',answer:'1:00',deliberation:'3:00','mod-questions':'2','audience-questions':'1',proposition:'Public transit should be free.',names:'Alex\nJordan\nMorgan\nSam'})) get(id).value=value;
@@ -16,9 +21,19 @@ async function exercise({native = false, publicPage = false} = {}) {
   const actualDate=Date;
   class FakeDate extends actualDate {constructor(...args){super(...(args.length?args:[now]));}static now(){return now;}}
   const blobs=new Map();
-  const db={transaction(){const tx={};tx.objectStore=()=>({put(blob,id){blobs.set(id,blob);queueMicrotask(()=>tx.oncomplete?.());},get(id){const r={};queueMicrotask(()=>{r.result=blobs.get(id);r.onsuccess?.();});return r;}});return tx;}};
+  class TestURL extends URL {
+    static createObjectURL(blob) {
+      const url = URL.createObjectURL(blob);
+      blobs.set(url,blob);
+      return url;
+    }
+    static revokeObjectURL(url) {
+      blobs.delete(url);
+      URL.revokeObjectURL(url);
+    }
+  }
   class Recorder {static isTypeSupported(){return true;}constructor(){this.state='inactive';this.mimeType='audio/webm';}start(){this.state='recording';}stop(){this.state='inactive';this.ondataavailable({data:new Blob(['synthetic audio'],{type:this.mimeType})});queueMicrotask(()=>this.onstop());}}
-  const context=vm.createContext({document:{getElementById:get,querySelectorAll:()=>[],querySelector:el,createElement:el,addEventListener(){}},window:{addEventListener(){},scrollTo(){}},location:{hostname:publicPage?'jasonkessler.github.io':'127.0.0.1',hash:'',pathname:'/'},localStorage:{getItem:key=>saved.get(key)??null,setItem:(key,value)=>saved.set(key,value)},setInterval(){},setTimeout,queueMicrotask,crypto:webcrypto,console,confirm:()=>true,Date:FakeDate,Blob,URL,structuredClone,MediaRecorder:Recorder,navigator:{mediaDevices:{async getUserMedia(){microphoneCalls++;return {getTracks:()=>[{stop(){tracksStopped++;}}]};}}},indexedDB:{open(){const r={};queueMicrotask(()=>{r.result=db;r.onsuccess?.();});return r;}},fetch:async(url,options)=>{calls.push({url,options});const data=url==='/api/health'?{local:true,whisper:true,ffmpeg:true,models:['local:small']}:url==='/api/transcribe'?{text:'People need jobs.',segments:[]}:{summary:'Access matters.',points:[{kind:'claim',point:'Jobs matter.',quote:'People need jobs.'}]};return {ok:true,json:async()=>data};}});
+  const context=vm.createContext({document:{getElementById:get,querySelectorAll:()=>[],querySelector:el,createElement:el,addEventListener(){}},window:{addEventListener(){},scrollTo(){}},location:{hostname:publicPage?'jasonkessler.github.io':'127.0.0.1',hash:'',pathname:'/'},localStorage:{getItem:key=>saved.get(key)??null,setItem:(key,value)=>saved.set(key,value),removeItem:key=>saved.delete(key)},setInterval(){},setTimeout,queueMicrotask,crypto:webcrypto,console,confirm:()=>true,Date:FakeDate,Blob,URL:TestURL,structuredClone,MediaRecorder:Recorder,navigator:{mediaDevices:{async getUserMedia(){microphoneCalls++;return {getTracks:()=>[{stop(){tracksStopped++;}}]};}}},indexedDB:{deleteDatabase:name=>deletedDatabases.push(name)},fetch:async(url,options)=>{calls.push({url,options});const data=url==='/api/health'?{local:true,whisper:true,ffmpeg:true,models:['local:small']}:url==='/api/transcribe'?{text:'People need jobs.',segments:[]}:{summary:'Access matters.',points:[{kind:'claim',point:'Jobs matter.',quote:'People need jobs.'}]};return {ok:true,json:async()=>data};}});
   const bridgeCalls = [];
   if (native) {
     context.window.debateRoomMacApp = true;
@@ -36,6 +51,11 @@ async function exercise({native = false, publicPage = false} = {}) {
   const source=fs.readFileSync(path.join(root,'index.html'),'utf8').match(/<script>([\s\S]*?)<\/script>/)[1];
   vm.runInContext(source,context);vm.runInContext(fs.readFileSync(path.join(root,'local-ai.js'),'utf8'),context);
   const run=code=>vm.runInContext(code,context);
+  assert.deepEqual(deletedDatabases,['debate-room-audio-v1']);
+  assert.deepEqual([...saved.keys()],['debate-room-capture-v1']);
+  assert.deepEqual(JSON.parse(saved.get('debate-room-capture-v1')),{enabled:false});
+  assert.equal(run('round'),null);
+  assert.equal(get('proposition').value,'Public transit should be free.');
   if (!native && !publicPage) {
     run(`const originalSetup = getConfig();
       applyConfig({...originalSetup, rolePreferences:[['Alex','moderator'],['Sam','questioner']]});`);
@@ -72,7 +92,9 @@ async function exercise({native = false, publicPage = false} = {}) {
     await get('next').onclick();
     assert.equal(run('round.entries[0].status'),'recorded');
     assert.equal(blobs.size,1);
-    run('backToSetup()');
+    await get('edit').onclick();
+    assert.equal(blobs.size,0);
+    assert.deepEqual([...saved.keys()],['debate-room-capture-v1']);
     await get('setup-form').onsubmit({preventDefault(){}});
     await get('start').onclick();
     assert.equal(microphoneCalls,2);
@@ -146,6 +168,6 @@ async function exercise({native = false, publicPage = false} = {}) {
   await get('stop-recording').onclick();
   // No endpoint other than loopback-relative local APIs was used.
   assert.ok(calls.every(call=>['/api/health','/api/transcribe','/api/summarize'].includes(call.url)));
-  console.log('PASS: timer-linked recording, queued processing, stop on speaker change, separate question/answer attribution, local audio persistence, microphone shutdown, and disabling capture.');
+  console.log('PASS: timer-linked recording, queued processing, stop on speaker change, separate question/answer attribution, in-session audio playback, microphone shutdown, and disabling capture.');
 }
 exercise().then(() => exercise({native:true})).then(() => exercise({publicPage:true})).catch(error=>{console.error(error);process.exitCode=1;});

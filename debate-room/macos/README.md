@@ -1,6 +1,6 @@
 # Debate Room for Mac
 
-Open **Debate Room.app** from Finder. The app opens a macOS window and starts the local service automatically. Its debate interface runs in WebKit. The app uses its own storage for round progress, transcripts, and audio. Rounds saved in a browser stay in that browser.
+Open **Debate Room.app** from Finder. The app opens a macOS window and starts the local service automatically. Its debate interface runs in WebKit. Debates, participants, transcripts, notes, and recordings are cleared when the app closes. Audio capture preferences can carry over to the next launch.
 
 The build targets Apple Silicon and macOS 14 or later. Local AI uses FFmpeg, Whisper, and an installed Ollama model. If you already use the browser companion, the Mac app reuses the same Python environment and model downloads. For a new machine, install Ollama, pull a local model, and install `uv` and `ffmpeg` with Homebrew. The first launch can set up the Python environment and install Whisper. Whisper downloads its model weights on first use if needed.
 

@@ -28,11 +28,9 @@ This version uses MLX and requires an Apple Silicon Mac. It does not yet include
 
 ## Saving, privacy, and moving between pages
 
-Round settings, transcripts, and notes are saved to browser local storage. Audio blobs are saved to IndexedDB in that browser. These are not cloud backups. Returning to setup/redrawing roles resets the current round and its visible notebook. Audio blobs are retained in the browser database until site data is cleared.
+Debates, participants, transcripts, notes, and audio are held for the current session. Closing the app, closing the browser tab, or reloading the page clears the session. Returning to setup or redrawing roles clears the current round and its recordings. Audio capture preferences can carry over between sessions.
 
-The public GitHub page and the local page have separate browser storage. **Open local AI mode** transfers the current setup, roles, and existing text notebook through a URL fragment to the local page and pauses any running timer. URL fragments are not sent to the local server. Existing audio stays with its original browser origin. The local page removes the fragment after import.
-
-Only click **Enable local recording & notes** when you want capture available. Microphone access is requested when a recording starts. There is a visible recording indicator on the timer, and microphone tracks stop when the recording ends. After a refresh, recording is disabled until you enable it again. A recording still in progress can be lost if you forcibly close the tab; completed clips and saved transcripts can be recovered. Interrupted processing can be retried from its entry.
+The public page can record audio in the current tab. Automatic transcription and summaries run in the Mac app or local AI mode. **Open local AI mode** transfers the current setup and text notebook to the local page and pauses the timer. The local page removes the transfer fragment after import. Recordings are available for playback in the session that captured them.
 
 The Python service binds only to `127.0.0.1`, accepts only its own local browser origin, and does not expose a network-wide endpoint or change Ollama's access settings. Internet access may still be needed for initial software/model downloads. No analytics or hosted inference endpoints are included in this local mode.
 
@@ -43,7 +41,6 @@ The Python service binds only to `127.0.0.1`, accepts only its own local browser
 - **Transcription failure:** check FFmpeg and the launcher window. Try uploading WAV/MP3/M4A/WebM under 40 MB. Recordings are limited to one hour. Retry from the saved entry.
 - **No microphone/permission denied:** allow microphone access in the browser's site settings. You can upload audio or type a transcript instead.
 - **Incorrect transcription or notes:** edit the transcript/participant and regenerate the points. Speech recognition can omit or invent words; quoted support does not verify a speaker's factual claims.
-- **Browser storage unavailable/full:** Browser-private windows or storage limits can prevent local saving.
 - **Port in use:** an existing companion may already be running. Open its local URL, or stop it with Control-C before restarting.
 
 For development, run `python3 -m unittest discover -s tests` and `node tests/recording.test.cjs` from this folder. To launch directly with an existing environment: `~/.local/share/debate-room/venv/bin/python local_service.py`.
