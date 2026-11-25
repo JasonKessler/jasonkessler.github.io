@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'unsafe-inline'; media-src blob:; connect-src 'none'">
+<title>Debate call</title>
+<style>
+:root{color-scheme:light dark;font:15px/1.4 system-ui;background:Canvas;color:CanvasText}
+body{margin:0;padding:10px}
+h1{font-size:18px;margin:0 0 4px}
+button,input{font:inherit}
+button{padding:5px 8px;min-height:32px}
+p{margin:4px 0}
+#controls{display:flex;align-items:center;flex-wrap:wrap;gap:6px 10px;margin:6px 0}
+#participants{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.tile{min-width:0;background:color-mix(in srgb,CanvasText 10%,Canvas);border-radius:5px;overflow:hidden}
+.stage{aspect-ratio:16/9;position:relative;max-height:29vh}
+.stage:not(:has(video:not([hidden]))){display:none}
+.stage video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.stage>span{display:none}
+.caption{padding:4px 6px;display:flex;justify-content:space-between;gap:3px 6px;flex-wrap:wrap;overflow-wrap:anywhere}
+.name{font-weight:650}.state{font-size:13px}
+details{margin:6px 0}.settings{display:grid;gap:4px;margin-top:4px;max-width:380px}.settings label{display:grid;gap:2px}
+.settings input{padding:5px;min-width:0}
+#notebookNotice{font-size:13px}
+[hidden]{display:none!important}
+</style>
+<h1>Debate call</h1>
+<p id="status" role="status">Camera and microphone are off until you join.</p>
+<div id="controls">
+  <label id="cameraOption"><input id="camera" type="checkbox" checked> Camera</label>
+  <label id="micOption"><input id="mic" type="checkbox" checked> Microphone</label>
+  <button id="join">Join call</button>
+  <button id="mute" hidden>Mute mic</button>
+  <button id="pauseVideo" hidden>Pause camera</button>
+  <button id="enableAudio" hidden>Enable playback</button>
+  <button id="leave" hidden>Leave call</button>
+</div>
+<details id="relay">
+  <summary>TURN relay settings</summary>
+  <div class="settings">
+    <label>TURN URL <input id="turnURL" placeholder="turns:relay.example.org:443"></label>
+    <label>Username <input id="turnUser" autocomplete="off"></label>
+    <label>Password <input id="turnPassword" type="password" autocomplete="off"></label>
+  </div>
+</details>
+<p id="notebookNotice">The host can record speaking turns.</p>
+<div id="participants" aria-label="Video participants"></div>
+<script>window.debateCallSend = message => window.webkit.messageHandlers.debateCall.postMessage(JSON.stringify(message));</script>
+<script src="call-media.js"></script>
+</html>
