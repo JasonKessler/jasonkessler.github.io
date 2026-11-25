@@ -104,7 +104,7 @@ Participant 4</textarea>
 <div class="field-grid" style="margin-top:8px"><div><label for="mod-questions">Moderator questions per debater</label><input id="mod-questions" type="number" min="0" max="20" step="1" value="2"></div><div id="questioner-settings"><label for="audience-questions">Questions per questioner per debater</label><input id="audience-questions" type="number" min="0" max="20" step="1" value="1"></div></div>
 </details>
 <p id="error" class="error" role="alert"></p>
-<div class="submit-row"><button class="primary" type="submit">Create debate</button></div>
+<div class="submit-row"><button class="primary" type="submit">Create debate</button><button id="setup-defaults" type="button">Use default topic and names</button></div>
 </form>
 </div>
 <section id="session" hidden aria-label="Debate in progress">
@@ -263,6 +263,17 @@ if(!document.fullscreenEnabled)$('fullscreen').hidden=true;
 document.addEventListener('fullscreenchange',()=>{$('fullscreen').textContent=document.fullscreenElement?'Exit full screen':'Full screen';});
 $('sound').onchange=persist;
 $('setup-form').oninput=()=>{estimate();persist();};
+$('setup-defaults').onclick = () => {
+  const proposition = $('proposition');
+  const names = $('names');
+  proposition.value = proposition.defaultValue;
+  names.value = names.defaultValue;
+  rolePreferences.clear();
+  proposition.removeAttribute('aria-invalid');
+  names.removeAttribute('aria-invalid');
+  $('error').textContent = '';
+  names.dispatchEvent(new Event('input', {bubbles:true}));
+};
 $('setup-form').onsubmit=e=>{e.preventDefault();const c=getConfig();if(validate(c)){createRound(c);window.scrollTo({top:0});$('start').focus();}};
 try{const saved=JSON.parse(localStorage.getItem(KEY));if(saved?.config)applyConfig(saved.config);if(typeof saved?.sound==='boolean')$('sound').checked=saved.sound;const r=saved?.round;if(r&&Array.isArray(r.stages)&&r.stages.length&&r.index>=0&&r.index<r.stages.length&&r.roles&&r.config&&Number.isFinite(r.remaining)){round=r;remaining=r.remaining;deadline=Number.isFinite(r.deadline)?r.deadline:null;touched=!!r.touched;if(deadline!==null&&deadline<=Date.now()){remaining=0;deadline=null;}showRound();}}catch{round=null;$('session').hidden=true;$('setup').hidden=false;}
 renderRolePreferences();estimate();setInterval(syncTime,200);document.addEventListener('visibilitychange',syncTime);window.addEventListener('pagehide',snapshot);
