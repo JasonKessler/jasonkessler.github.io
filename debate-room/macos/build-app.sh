@@ -2,6 +2,13 @@
 set -euo pipefail
 macos_dir="$(cd -- "$(dirname -- "$0")" && pwd)"
 source_dir="$(dirname -- "$macos_dir")"
+version="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$macos_dir/Info.plist")"
+for page in index.html guest.html; do
+    if ! /usr/bin/grep -Fq "<small id=\"release-version\">v${version}</small>" "$source_dir/$page"; then
+        printf 'Update the visible version in %s to match Info.plist (%s).\n' "$page" "$version" >&2
+        exit 1
+    fi
+done
 output_dir="${1:-$source_dir/build}"
 mkdir -p "$output_dir"
 output_dir="$(cd -- "$output_dir" && pwd)"
