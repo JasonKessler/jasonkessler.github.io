@@ -3,6 +3,7 @@ import WebKit
 
 final class SharingWindow: NSObject, NSWindowDelegate {
     var readNotebook: ((Bool, @escaping (Result<SharedNotebook, Error>) -> Void) -> Void)?
+    var onPendingViewers: (([SharingHost.Viewer]) -> Void)?
     private var host: SharingHost?
     private var viewer: SharingViewer?
     private var videoCall: VideoCallWindow?
@@ -72,6 +73,12 @@ final class SharingWindow: NSObject, NSWindowDelegate {
         showWindow()
     }
 
+    func reviewJoinRequests() {
+        guard let waiting = host?.viewers.first(where: { !$0.approved }) else { return }
+        showShare()
+        if let index = viewerIDs.firstIndex(of: waiting.id) { people.selectItem(at: index) }
+    }
+
     func showJoin() {
         if host != nil || viewer != nil { showWindow(); return }
         layout(title: "Join Debate", state: "Paste the moderator’s invite. An internet invite works from another network.")
@@ -95,6 +102,7 @@ final class SharingWindow: NSObject, NSWindowDelegate {
         pendingBrowserLink = nil
         host?.stop()
         host = nil
+        onPendingViewers?([])
         viewer?.stop()
         viewer = nil
         activeRound = nil
@@ -361,6 +369,7 @@ final class SharingWindow: NSObject, NSWindowDelegate {
         if viewers.isEmpty { people.addItem(withTitle: "No viewers yet") }
         if let selected, let index = viewerIDs.firstIndex(of: selected) { people.selectItem(at: index) }
         else { people.selectItem(at: 0) }
+        onPendingViewers?(viewers.filter { !$0.approved })
     }
 
     private func selectedViewer() -> UUID? {

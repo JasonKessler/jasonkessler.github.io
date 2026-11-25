@@ -22,6 +22,7 @@ final class DebateRoom: NSObject, NSApplicationDelegate, WKNavigationDelegate, W
     )
     private var webView: WKWebView?
     private let sharing = SharingWindow()
+    private lazy var joinRequests = JoinRequestBanner()
     private var service: Process?
     private var outputPipe: Pipe?
     private var serviceInput: Pipe?
@@ -32,6 +33,8 @@ final class DebateRoom: NSObject, NSApplicationDelegate, WKNavigationDelegate, W
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.regular)
         configureMenus()
+        sharing.onPendingViewers = { [weak self] pending in self?.joinRequests.update(pending) }
+        joinRequests.onReview = { [weak self] in self?.sharing.reviewJoinRequests() }
         sharing.readNotebook = { [weak self] includeTranscript, completion in
             guard let view = self?.webView else { completion(.failure(SharingUIError.noRound)); return }
             view.evaluateJavaScript("window.debateRoomSharedNotebook?.(\(includeTranscript)) ?? null") { value, error in

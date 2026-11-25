@@ -28,7 +28,7 @@ For a fictional character with racist beliefs, describe how the bias appears in 
 
 1. Create a round and choose **Sharing → Share Debate**. Select **Points only** or **Points and transcript**. Only the second option includes transcript text and supporting quotes. Saved audio stays on the host Mac.
 2. Start sharing and copy the invite. Send it to viewers on the same network. Invite links expire after one hour for new devices. Viewers choose **Sharing → Join Debate**, enter a name, and paste the invite.
-3. Select a waiting viewer and click **Approve**. Click **Publish Notebook** to send the current version, or enable **Publish automatically** for updates as turns are processed. The host can pause updates or remove a connected viewer at any time.
+3. When a viewer requests to join, click **Review** in the Mac app’s alert to select the first waiting viewer. Click **Approve** to let them in. Click **Publish Notebook** to send the current version, or enable **Publish automatically** for updates as turns are processed. The host can pause updates or remove a connected viewer at any time.
 4. Viewers read and scroll in their own window. New viewers receive the most recently published notebook after approval. A viewer who briefly disconnects can resume without a fresh approval while the window and host session stay open. Closing the host's sharing window ends the session.
 
 Hosting requires macOS 15 or later. Viewers can join without installing Whisper or Ollama. Allow **Local Network** access if macOS asks. Guest networks that isolate devices can prevent a connection. Each session uses a fresh TLS identity. The invite pins the host certificate and carries a random invite secret. The app sends notes over separate encrypted peer connections and does not advertise the proposition or notebook in Bonjour.
@@ -37,7 +37,7 @@ Hosting requires macOS 15 or later. Viewers can join without installing Whisper 
 
 1. On the Mac running Debate Room 2.2 or later, start **Sharing → Share Debate**. Select **Points and transcript** and **Publish automatically** if guests should see new turns as they are processed.
 2. Click **Copy Browser Guest Link** and send the link to guests. Open the video call on the host Mac if you want guests to speak or see the call.
-3. Guests open the full link in a browser, enter the exact name from the debate setup, and request access. Approve them from the host’s sharing window. They can read and scroll through the notebook immediately after it is published.
+3. Guests open the full link in a browser, enter the exact name from the debate setup, and request access. Click **Review** in the host’s app alert, then **Approve** in the sharing window. They can read and scroll through the notebook immediately after it is published.
 4. Guests choose whether to share a microphone or camera and select **Join call**. The same four-person call limit applies across Mac apps and browsers. Additional guests can read the notebook. For remote transcription, enable **Record audio from the video call** on the host Mac.
 
 The host uses the same Cloudflare tunnel setup as internet invites. The guest link expires for new visitors after one hour or when sharing ends. The link carries the room’s encryption key in its URL fragment, so send it privately. GitHub Pages serves the guest page. The tunnel carries encrypted notebook and signaling messages, and WebRTC carries the call between participants. Whisper and Ollama run on the host Mac.
