@@ -100,7 +100,7 @@ Participant Three</textarea>
 <details class="section"><summary>Format <span id="estimate" class="hint"></span></summary>
 <p class="hint">Times are minutes:seconds. Start the answer timer after the question.</p>
 <div class="field-grid" id="time-fields"></div>
-<div class="field-grid" style="margin-top:8px"><div><label for="mod-questions">Moderator questions per debater</label><input id="mod-questions" type="number" min="0" max="20" step="1" value="2"></div><div><label for="audience-questions">Questions per questioner per debater</label><input id="audience-questions" type="number" min="0" max="20" step="1" value="1"></div></div>
+<div class="field-grid" style="margin-top:8px"><div><label for="mod-questions">Moderator questions per debater</label><input id="mod-questions" type="number" min="0" max="20" step="1" value="2"></div><div id="questioner-settings"><label for="audience-questions">Questions per questioner per debater</label><input id="audience-questions" type="number" min="0" max="20" step="1" value="1"></div></div>
 </details>
 <p id="error" class="error" role="alert"></p>
 <div class="submit-row"><button class="primary" type="submit">Create debate</button></div>
@@ -138,6 +138,7 @@ function selectedRoles(config) {
     if (!Array.isArray(preference)) continue;
     const [name, oldRole] = preference;
     const role = oldRole === 'judge' ? 'questioner' : oldRole;
+    if (role === 'questioner' && (config.names?.length ?? 0) < 4) continue;
     if (config.names?.includes(name) && role !== 'random' && Object.hasOwn(roleLabels, role)) roles.set(name, role);
   }
   return roles;
@@ -145,9 +146,11 @@ function selectedRoles(config) {
 function renderRolePreferences() {
   const list = $('role-preferences');
   const names = [...new Set(participantNames())];
+  const options = Object.entries(roleLabels).filter(([role]) => role !== 'questioner' || names.length >= 4);
+  $('questioner-settings').hidden = names.length < 4;
   list.hidden = names.length === 0;
   list.innerHTML = names.map(name => `<label class="role-row"><span>${esc(name)}</span><select aria-label="Role for ${esc(name)}" data-name="${esc(name)}">
-    ${Object.entries(roleLabels).map(([value, label]) => `<option value="${value}" ${(rolePreferences.get(name) ?? 'random') === value ? 'selected' : ''}>${label}</option>`).join('')}
+    ${options.map(([value, label]) => `<option value="${value}" ${(rolePreferences.get(name) ?? 'random') === value ? 'selected' : ''}>${label}</option>`).join('')}
     </select></label>`).join('');
 }
 $('role-preferences').addEventListener('change', event => {
@@ -201,6 +204,7 @@ function validate(config) {
       if (!message && config.times[id] === null) [field,message] = [id, `${label} must be between 0:01 and 60:00.`];
     }
     for (const [id,key] of [['mod-questions','modQuestions'],['audience-questions','audienceQuestions']]) {
+      if (key === 'audienceQuestions' && config.names.length < 4) continue;
       if (!message && ($(id).value === '' || !Number.isInteger(config[key]) || config[key] < 0 || config[key] > 20)) {
         [field,message] = [id, 'Question counts must be whole numbers from 0 to 20.'];
       }
