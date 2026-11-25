@@ -12,6 +12,7 @@ final class JoinRequestBanner: NSObject {
         super.init()
         panel.title = "Debate join requests"
         panel.level = .floating
+        panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
         panel.hidesOnDeactivate = true
         panel.hasShadow = true
         panel.backgroundColor = .windowBackgroundColor
