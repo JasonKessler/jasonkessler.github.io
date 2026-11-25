@@ -1,6 +1,8 @@
 import importlib.util
 import json
 from pathlib import Path
+import subprocess
+import sys
 import threading
 import unittest
 from unittest.mock import patch
@@ -42,6 +44,20 @@ class NotesTests(unittest.TestCase):
         for data in [[], {}, {'text': None}, {'text': ''}, {'text': 'x' * 30001}]:
             with self.subTest(data=str(data)[:30]), self.assertRaises(ValueError):
                 service.summarize(data)
+
+
+class ServiceLifecycleTests(unittest.TestCase):
+    def test_service_releases_listener_when_parent_pipe_closes(self):
+        command = [sys.executable, spec.origin, '--port', '0', '--stop-on-stdin-eof']
+        with subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                              stderr=subprocess.STDOUT) as process:
+            try:
+                process.stdin.close()
+                self.assertEqual(process.wait(timeout=5), 0)
+                self.assertIn(b'The Debate Room', process.stdout.read())
+            finally:
+                if process.poll() is None:
+                    process.kill()
 
 
 class HTTPTests(unittest.TestCase):

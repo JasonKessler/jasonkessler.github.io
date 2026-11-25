@@ -8,6 +8,7 @@ import re
 from pathlib import Path
 import shutil
 import subprocess
+import sys
 import tempfile
 import threading
 import urllib.error
@@ -356,8 +357,16 @@ class Handler(BaseHTTPRequestHandler):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--port', type=int, default=18766)
+    parser.add_argument('--stop-on-stdin-eof', action='store_true',
+                        help='Stop when the Mac app closes its input pipe.')
     args = parser.parse_args()
     server = ThreadingHTTPServer(('127.0.0.1', args.port), Handler)
+    if args.stop_on_stdin_eof:
+        def watch_parent():
+            # The Mac app is the only writer, so a crash or force quit also closes this pipe.
+            sys.stdin.buffer.read()
+            server.shutdown()
+        threading.Thread(target=watch_parent, daemon=True).start()
     print(f'\nThe Debate Room — local AI\nOpen http://127.0.0.1:{args.port}/\nNo paid APIs. Press Control-C to stop.\n', flush=True)
     try:
         server.serve_forever()

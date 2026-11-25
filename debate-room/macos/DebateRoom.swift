@@ -24,6 +24,7 @@ final class DebateRoom: NSObject, NSApplicationDelegate, WKNavigationDelegate, W
     private let sharing = SharingWindow()
     private var service: Process?
     private var outputPipe: Pipe?
+    private var serviceInput: Pipe?
     private var startupOutput = ""
     private let status = NSTextField(wrappingLabelWithString: "")
     private lazy var retryButton = NSButton(title: "Try Again", target: self, action: #selector(startService))
@@ -39,7 +40,8 @@ final class DebateRoom: NSObject, NSApplicationDelegate, WKNavigationDelegate, W
                 completion(Result { try JSONDecoder().decode(SharedNotebook.self, from: Data(json.utf8)) })
             }
         }
-        window.title = "The Debate Room"
+        let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? ""
+        window.title = "The Debate Room · v\(version)"
         window.minSize = NSSize(width: 480, height: 480)
         window.setFrameAutosaveName("DebateRoomWindow")
         window.center()
@@ -70,7 +72,7 @@ final class DebateRoom: NSObject, NSApplicationDelegate, WKNavigationDelegate, W
     func applicationWillTerminate(_ notification: Notification) {
         sharing.end()
         outputPipe?.fileHandleForReading.readabilityHandler = nil
-        if service?.isRunning == true { service?.terminate() }
+        try? serviceInput?.fileHandleForWriting.close()
     }
 
     private func configureMenus() {
@@ -140,12 +142,15 @@ final class DebateRoom: NSObject, NSApplicationDelegate, WKNavigationDelegate, W
         webView = nil
         let process = Process()
         let pipe = Pipe()
+        let input = Pipe()
         process.executableURL = URL(fileURLWithPath: "/bin/bash")
         process.arguments = [Bundle.main.url(forResource: "run-service", withExtension: "sh")!.path, String(origin.port!)]
+        process.standardInput = input
         process.standardOutput = pipe
         process.standardError = pipe
         service = process
         outputPipe = pipe
+        serviceInput = input
 
         pipe.fileHandleForReading.readabilityHandler = { [weak self, weak process] handle in
             let data = handle.availableData
@@ -165,6 +170,7 @@ final class DebateRoom: NSObject, NSApplicationDelegate, WKNavigationDelegate, W
             try process.run()
         } catch {
             pipe.fileHandleForReading.readabilityHandler = nil
+            serviceInput = nil
             showStatus("The local service could not start. \(error.localizedDescription)", retry: true)
         }
     }
@@ -178,6 +184,7 @@ final class DebateRoom: NSObject, NSApplicationDelegate, WKNavigationDelegate, W
             }
             return
         }
+        serviceInput = nil
         let lastLine = startupOutput.split(separator: "\n").last.map(String.init) ?? ""
         let help = lastLine.contains("Address already in use")
             ? "Another app is listening on port \(origin.port!). Close that service and try again."

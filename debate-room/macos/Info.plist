@@ -6,8 +6,8 @@
 <key>CFBundleName</key><string>Debate Room</string>
 <key>CFBundleDisplayName</key><string>Debate Room</string>
 <key>CFBundlePackageType</key><string>APPL</string>
-<key>CFBundleShortVersionString</key><string>2.3.8</string>
-<key>CFBundleVersion</key><string>22</string>
+<key>CFBundleShortVersionString</key><string>2.3.9</string>
+<key>CFBundleVersion</key><string>23</string>
 <key>LSMinimumSystemVersion</key><string>14.0</string>
 <key>NSMicrophoneUsageDescription</key><string>Debate Room uses the mic when you join a call with audio or enable local recording.</string>
 <key>NSCameraUsageDescription</key><string>Debate Room shares your camera when you join a video call with Camera selected.</string>

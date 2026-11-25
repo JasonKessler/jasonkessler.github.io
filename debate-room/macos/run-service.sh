@@ -27,4 +27,4 @@ fi
 if ! /usr/bin/curl --noproxy '*' --silent --fail --max-time 2 http://127.0.0.1:11434/api/tags >/dev/null; then
     /usr/bin/open -g -a Ollama || true
 fi
-exec "$runtime/bin/python" local_service.py --port "$1"
+exec "$runtime/bin/python" local_service.py --port "$1" --stop-on-stdin-eof
